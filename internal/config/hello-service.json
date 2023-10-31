@@ -1,0 +1,56 @@
+{
+    "service_name": "my_service",
+    "logger": {
+        "is_verbose": true,
+        "logger_collector": "elastic"
+    },
+    "database": {
+        "host": "localhost",
+        "port": 5432,
+        "username": "user",
+        "password": "password",
+        "db_name": "mydb",
+        "ssl": "disable",
+        "schema_name": "public",
+        "max_idle_conns": 10,
+        "max_open_conns": 100,
+        "timeout": 30
+    },
+    "redis": {
+        "host": "localhost",
+        "port": "6379",
+        "username": "",
+        "password": "",
+        "db": 0,
+        "max_retries": 3,
+        "pool_fifo": true,
+        "pool_size": 10,
+        "pool_timeout": "5s",
+        "min_idle_conns": 2,
+        "max_idle_conns": 10,
+        "conn_max_idle_time": "30m",
+        "conn_max_lifetime": "24h"
+    },
+    "message_stream": {
+        "host": "localhost",
+        "port": "5672",
+        "username": "guest",
+        "password": "guest",
+        "exchange_name": "my_exchange",
+        "publish_topic": "my_topic",
+        "subscribe_topic": "my_topic"
+    },
+    "open_telemetry": {
+        "exporter_type": "otlp",
+        "otel_exporter_otlp_endpoint": "localhost:4317",
+        "otel_exporter_otlp_insecure": true
+    },
+    "grpc": {
+        "host": "localhost",
+        "port": "9090"
+    },
+    "grpc_client": {
+        "host": "localhost",
+        "port": "9090"
+    }
+}
