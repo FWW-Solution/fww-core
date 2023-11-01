@@ -4,27 +4,28 @@ import "time"
 
 // User represents a user entity in the database.
 type User struct {
-	ID         int64      `db:"id"`
-	FullName   string     `db:"full_name"`
-	Username   string     `db:"username"`
-	Email      string     `db:"email"`
-	Password   string     `db:"password"` // encrypted
-	CreatedAt  time.Time  `db:"created_at"`
-	UpdatedAt  time.Time  `db:"updated_at"`
-	DeletedAt  *time.Time `db:"deleted_at"`
+	ID        int64      `db:"id"`
+	FullName  string     `db:"full_name"`
+	Username  string     `db:"username"`
+	Email     string     `db:"email"`
+	Password  string     `db:"password"` // encrypted
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt time.Time  `db:"updated_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
 }
 
 // Passenger represents a passenger entity.
 type Passenger struct {
-	ID           int64      `db:"id"`
-	FullName     string     `db:"full_name"`
-	Gender       string     `db:"gender"` // enum (male, female)
-	DateOfBirth  time.Time  `db:"date_of_birth"`
-	IDType       string     `db:"id_type"` // enum (passport, ktp, driver_license)
-	IsVerified   bool       `db:"is_verified"`
-	CreatedAt    time.Time  `db:"created_at"`
-	UpdatedAt    time.Time  `db:"updated_at"`
-	DeletedAt    *time.Time `db:"deleted_at"`
+	ID                 int64      `db:"id"`
+	FullName           string     `db:"full_name"`
+	Gender             string     `db:"gender"` // enum (male, female)
+	DateOfBirth        time.Time  `db:"date_of_birth"`
+	IDType             string     `db:"id_type"`              // enum (passport, ktp, driver_license)
+	CovidVaccineStatus string     `db:"covid_vaccine_status"` // enum (Vaccine I, Vaccine II, Vaccine III, Not Vaccinated)
+	IsVerified         bool       `db:"is_verified"`
+	CreatedAt          time.Time  `db:"created_at"`
+	UpdatedAt          time.Time  `db:"updated_at"`
+	DeletedAt          *time.Time `db:"deleted_at"`
 }
 
 // PlaneInformation represents information about a plane.
@@ -66,35 +67,35 @@ type Flight struct {
 
 // FlightPrice represents the price of a flight and its metadata.
 type FlightPrice struct {
-	ID        int64       `db:"id"`
-	Price     float64     `db:"price"`
-	CreatedAt time.Time   `db:"created_at"`
-	UpdatedAt time.Time   `db:"updated_at"`
-	DeletedAt *time.Time  `db:"deleted_at"`
-	FlightID  int         `db:"flight_id"`
+	ID        int64      `db:"id"`
+	Price     float64    `db:"price"`
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt time.Time  `db:"updated_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
+	FlightID  int        `db:"flight_id"`
 }
 
 // FlightReservation represents a flight reservation entity in the database.
 type FlightReservation struct {
-	ID            int64      `db:"id"`
-	Class         string     `db:"class"` // enum (business, economy)
-	ReservedSeat  int        `db:"reserved_seat"`
-	TotalSeat     int        `db:"total_seat"`
-	CreatedAt     time.Time  `db:"created_at"`
-	UpdatedAt     time.Time  `db:"updated_at"`
-	DeletedAt     *time.Time `db:"deleted_at"`
-	FlightID      int64      `db:"flight_id"`
+	ID           int64      `db:"id"`
+	Class        string     `db:"class"` // enum (business, economy)
+	ReservedSeat int        `db:"reserved_seat"`
+	TotalSeat    int        `db:"total_seat"`
+	CreatedAt    time.Time  `db:"created_at"`
+	UpdatedAt    time.Time  `db:"updated_at"`
+	DeletedAt    *time.Time `db:"deleted_at"`
+	FlightID     int64      `db:"flight_id"`
 }
 
 // Airport represents an airport entity in the database.
 type Airport struct {
-	ID         int64      `db:"id"`
-	Name       string     `db:"name"`
-	City       string     `db:"city"`
-	Country    string     `db:"country"`
-	CreatedAt  time.Time  `db:"created_at"`
-	UpdatedAt  time.Time  `db:"updated_at"`
-	DeletedAt  *time.Time `db:"deleted_at"`
+	ID        int64      `db:"id"`
+	Name      string     `db:"name"`
+	City      string     `db:"city"`
+	Country   string     `db:"country"`
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt time.Time  `db:"updated_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
 }
 
 // Booking represents a booking made by a user for a flight.
