@@ -20,9 +20,10 @@ type Passenger struct {
 	FullName           string     `db:"full_name"`
 	Gender             string     `db:"gender"` // enum (male, female)
 	DateOfBirth        time.Time  `db:"date_of_birth"`
+	IDNumber           string     `db:"id_number"`
 	IDType             string     `db:"id_type"`              // enum (passport, ktp, driver_license)
 	CovidVaccineStatus string     `db:"covid_vaccine_status"` // enum (Vaccine I, Vaccine II, Vaccine III, Not Vaccinated)
-	IsVerified         bool       `db:"is_verified"`
+	IsIDVerified       bool       `db:"is_id_verified"`
 	CreatedAt          time.Time  `db:"created_at"`
 	UpdatedAt          time.Time  `db:"updated_at"`
 	DeletedAt          *time.Time `db:"deleted_at"`

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS passengers (
     full_name VARCHAR(255) NOT NULL,
     gender ENUM('male', 'female') NOT NULL,
     date_of_birth TIMESTAMP NOT NULL,
+    id_number VARCHAR(255) NOT NULL,
     id_type ENUM('passport', 'ktp', 'driver_license') NOT NULL,
     covid_vaccine_status ENUM(
         'Vaccine I',
@@ -21,7 +22,7 @@ CREATE TABLE IF NOT EXISTS passengers (
         'Vaccine III',
         'Not Vaccinated'
     ) NOT NULL,
-    is_verified BOOLEAN NOT NULL,
+    is_id_verified BOOLEAN NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     deleted_at TIMESTAMP
