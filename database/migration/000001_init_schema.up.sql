@@ -87,9 +87,11 @@ CREATE TABLE IF NOT EXISTS airports (
     id BIGINT PRIMARY KEY,
     "name" VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
-    country VARCHAR(255) NOT NULL,
+    province VARCHAR(255) NOT NULL,
+    iata VARCHAR(255),
+    icao VARCHAR(255),
     created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS bookings (
