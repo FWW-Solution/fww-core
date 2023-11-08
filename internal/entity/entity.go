@@ -53,23 +53,26 @@ type PlaneInformationDetail struct {
 
 // Flight represents a flight entity in the database.
 type Flight struct {
-	ID                 int64      `db:"id"`
-	CodeFlight         string     `db:"code_flight"`
-	DepartureTime      time.Time  `db:"departure_time"`
-	ArrivalTime        time.Time  `db:"arrival_time"`
-	DepartureAirportID int64      `db:"departure_airport_id"`
-	ArrivalAirportID   int64      `db:"arrival_airport_id"`
-	Status             string     `db:"status"` // enum (on_time, delayed, canceled)
-	CreatedAt          time.Time  `db:"created_at"`
-	UpdatedAt          time.Time  `db:"updated_at"`
-	DeletedAt          *time.Time `db:"deleted_at"`
-	PlaneID            int64      `db:"plane_id"`
+	ID                   int64      `db:"id"`
+	CodeFlight           string     `db:"code_flight"`
+	DepartureTime        time.Time  `db:"departure_time"`
+	ArrivalTime          time.Time  `db:"arrival_time"`
+	DepartureAirportName string     `db:"departure_airport_name"`
+	ArrivalAirportName   string     `db:"arrival_airport_name"`
+	DepartureAirportID   int64      `db:"departure_airport_id"`
+	ArrivalAirportID     int64      `db:"arrival_airport_id"`
+	Status               string     `db:"status"` // enum (on_time, delayed, canceled)
+	CreatedAt            time.Time  `db:"created_at"`
+	UpdatedAt            time.Time  `db:"updated_at"`
+	DeletedAt            *time.Time `db:"deleted_at"`
+	PlaneID              int64      `db:"plane_id"`
 }
 
 // FlightPrice represents the price of a flight and its metadata.
 type FlightPrice struct {
 	ID        int64      `db:"id"`
 	Price     float64    `db:"price"`
+	Class     string     `db:"class"` // enum (economy, business, first)
 	CreatedAt time.Time  `db:"created_at"`
 	UpdatedAt time.Time  `db:"updated_at"`
 	DeletedAt *time.Time `db:"deleted_at"`
@@ -103,15 +106,16 @@ type Airport struct {
 
 // Booking represents a booking made by a user for a flight.
 type Booking struct {
-	ID            int64      `db:"id"`
-	CodeBooking   string     `db:"code_booking"`
-	BookingDate   time.Time  `db:"booking_date"`
-	BookingStatus string     `db:"booking_status"` // enum (pending, paid, canceled)
-	CreatedAt     time.Time  `db:"created_at"`
-	UpdatedAt     time.Time  `db:"updated_at"`
-	DeletedAt     *time.Time `db:"deleted_at"`
-	UserID        int64      `db:"user_id"`
-	FlightID      int64      `db:"flight_id"`
+	ID               int64      `db:"id"`
+	CodeBooking      string     `db:"code_booking"`
+	BookingDate      time.Time  `db:"booking_date"`
+	PaymentExpiredAt time.Time  `db:"payment_expired_at"`
+	BookingStatus    string     `db:"booking_status"` // enum (pending, paid, canceled)
+	CreatedAt        time.Time  `db:"created_at"`
+	UpdatedAt        time.Time  `db:"updated_at"`
+	DeletedAt        *time.Time `db:"deleted_at"`
+	UserID           int64      `db:"user_id"`
+	FlightID         int64      `db:"flight_id"`
 }
 
 // BookingDetail represents the details of a booking made by a passenger.
