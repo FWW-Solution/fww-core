@@ -15,19 +15,19 @@ func (*useCase) DetailPassanger(id int64) (dto_passanger.ResponseDetail, error) 
 }
 
 // RegisterPassanger implements UseCase.
-func (*useCase) RegisterPassanger(data dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error) {
+func (*useCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error) {
 	panic("unimplemented")
 }
 
 // UpdatePassanger implements UseCase.
-func (*useCase) UpdatePassanger(data dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error) {
+func (*useCase) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error) {
 	panic("unimplemented")
 }
 
 type UseCase interface {
-	RegisterPassanger(data dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
+	RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
 	DetailPassanger(id int64) (dto_passanger.ResponseDetail, error)
-	UpdatePassanger(data dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error)
+	UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error)
 }
 
 func New(repository repository.Repository) UseCase {
