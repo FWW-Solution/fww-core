@@ -1,6 +1,8 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 // User represents a user entity in the database.
 type User struct {
@@ -24,6 +26,7 @@ type Passenger struct {
 	IDType             string     `db:"id_type"`              // enum (passport, ktp, driver_license)
 	CovidVaccineStatus string     `db:"covid_vaccine_status"` // enum (Vaccine I, Vaccine II, Vaccine III, Not Vaccinated)
 	IsIDVerified       bool       `db:"is_id_verified"`
+	CaseID             int64      `db:"case_id"`
 	CreatedAt          time.Time  `db:"created_at"`
 	UpdatedAt          time.Time  `db:"updated_at"`
 	DeletedAt          *time.Time `db:"deleted_at"`
@@ -111,6 +114,7 @@ type Booking struct {
 	BookingDate      time.Time  `db:"booking_date"`
 	PaymentExpiredAt time.Time  `db:"payment_expired_at"`
 	BookingStatus    string     `db:"booking_status"` // enum (pending, paid, canceled)
+	CaseID           int64      `db:"case_id"`
 	CreatedAt        time.Time  `db:"created_at"`
 	UpdatedAt        time.Time  `db:"updated_at"`
 	DeletedAt        *time.Time `db:"deleted_at"`
@@ -155,4 +159,15 @@ type Ticket struct {
 	UpdatedAt          time.Time  `db:"updated_at"`
 	DeletedAt          *time.Time `db:"deleted_at"`
 	BookingID          int64      `db:"booking_id"`
+}
+
+type WorkflowDetail struct {
+	ID        int64      `db:"id"`
+	CaseID    int64      `db:"case_id"`
+	TaskName  string     `db:"task_name"`
+	TaskID    string     `db:"task_id"`
+	Status    string     `db:"status"`
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt time.Time  `db:"updated_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
 }

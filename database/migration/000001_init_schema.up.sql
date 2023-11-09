@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS passengers (
     id_type VARCHAR(255) NOT NULL,
     covid_vaccine_status VARCHAR(255) NOT NULL,
     is_id_verified BOOLEAN NOT NULL,
+    case_id INT NOT NULL default 0,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     deleted_at TIMESTAMP
@@ -98,6 +99,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     booking_date TIMESTAMP NOT NULL,
     payment_expired_at TIMESTAMP NOT NULL,
     booking_status VARCHAR(255) NOT NULL,
+    case_id INT NOT NULL default 0,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     deleted_at TIMESTAMP,
@@ -142,6 +144,17 @@ CREATE TABLE IF NOT EXISTS tickets (
     deleted_at TIMESTAMP,
     booking_id BIGINT NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(id)
+);
+CREATE TABLE IF NOT EXISTS workflow_details (
+    id BIGINT PRIMARY KEY,
+    case_id BIGINT NOT NULL,
+    task_name VARCHAR(255) NOT NULL,
+    task_id VARCHAR(255) NOT NULL,
+    "status" VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    deleted_at TIMESTAMP,
+    UNIQUE (case_id, task_id)
 );
 -- Indexes
 CREATE INDEX code_booking_idx ON bookings(code_booking);

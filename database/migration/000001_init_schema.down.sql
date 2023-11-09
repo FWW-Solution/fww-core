@@ -4,6 +4,7 @@ DROP INDEX IF EXISTS departure_time_idx;
 DROP INDEX IF EXISTS arrival_time_idx;
 DROP INDEX IF EXISTS city_idx;
 -- Drop tables
+DROP TABLE IF EXISTS workflow_details;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS booking_details;
