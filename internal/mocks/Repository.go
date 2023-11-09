@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	dto_passanger "fww-core/internal/data/dto_passanger"
+	entity "fww-core/internal/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -14,18 +14,18 @@ type Repository struct {
 }
 
 // FindDetailPassanger provides a mock function with given fields: id
-func (_m *Repository) FindDetailPassanger(id int64) (dto_passanger.ResponseDetail, error) {
+func (_m *Repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
 	ret := _m.Called(id)
 
-	var r0 dto_passanger.ResponseDetail
+	var r0 entity.Passenger
 	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (dto_passanger.ResponseDetail, error)); ok {
+	if rf, ok := ret.Get(0).(func(int64) (entity.Passenger, error)); ok {
 		return rf(id)
 	}
-	if rf, ok := ret.Get(0).(func(int64) dto_passanger.ResponseDetail); ok {
+	if rf, ok := ret.Get(0).(func(int64) entity.Passenger); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(dto_passanger.ResponseDetail)
+		r0 = ret.Get(0).(entity.Passenger)
 	}
 
 	if rf, ok := ret.Get(1).(func(int64) error); ok {
@@ -38,21 +38,21 @@ func (_m *Repository) FindDetailPassanger(id int64) (dto_passanger.ResponseDetai
 }
 
 // RegisterPassanger provides a mock function with given fields: data
-func (_m *Repository) RegisterPassanger(data *dto_passanger.RequestRegister) (int64, error) {
+func (_m *Repository) RegisterPassanger(data *entity.Passenger) (int64, error) {
 	ret := _m.Called(data)
 
 	var r0 int64
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*dto_passanger.RequestRegister) (int64, error)); ok {
+	if rf, ok := ret.Get(0).(func(*entity.Passenger) (int64, error)); ok {
 		return rf(data)
 	}
-	if rf, ok := ret.Get(0).(func(*dto_passanger.RequestRegister) int64); ok {
+	if rf, ok := ret.Get(0).(func(*entity.Passenger) int64); ok {
 		r0 = rf(data)
 	} else {
 		r0 = ret.Get(0).(int64)
 	}
 
-	if rf, ok := ret.Get(1).(func(*dto_passanger.RequestRegister) error); ok {
+	if rf, ok := ret.Get(1).(func(*entity.Passenger) error); ok {
 		r1 = rf(data)
 	} else {
 		r1 = ret.Error(1)
@@ -62,21 +62,21 @@ func (_m *Repository) RegisterPassanger(data *dto_passanger.RequestRegister) (in
 }
 
 // UpdatePassanger provides a mock function with given fields: data
-func (_m *Repository) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error) {
+func (_m *Repository) UpdatePassanger(data *entity.Passenger) (int64, error) {
 	ret := _m.Called(data)
 
-	var r0 dto_passanger.ResponseUpdate
+	var r0 int64
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error)); ok {
+	if rf, ok := ret.Get(0).(func(*entity.Passenger) (int64, error)); ok {
 		return rf(data)
 	}
-	if rf, ok := ret.Get(0).(func(*dto_passanger.RequestUpdate) dto_passanger.ResponseUpdate); ok {
+	if rf, ok := ret.Get(0).(func(*entity.Passenger) int64); ok {
 		r0 = rf(data)
 	} else {
-		r0 = ret.Get(0).(dto_passanger.ResponseUpdate)
+		r0 = ret.Get(0).(int64)
 	}
 
-	if rf, ok := ret.Get(1).(func(*dto_passanger.RequestUpdate) error); ok {
+	if rf, ok := ret.Get(1).(func(*entity.Passenger) error); ok {
 		r1 = rf(data)
 	} else {
 		r1 = ret.Error(1)

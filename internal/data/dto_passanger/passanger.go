@@ -30,7 +30,7 @@ type ResponseDetail struct {
 	ID                 int64  `json:"id"`
 	IDNumber           string `json:"id_number"`
 	IDType             string `json:"id_type"`
-	IsIDVerified       string `json:"is_id_verified"`
+	IsIDVerified       bool   `json:"is_id_verified"`
 	UpdatedAt          string `json:"updated_at"`
 }
 

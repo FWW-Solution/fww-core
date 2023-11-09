@@ -2,15 +2,21 @@ package usecase_test
 
 import (
 	"fww-core/internal/data/dto_passanger"
+	"fww-core/internal/entity"
 	"fww-core/internal/mocks"
 	"fww-core/internal/usecase"
 	"testing"
+	"time"
 )
 
 var (
 	uc             usecase.UseCase
 	repositoryMock *mocks.Repository
 	adapterMock    *mocks.Adapter
+	timeNow        = time.Now().Format("2006-01-02 15:04:05")
+	dateTime       = time.Now().Format("2006-01-02")
+	t              = time.Now()
+	dateOnly       = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.UTC().Location())
 )
 
 func setup() {
@@ -25,17 +31,30 @@ func TestDetailPassanger(t *testing.T) {
 		id := int64(1)
 		expected := dto_passanger.ResponseDetail{
 			CovidVaccineStatus: "VACCINATED I",
-			CreatedAt:          "2021-10-01T00:00:00Z",
-			DateOfBirth:        "1990-10-01T00:00:00Z",
+			CreatedAt:          timeNow,
+			DateOfBirth:        dateTime,
 			FullName:           "John Doe",
 			Gender:             "Male",
 			ID:                 id,
 			IDNumber:           "1234567890",
 			IDType:             "KTP",
-			IsIDVerified:       "VERIFIED",
-			UpdatedAt:          "2021-10-01T00:00:00Z",
+			IsIDVerified:       true,
+			UpdatedAt:          timeNow,
 		}
-		repositoryMock.On("FindDetailPassanger", id).Return(expected, nil)
+
+		entity := entity.Passenger{
+			CovidVaccineStatus: "VACCINATED I",
+			CreatedAt:          time.Now(),
+			DateOfBirth:        time.Now(),
+			FullName:           "John Doe",
+			Gender:             "Male",
+			ID:                 id,
+			IDNumber:           "1234567890",
+			IDType:             "KTP",
+			IsIDVerified:       true,
+			UpdatedAt:          time.Now(),
+		}
+		repositoryMock.On("FindDetailPassanger", id).Return(entity, nil)
 
 		res, err := uc.DetailPassanger(id)
 		if err != nil {
@@ -79,26 +98,32 @@ func TestUpdatePassanger(t *testing.T) {
 	t.Run("Sucess", func(t *testing.T) {
 		id := int64(1)
 		req := &dto_passanger.RequestUpdate{
-			DateOfBirth: "1990-10-01T00:00:00Z",
+			DateOfBirth: dateTime,
 			FullName:    "John Doe",
 			Gender:      "Male",
-			ID:          1,
+			ID:          id,
 			IDNumber:    "1234567890",
 			IDType:      "KTP",
 		}
-		expected := dto_passanger.ResponseUpdate{
+
+		entity := entity.Passenger{
 			CovidVaccineStatus: "VACCINATED I",
-			CreatedAt:          "2021-10-01T00:00:00Z",
-			DateOfBirth:        "1990-10-01T00:00:00Z",
+			CreatedAt:          time.Now(),
+			DateOfBirth:        dateOnly,
 			FullName:           "John Doe",
 			Gender:             "Male",
 			ID:                 id,
 			IDNumber:           "1234567890",
 			IDType:             "KTP",
-			IsIDVerified:       "VERIFIED",
-			UpdatedAt:          "2021-10-01T00:00:00Z",
+			IsIDVerified:       true,
+			UpdatedAt:          time.Now(),
 		}
-		repositoryMock.On("UpdatePassanger", req).Return(expected, nil)
+		expected := dto_passanger.ResponseUpdate{
+			ID: id,
+		}
+
+		repositoryMock.On("FindDetailPassanger", id).Return(entity, nil)
+		repositoryMock.On("UpdatePassanger", &entity).Return(id, nil)
 
 		result, err := uc.UpdatePassanger(req)
 		if err != nil {
