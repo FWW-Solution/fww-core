@@ -10,14 +10,17 @@ import (
 var (
 	uc             usecase.UseCase
 	repositoryMock *mocks.Repository
+	adapterMock    *mocks.Adapter
 )
 
-func Setup() {
+func setup() {
 	repositoryMock = &mocks.Repository{}
-	uc = usecase.New(repositoryMock)
+	adapterMock = &mocks.Adapter{}
+	uc = usecase.New(repositoryMock, adapterMock)
 }
 
 func TestDetailPassanger(t *testing.T) {
+	setup()
 	t.Run("Success", func(t *testing.T) {
 		id := int64(1)
 		expected := dto_passanger.ResponseDetail{
@@ -45,6 +48,7 @@ func TestDetailPassanger(t *testing.T) {
 }
 
 func TestRegisterPassanger(t *testing.T) {
+	setup()
 	t.Run("Success", func(t *testing.T) {
 		req := &dto_passanger.RequestRegister{
 			DateOfBirth: "1990-10-01T00:00:00Z",
@@ -56,7 +60,9 @@ func TestRegisterPassanger(t *testing.T) {
 		expected := dto_passanger.ResponseRegistered{
 			ID: 1,
 		}
-		repositoryMock.On("RegisterPassanger", req).Return(expected, nil)
+		idInt64 := int64(1)
+		repositoryMock.On("RegisterPassanger", req).Return(idInt64, nil)
+		adapterMock.On("CheckPassangerInformations", nil)
 
 		res, err := uc.RegisterPassanger(req)
 		if err != nil {
@@ -69,6 +75,7 @@ func TestRegisterPassanger(t *testing.T) {
 }
 
 func TestUpdatePassanger(t *testing.T) {
+	setup()
 	t.Run("Sucess", func(t *testing.T) {
 		id := int64(1)
 		req := &dto_passanger.RequestUpdate{
