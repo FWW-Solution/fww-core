@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 )
 
-func Initialize(app *fiber.App, ctrl *controller.Controller) {
+func Initialize(app *fiber.App, ctrl *controller.Controller) *fiber.App {
 	app.Get("/", monitor.New(monitor.Config{Title: "fww-core metrics page"}))
 
 	Api := app.Group("/api")
@@ -17,5 +17,7 @@ func Initialize(app *fiber.App, ctrl *controller.Controller) {
 	v1.Post("/passanger", ctrl.RegisterPassanger)
 	v1.Get("/passanger", ctrl.DetailPassanger)
 	v1.Put("/passanger", ctrl.UpdatePassanger)
+
+	return app
 
 }

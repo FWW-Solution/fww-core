@@ -7,7 +7,7 @@ import (
 )
 
 type repository struct {
-	db sqlx.DB
+	db *sqlx.DB
 }
 
 // FindDetailPassanger implements Repository.
@@ -69,7 +69,7 @@ type Repository interface {
 	UpdatePassanger(data *entity.Passenger) (int64, error)
 }
 
-func New(db sqlx.DB) Repository {
+func New(db *sqlx.DB) Repository {
 	return &repository{
 		db: db,
 	}

@@ -8,10 +8,12 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 )
 
 type Controller struct {
-	useCase usecase.UseCase
+	UseCase usecase.UseCase
+	Log     *zap.SugaredLogger
 }
 
 func (c *Controller) RegisterPassanger(ctx *fiber.Ctx) error {
@@ -19,17 +21,20 @@ func (c *Controller) RegisterPassanger(ctx *fiber.Ctx) error {
 
 	if err := ctx.BodyParser(&body); err != nil {
 		err := tools.ResponseBadRequest(err)
+		c.Log.Error(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(err)
 	}
 
 	// validate body
 	errValidation := tools.ValidateVariable(body)
 	if errValidation != nil {
+		c.Log.Error(errValidation)
 		return ctx.Status(400).JSON(errValidation)
 	}
 
-	result, err := c.useCase.RegisterPassanger(&body)
+	result, err := c.UseCase.RegisterPassanger(&body)
 	if err != nil {
+		c.Log.Error(err)
 		return err
 	}
 
@@ -41,7 +46,7 @@ func (c *Controller) RegisterPassanger(ctx *fiber.Ctx) error {
 
 	response := tools.ResponseBuilder(result, meta)
 
-	return ctx.JSON(response)
+	return ctx.Status(fiber.StatusAccepted).JSON(response)
 }
 
 func (c *Controller) DetailPassanger(ctx *fiber.Ctx) error {
@@ -51,11 +56,13 @@ func (c *Controller) DetailPassanger(ctx *fiber.Ctx) error {
 
 	if err != nil {
 		err := tools.ResponseBadRequest(err)
+		c.Log.Error(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(err)
 	}
 
-	result, err := c.useCase.DetailPassanger(dataInt64)
+	result, err := c.UseCase.DetailPassanger(dataInt64)
 	if err != nil {
+		c.Log.Error(err)
 		return err
 	}
 
@@ -67,7 +74,7 @@ func (c *Controller) DetailPassanger(ctx *fiber.Ctx) error {
 
 	response := tools.ResponseBuilder(result, meta)
 
-	return ctx.JSON(response)
+	return ctx.Status(fiber.StatusAccepted).JSON(response)
 }
 
 func (c *Controller) UpdatePassanger(ctx *fiber.Ctx) error {
@@ -75,17 +82,20 @@ func (c *Controller) UpdatePassanger(ctx *fiber.Ctx) error {
 
 	if err := ctx.BodyParser(&body); err != nil {
 		err := tools.ResponseBadRequest(err)
+		c.Log.Error(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(err)
 	}
 
 	// validate body
 	errValidation := tools.ValidateVariable(body)
 	if errValidation != nil {
+		c.Log.Error(errValidation)
 		return ctx.Status(400).JSON(errValidation)
 	}
 
-	result, err := c.useCase.UpdatePassanger(&body)
+	result, err := c.UseCase.UpdatePassanger(&body)
 	if err != nil {
+		c.Log.Error(err)
 		return err
 	}
 
@@ -97,6 +107,6 @@ func (c *Controller) UpdatePassanger(ctx *fiber.Ctx) error {
 
 	response := tools.ResponseBuilder(result, meta)
 
-	return ctx.JSON(response)
+	return ctx.Status(fiber.StatusCreated).JSON(response)
 
 }
