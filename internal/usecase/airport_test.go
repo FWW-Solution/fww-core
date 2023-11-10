@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"database/sql"
 	"fww-core/internal/data/dto_airport"
 	"fww-core/internal/entity"
 	"testing"
@@ -17,24 +18,42 @@ func TestGetAirport(t *testing.T) {
 		iata := ""
 		entityResult := []entity.Airport{
 			{
-				ID:        1,
-				Name:      "Soekarno-Hatta International Airport",
-				City:      "Tangerang",
-				Province:  "Banten",
-				IATA:      "CGK",
-				ICAO:      "WIII",
+				ID:       1,
+				Name:     "Soekarno-Hatta International Airport",
+				City:     "Tangerang",
+				Province: "Banten",
+				IATA: sql.NullString{
+					String: "CGK",
+					Valid:  true,
+				},
+				ICAO: sql.NullString{
+					String: "WIII",
+					Valid:  true,
+				},
 				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				UpdatedAt: sql.NullTime{
+					Time:  time.Now(),
+					Valid: true,
+				},
 			},
 			{
-				ID:        2,
-				Name:      "Halim Perdanakusuma International Airport",
-				City:      "Jakarta",
-				Province:  "DKI Jakarta",
-				IATA:      "HLP",
-				ICAO:      "WIHH",
+				ID:       2,
+				Name:     "Halim Perdanakusuma International Airport",
+				City:     "Jakarta",
+				Province: "DKI Jakarta",
+				IATA: sql.NullString{
+					String: "HLP",
+					Valid:  true,
+				},
+				ICAO: sql.NullString{
+					String: "WIHH",
+					Valid:  true,
+				},
 				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				UpdatedAt: sql.NullTime{
+					Time:  time.Now(),
+					Valid: true,
+				},
 			},
 		}
 		expected := []dto_airport.ResponseAirport{

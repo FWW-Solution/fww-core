@@ -17,10 +17,10 @@ func (u *useCase) GetAirport(city string, province string, iata string) ([]dto_a
 			City:      v.City,
 			Province:  v.Province,
 			Name:      v.Name,
-			Iata:      v.IATA,
-			Icao:      v.ICAO,
+			Iata:      v.IATA.String,
+			Icao:      v.ICAO.String,
 			CreatedAt: v.CreatedAt.Format("2006-01-02 15:04:05"),
-			UpdatedAt: v.UpdatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: v.UpdatedAt.Time.Format("2006-01-02 15:04:05"),
 		})
 	}
 

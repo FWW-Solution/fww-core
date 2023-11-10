@@ -8,9 +8,9 @@ import (
 )
 
 func (c *Controller) ListAirport(ctx *fiber.Ctx) error {
-	city := ctx.Query("city")
-	province := ctx.Query("province")
-	iata := ctx.Query("iata")
+	city := ctx.Query("city", "")
+	province := ctx.Query("province", "")
+	iata := ctx.Query("iata", "")
 
 	result, err := c.UseCase.GetAirport(city, province, iata)
 	if err != nil {

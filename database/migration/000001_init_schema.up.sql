@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS passengers (
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS plane_informations (
     "type" VARCHAR(255) NOT NULL,
     variant VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS plane_information_details (
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS airports (
     iata VARCHAR(255),
     icao VARCHAR(255),
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS flights (
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS flights (
     arrival_airport_id BIGINT NOT NULL,
     status VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     plane_id BIGINT NOT NULL,
     FOREIGN KEY (departure_airport_id) REFERENCES airports(id),
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     booking_status VARCHAR(255) NOT NULL,
     case_id INT NOT NULL default 0,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     user_id BIGINT NOT NULL,
     flight_id BIGINT NOT NULL,
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS payments (
     payment_date TIMESTAMP NOT NULL,
     payment_status VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     booking_id BIGINT NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(id)

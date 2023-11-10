@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -96,15 +97,15 @@ type FlightReservation struct {
 
 // Airport represents an airport entity in the database.
 type Airport struct {
-	ID        int64      `db:"id"`
-	Name      string     `db:"name"`
-	City      string     `db:"city"`
-	Province  string     `db:"province"`
-	IATA      string     `db:"iata"`
-	ICAO      string     `db:"icao"`
-	CreatedAt time.Time  `db:"created_at"`
-	UpdatedAt time.Time  `db:"updated_at"`
-	DeletedAt *time.Time `db:"deleted_at"`
+	ID        int64          `db:"id"`
+	Name      string         `db:"name"`
+	City      string         `db:"city"`
+	Province  string         `db:"province"`
+	IATA      sql.NullString `db:"iata"`
+	ICAO      sql.NullString `db:"icao"`
+	CreatedAt time.Time      `db:"created_at"`
+	UpdatedAt sql.NullTime   `db:"updated_at"`
+	DeletedAt sql.NullTime   `db:"deleted_at"`
 }
 
 // Booking represents a booking made by a user for a flight.
