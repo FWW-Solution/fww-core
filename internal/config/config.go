@@ -117,7 +117,7 @@ func InitConfig() *Config {
 
 	// Viper read file from path
 	viper.AddConfigPath("./internal/config")
-	viper.SetConfigName("hello-service")
+	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	err := viper.ReadInConfig()
 	if err != nil {

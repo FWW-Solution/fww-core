@@ -12,7 +12,10 @@ type repository struct {
 
 // FindDetailPassanger implements Repository.
 func (r *repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
-	result, err := r.db.Queryx("SELECT  FROM passanger WHERE id = ?", id)
+	query := `SELECT id, full_name, gender, date_of_birth, id_number, id_type, covid_vaccine_status, is_id_verified, case_id, created_at, updated_at, deleted_at 
+FROM passengers 
+WHERE id = $1`
+	result, err := r.db.Queryx(query, id)
 	if err != nil && err.Error() != "sql: no rows in result set" {
 		return entity.Passenger{}, nil
 	}

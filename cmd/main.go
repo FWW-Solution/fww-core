@@ -29,7 +29,7 @@ func main() {
 	// 			zap.Error(errors.New("error details")))
 	// 	} else {
 	// 		log.Info("everything is fine",
-	// 			zap.Int("count", count))
+	// 			zap.Int("cou nt", count))
 	// 	}
 	// 	count++
 	// 	time.Sleep(time.Second * 2)

@@ -1,8 +1,8 @@
 .PHONY: build clean development and deploy
 
-run-tools:
-	@echo "Running tools..."
-	docker compose -f infrastructure-devops/docker-compose.yml up -d
+run:
+	@echo "Running application..."
+	go run cmd/main.go
 
 clean-tools:
 	@echo "Cleaning tools..."
@@ -20,3 +20,16 @@ scan:
 	@echo "Running scann..."
 	gosec ./internal/...
 
+migrate-up:
+	@echo "Migrating up..."
+	migrate -path database/migration -database $(DB_URL) -verbose up
+
+migrate-down:
+	@echo "Migrating down..."
+	migrate -path database/migration -database $(DB_URL) -verbose down
+
+migrate-force:
+	@echo "Migrating force..."
+	migrate -path database/migration -database $(DB_URL) -verbose force $(version)
+
+## postgres://postgres:postgres@100.83.50.92:5432/postgres?sslmode=disable

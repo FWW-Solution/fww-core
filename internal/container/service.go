@@ -20,7 +20,7 @@ import (
 
 func InitService(cfg *config.Config) *fiber.App {
 	// init database
-	_ = database.GetConnection(&cfg.Database)
+	db := database.GetConnection(&cfg.Database)
 	// init redis
 	clientRedis := redis.SetupClient(&cfg.Redis)
 	// init redis cache
@@ -38,8 +38,6 @@ func InitService(cfg *config.Config) *fiber.App {
 		log.Error(err)
 		panic(err)
 	}
-	// Init Database
-	db := database.GetConnection(&cfg.Database)
 
 	amqpMessageStream := messagestream.NewAmpq(&cfg.MessageStream)
 

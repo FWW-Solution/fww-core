@@ -2,14 +2,14 @@
     "service_name": "my_service",
     "logger": {
         "is_verbose": true,
-        "logger_collector": "elastic"
+        "logger_collector": ""
     },
     "database": {
-        "host": "localhost",
+        "host": "100.83.50.92",
         "port": 5432,
-        "username": "user",
-        "password": "password",
-        "db_name": "mydb",
+        "username": "postgres",
+        "password": "postgres",
+        "db_name": "postgres",
         "ssl": "disable",
         "schema_name": "public",
         "max_idle_conns": 10,
@@ -17,7 +17,7 @@
         "timeout": 30
     },
     "redis": {
-        "host": "localhost",
+        "host": "100.83.50.92",
         "port": "6379",
         "username": "",
         "password": "",
@@ -32,17 +32,17 @@
         "conn_max_lifetime": "24h"
     },
     "message_stream": {
-        "host": "localhost",
+        "host": "100.83.50.92",
         "port": "5672",
-        "username": "guest",
-        "password": "guest",
+        "username": "rabbitmq",
+        "password": "rabbitmq",
         "exchange_name": "my_exchange",
         "publish_topic": "my_topic",
         "subscribe_topic": "my_topic"
     },
     "open_telemetry": {
         "exporter_type": "otlp",
-        "otel_exporter_otlp_endpoint": "localhost:4317",
+        "otel_exporter_otlp_endpoint": "100.83.50.92:4317",
         "otel_exporter_otlp_insecure": true
     },
     "grpc": {
@@ -52,5 +52,18 @@
     "grpc_client": {
         "host": "localhost",
         "port": "9090"
+    },
+    "http_server": {
+        "host": "localhost",
+        "port": "8080"
+    },
+    "http_client": {
+        "host": "localhost",
+        "port": "8081",
+        "timeout": 0,
+        "consecutive_failures": 0,
+        "error_rate": 0.0,
+        "threshold": 0,
+        "type": "consecutive"
     }
 }

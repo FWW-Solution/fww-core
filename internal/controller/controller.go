@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
 	"fww-core/internal/data/dto"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/tools"
 	"fww-core/internal/usecase"
+	"log"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,6 +22,7 @@ func (c *Controller) RegisterPassanger(ctx *fiber.Ctx) error {
 	var body dto_passanger.RequestRegister
 
 	if err := ctx.BodyParser(&body); err != nil {
+		log.Println(err)
 		err := tools.ResponseBadRequest(err)
 		c.Log.Error(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(err)
@@ -46,11 +49,11 @@ func (c *Controller) RegisterPassanger(ctx *fiber.Ctx) error {
 
 	response := tools.ResponseBuilder(result, meta)
 
-	return ctx.Status(fiber.StatusAccepted).JSON(response)
+	return ctx.Status(fiber.StatusCreated).JSON(response)
 }
 
 func (c *Controller) DetailPassanger(ctx *fiber.Ctx) error {
-	data := ctx.Query("data")
+	data := ctx.Query("id")
 	dataInt, err := strconv.Atoi(data)
 	dataInt64 := int64(dataInt)
 
@@ -67,14 +70,16 @@ func (c *Controller) DetailPassanger(ctx *fiber.Ctx) error {
 	}
 
 	meta := dto.MetaResponse{
-		StatusCode: "201",
+		StatusCode: "200",
 		IsSuccess:  true,
 		Message:    "Success",
 	}
 
 	response := tools.ResponseBuilder(result, meta)
 
-	return ctx.Status(fiber.StatusAccepted).JSON(response)
+	fmt.Println(response)
+
+	return ctx.Status(fiber.StatusOK).JSON(response)
 }
 
 func (c *Controller) UpdatePassanger(ctx *fiber.Ctx) error {

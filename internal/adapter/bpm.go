@@ -1,6 +1,8 @@
 package adapter
 
 import (
+	"fmt"
+
 	"github.com/ThreeDotsLabs/watermill/message"
 )
 
@@ -13,5 +15,5 @@ func NewBPM(publisher *message.Publisher, subscriber *message.Subscriber) Adapte
 
 // CheckPassangerInformations implements Adapter.
 func (a *adapter) CheckPassangerInformations(data interface{}) {
-	panic("unimplemented")
+	fmt.Println("CheckPassangerInformations")
 }
