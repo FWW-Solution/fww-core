@@ -50,9 +50,6 @@ func (u *useCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_pa
 		IDType:             data.IDType,
 		CovidVaccineStatus: "",
 		IsIDVerified:       false,
-		CreatedAt:          time.Time{},
-		UpdatedAt:          time.Time{},
-		DeletedAt:          &time.Time{},
 	}
 	result, err := u.repository.RegisterPassanger(&entity)
 	if err != nil {

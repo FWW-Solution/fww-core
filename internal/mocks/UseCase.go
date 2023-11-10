@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	dto_airport "fww-core/internal/data/dto_airport"
 	dto_passanger "fww-core/internal/data/dto_passanger"
 
 	mock "github.com/stretchr/testify/mock"
@@ -30,6 +31,32 @@ func (_m *UseCase) DetailPassanger(id int64) (dto_passanger.ResponseDetail, erro
 
 	if rf, ok := ret.Get(1).(func(int64) error); ok {
 		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetAirport provides a mock function with given fields: city, province, iata
+func (_m *UseCase) GetAirport(city string, province string, iata string) ([]dto_airport.ResponseAirport, error) {
+	ret := _m.Called(city, province, iata)
+
+	var r0 []dto_airport.ResponseAirport
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, string) ([]dto_airport.ResponseAirport, error)); ok {
+		return rf(city, province, iata)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, string) []dto_airport.ResponseAirport); ok {
+		r0 = rf(city, province, iata)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dto_airport.ResponseAirport)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
+		r1 = rf(city, province, iata)
 	} else {
 		r1 = ret.Error(1)
 	}

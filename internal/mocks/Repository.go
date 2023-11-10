@@ -13,6 +13,32 @@ type Repository struct {
 	mock.Mock
 }
 
+// FindAirport provides a mock function with given fields: city, province, iata
+func (_m *Repository) FindAirport(city string, province string, iata string) ([]entity.Airport, error) {
+	ret := _m.Called(city, province, iata)
+
+	var r0 []entity.Airport
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, string) ([]entity.Airport, error)); ok {
+		return rf(city, province, iata)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, string) []entity.Airport); ok {
+		r0 = rf(city, province, iata)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Airport)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
+		r1 = rf(city, province, iata)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindDetailPassanger provides a mock function with given fields: id
 func (_m *Repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
 	ret := _m.Called(id)

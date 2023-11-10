@@ -100,10 +100,10 @@ type Airport struct {
 	Name      string     `db:"name"`
 	City      string     `db:"city"`
 	Province  string     `db:"province"`
-	IATA      *string    `db:"iata"`
-	ICAO      *string    `db:"icao"`
+	IATA      string     `db:"iata"`
+	ICAO      string     `db:"icao"`
 	CreatedAt time.Time  `db:"created_at"`
-	UpdatedAt *time.Time `db:"updated_at"`
+	UpdatedAt time.Time  `db:"updated_at"`
 	DeletedAt *time.Time `db:"deleted_at"`
 }
 

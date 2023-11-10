@@ -70,17 +70,28 @@ func TestRegisterPassanger(t *testing.T) {
 	setup()
 	t.Run("Success", func(t *testing.T) {
 		req := &dto_passanger.RequestRegister{
-			DateOfBirth: "1990-10-01T00:00:00Z",
+			DateOfBirth: dateTime,
 			FullName:    "John Doe",
 			Gender:      "Male",
 			IDNumber:    "1234567890",
 			IDType:      "KTP",
 		}
+
+		entity := &entity.Passenger{
+			ID:                 0,
+			FullName:           "John Doe",
+			Gender:             "Male",
+			IDNumber:           "1234567890",
+			IDType:             "KTP",
+			CovidVaccineStatus: "",
+			DateOfBirth:        dateOnly,
+			IsIDVerified:       false,
+		}
 		expected := dto_passanger.ResponseRegistered{
 			ID: 1,
 		}
-		idInt64 := int64(1)
-		repositoryMock.On("RegisterPassanger", req).Return(idInt64, nil)
+		id := int64(1)
+		repositoryMock.On("RegisterPassanger", entity).Return(id, nil)
 		adapterMock.On("CheckPassangerInformations", nil)
 
 		res, err := uc.RegisterPassanger(req)
