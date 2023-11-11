@@ -15,10 +15,11 @@ import (
 	"fww-core/internal/repository"
 	"fww-core/internal/usecase"
 
+	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/gofiber/fiber/v2"
 )
 
-func InitService(cfg *config.Config) *fiber.App {
+func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 	// init database
 	db := database.GetConnection(&cfg.Database)
 	// init redis
@@ -42,33 +43,47 @@ func InitService(cfg *config.Config) *fiber.App {
 	amqpMessageStream := messagestream.NewAmpq(&cfg.MessageStream)
 
 	// set message stream subscriber
-	_, err = amqpMessageStream.NewSubscriber()
+	sub, err := amqpMessageStream.NewSubscriber()
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
 
 	// set message stream publisher
-	_, err = amqpMessageStream.NewPublisher()
+	pub, err := amqpMessageStream.NewPublisher()
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
 
 	// Init Publisher
-	// Init Subscriber
 
 	// Init Adapter
 	adapter := adapter.NewBPM(nil, nil)
 	// Init Repository
 	repo := repository.New(db)
 	// Init UseCase
-	usecase := usecase.New(repo, adapter)
+	usecase := usecase.New(repo, adapter, clientRedis)
 	// Init Controller
 	ctrl := controller.Controller{UseCase: usecase, Log: log}
+	var messageRouters []message.Router
+	// Init Router
+	requestBookingRouter, err := messagestream.NewRouter(
+		pub,
+		"request_booking_poisoned",
+		"request_booking_handler",
+		"request_booking",
+		sub,
+		ctrl.RequestBooking,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	messageRouters = append(messageRouters, *requestBookingRouter)
 
 	// Init Router
 	app := router.Initialize(server, &ctrl)
 
-	return app
+	return app, messageRouters
 }

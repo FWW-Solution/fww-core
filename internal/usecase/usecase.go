@@ -3,16 +3,19 @@ package usecase
 import (
 	"fww-core/internal/adapter"
 	"fww-core/internal/data/dto_airport"
+	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_flight"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/repository"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type useCase struct {
 	repository repository.Repository
 	adapter    adapter.Adapter
+	redis      *redis.Client
 }
-
 type UseCase interface {
 	RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
 	DetailPassanger(id int64) (dto_passanger.ResponseDetail, error)
@@ -22,11 +25,14 @@ type UseCase interface {
 	// Flight
 	GetFlights(departureTime string, ArrivalTime string, limit int, offset int) ([]dto_flight.ResponseFlight, error)
 	GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail, error)
+	// Booking
+	RequestBooking(data *dto_booking.Request, bookingIDCode string) error
 }
 
-func New(repository repository.Repository, adapter adapter.Adapter) UseCase {
+func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {
 	return &useCase{
 		repository: repository,
 		adapter:    adapter,
+		redis:      redis,
 	}
 }

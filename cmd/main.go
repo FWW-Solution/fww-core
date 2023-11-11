@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"fww-core/internal/config"
 	"fww-core/internal/container"
 	"fww-core/internal/container/infrastructure/http"
+	"log"
 )
 
 func main() {
@@ -11,7 +13,17 @@ func main() {
 	cfg := config.InitConfig()
 
 	// init service
-	app := container.InitService(cfg)
+	app, routers := container.InitService(cfg)
+
+	for _, router := range routers {
+		ctx := context.Background()
+		go func() {
+			err := router.Run(ctx)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
+	}
 
 	// run service
 	http.StartHttpServer(app, cfg.HttpServer.Port)

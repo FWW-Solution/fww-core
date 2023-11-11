@@ -19,7 +19,7 @@ type MessageStream interface {
 	NewPublisher() (message.Publisher, error)
 }
 
-func NewRouter(pub message.Publisher, poisonTopic string, handlerTopicExchange string, subscribeTopic string, subs message.Subscriber, handlerFunc func(msg *message.Message) error) (*message.Router, error) {
+func NewRouter(pub message.Publisher, poisonTopic string, handlerTopicName string, subscribeTopic string, subs message.Subscriber, handlerFunc func(msg *message.Message) error) (*message.Router, error) {
 	logger := watermill.NewStdLogger(stateLog, stateLog)
 	router, err := message.NewRouter(message.RouterConfig{}, logger)
 	if err != nil {
@@ -47,11 +47,12 @@ func NewRouter(pub message.Publisher, poisonTopic string, handlerTopicExchange s
 			Logger:          logger,
 		}.Middleware,
 
+		middleware.CorrelationID,
 		middleware.Recoverer,
 	)
 
 	router.AddNoPublisherHandler(
-		handlerTopicExchange,
+		handlerTopicName,
 		subscribeTopic,
 		subs,
 		handlerFunc,

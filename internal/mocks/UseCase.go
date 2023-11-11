@@ -4,6 +4,8 @@ package mocks
 
 import (
 	dto_airport "fww-core/internal/data/dto_airport"
+	dto_booking "fww-core/internal/data/dto_booking"
+
 	dto_flight "fww-core/internal/data/dto_flight"
 
 	dto_passanger "fww-core/internal/data/dto_passanger"
@@ -138,6 +140,20 @@ func (_m *UseCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_p
 	}
 
 	return r0, r1
+}
+
+// RequestBooking provides a mock function with given fields: data, bookingIDCode
+func (_m *UseCase) RequestBooking(data *dto_booking.Request, bookingIDCode string) error {
+	ret := _m.Called(data, bookingIDCode)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_booking.Request, string) error); ok {
+		r0 = rf(data, bookingIDCode)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // UpdatePassanger provides a mock function with given fields: data

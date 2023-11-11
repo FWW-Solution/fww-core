@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/go-redsync/redsync/v4"
-	redispool "github.com/go-redsync/redsync/v4/redis"
 	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	redis "github.com/redis/go-redis/v9"
 
@@ -20,6 +19,9 @@ var (
 // InitRedisClient initializes the Redis client.
 func InitRedisClient(client *redis.Client) {
 	redisClient = client
+}
+
+type redisUtils struct {
 }
 
 // CacheMiddleware is a middleware that checks if the response is already cached in Redis.
@@ -47,7 +49,7 @@ func InitMutex(mutexName string) *redsync.Mutex {
 }
 
 // LockMutex locks the mutex. It returns an error if the mutex is already locked on the calling process.
-func LockMutex(pool redispool.Pool, mutex *redsync.Mutex) error {
+func LockMutex(mutex *redsync.Mutex) error {
 	if err := mutex.Lock(); err != nil {
 		return errors.New("failed to lock")
 	}
@@ -55,9 +57,27 @@ func LockMutex(pool redispool.Pool, mutex *redsync.Mutex) error {
 }
 
 // UnlockMutex unlocks the mutex. It returns an error if the mutex is not locked on the calling process.
-func UnlockMutex(pool redispool.Pool, mutex *redsync.Mutex) error {
+func UnlockMutex(mutex *redsync.Mutex) error {
 	if ok, err := mutex.Unlock(); !ok || err != nil {
 		return errors.New("failed to unlock")
+	}
+	return nil
+}
+
+// Counter is a counter that can be incremented and decremented.
+type Counter struct {
+	Name string
+}
+
+// NewCounter creates a new counter with the given name.
+func NewCounter(name string) *Counter {
+	return &Counter{Name: name}
+}
+
+// Increment increments the counter.
+func (c *Counter) Increment() error {
+	if err := redisClient.Incr(ctx, c.Name).Err(); err != nil {
+		return err
 	}
 	return nil
 }
