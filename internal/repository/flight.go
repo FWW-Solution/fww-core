@@ -10,7 +10,7 @@ func (r *repository) FindFlightByID(id int64) (entity.Flight, error) {
 	query := `SELECT id, code_flight, departure_time, arrival_time, arrival_airport_name, departure_airport_name, departure_airport_id, arrival_airport_id, created_at, updated_at FROM flights WHERE id = $1 AND deleted_at IS NULL`
 	var result entity.Flight
 	err := r.db.QueryRowx(query, id).StructScan(&result)
-	if err != nil && err.Error() != "sql: no rows in result set" {
+	if err != nil && err.Error() == "sql: no rows in result set" {
 		return entity.Flight{}, nil
 	}
 	if err != nil {
@@ -24,7 +24,7 @@ func (r *repository) FindFlightPriceByID(id int64) (entity.FlightPrice, error) {
 	query := `SELECT id, flight_id, price, created_at, updated_at FROM flight_prices WHERE flight_id = $1 AND deleted_at IS NULL`
 	var result entity.FlightPrice
 	err := r.db.QueryRowx(query, id).StructScan(&result)
-	if err != nil && err.Error() != "sql: no rows in result set" {
+	if err != nil && err.Error() == "sql: no rows in result set" {
 		return entity.FlightPrice{}, nil
 	}
 	if err != nil {

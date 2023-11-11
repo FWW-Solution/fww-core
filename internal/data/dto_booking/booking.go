@@ -34,7 +34,7 @@ type BookResponse struct {
 }
 
 type BookResponseDetail struct {
-	Bagage        int     `json:"bagage"`
+	Baggage       int     `json:"baggage"`
 	Class         string  `json:"class"`
 	PassangerName string  `json:"passanger_name"`
 	Price         float64 `json:"price"`

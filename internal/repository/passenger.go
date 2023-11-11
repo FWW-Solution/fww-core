@@ -8,7 +8,7 @@ func (r *repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
 FROM passengers 
 WHERE id = $1`
 	result, err := r.db.Queryx(query, id)
-	if err != nil && err.Error() != "sql: no rows in result set" {
+	if err != nil && err.Error() == "sql: no rows in result set" {
 		return entity.Passenger{}, nil
 	}
 

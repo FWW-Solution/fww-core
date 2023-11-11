@@ -28,22 +28,22 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	flightIDReminingSeat := fmt.Sprintf("flight-%d-seat", data.FlightID)
 	result := u.redis.Get(ctx, flightIDReminingSeat)
 	if result.Err() != nil {
-		resultSeat, err := u.repository.FindReminingSeat(data.FlightID)
+		reminingSeat, err := u.repository.FindReminingSeat(data.FlightID)
 		if err != nil {
 			return err
 		}
-		if resultSeat <= 0 {
+		if reminingSeat <= 0 {
 			return errors.New("no remaning seat")
 		}
-		u.redis.Set(ctx, flightIDReminingSeat, resultSeat, 0)
+		u.redis.Set(ctx, flightIDReminingSeat, reminingSeat, 0)
 	}
 
-	resultSeat, err := result.Int()
+	reminingSeat, err := result.Int()
 	if err != nil {
 		return err
 	}
 
-	if resultSeat <= 0 {
+	if reminingSeat <= 0 {
 		return errors.New("no remaning seat")
 	}
 
@@ -76,9 +76,8 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 	// Update Flight Reservation
 	entityReservation := &entity.FlightReservation{
-		Class: data.BookDetails[0].Class,
-		// ReservedSeat: (172 - resultSeat) + len(data.BookDetails),
-		ReservedSeat: (172 - 0) + len(data.BookDetails),
+		Class:        data.BookDetails[0].Class,
+		ReservedSeat: 172 - (reminingSeat + len(data.BookDetails)),
 		TotalSeat:    172,
 		UpdatedAt: sql.NullTime{
 			Time:  time.Now().Round(time.Minute),
@@ -95,11 +94,11 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	for _, v := range data.BookDetails {
 
 		entityBookingDetail := entity.BookingDetail{
-			BookingID:      bookingID,
-			PassengerID:    v.PassangerID,
-			SeatNumber:     v.SeatNumber,
-			BagageCapacity: v.Baggage,
-			Class:          v.Class,
+			BookingID:       bookingID,
+			PassengerID:     v.PassangerID,
+			SeatNumber:      v.SeatNumber,
+			BaggageCapacity: v.Baggage,
+			Class:           v.Class,
 		}
 
 		_, err := u.repository.InsertBookingDetail(&entityBookingDetail)
@@ -109,5 +108,80 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	}
 
 	return err
+
+}
+
+// GetDetailBooking implements UseCase.
+func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error) {
+	result, err := u.repository.FindBookingByBookingIDCode(codeBooking)
+	if err != nil {
+		return dto_booking.BookResponse{}, err
+	}
+
+	if result.ID == 0 {
+		return dto_booking.BookResponse{}, errors.New("booking not found")
+	}
+
+	resultBookingDetails, err := u.repository.FindBookingDetailByBookingID(result.ID)
+	if err != nil {
+		return dto_booking.BookResponse{}, err
+	}
+
+	resultFlight, err := u.repository.FindFlightByID(result.FlightID)
+	if err != nil {
+		return dto_booking.BookResponse{}, err
+	}
+
+	if resultFlight.ID == 0 {
+		return dto_booking.BookResponse{}, errors.New("flight not found")
+	}
+
+	resultFlightPrice, err := u.repository.FindFlightPriceByID(result.FlightID)
+	if err != nil {
+		return dto_booking.BookResponse{}, err
+	}
+
+	if resultFlightPrice.ID == 0 {
+		return dto_booking.BookResponse{}, errors.New("flight price not found")
+	}
+
+	// booking expired at resultFlight i day before DepartureTime
+	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
+
+	// payment expired at 6 hours after booking date
+	paymentExpiredAt := result.BookingDate.Add(time.Hour * 6)
+
+	var bookDetails []dto_booking.BookResponseDetail
+
+	for _, v := range resultBookingDetails {
+		passenger, err := u.repository.FindDetailPassanger(v.PassengerID)
+		if err != nil {
+			return dto_booking.BookResponse{}, err
+		}
+
+		bookDetails = append(bookDetails, dto_booking.BookResponseDetail{
+			Baggage:       v.BaggageCapacity,
+			SeatNumber:    v.SeatNumber,
+			PassangerName: passenger.FullName,
+			Class:         v.Class,
+			Price:         resultFlightPrice.Price,
+		})
+	}
+
+	bookResponse := dto_booking.BookResponse{
+		ArrivalAirport:   resultFlight.ArrivalAirportName,
+		ArrivalTime:      resultFlight.ArrivalTime.Format("2006-01-02 15:04:05"),
+		BookExpiredAt:    bookingExpiredAt.Format("2006-01-02 15:04:05"),
+		CodeBooking:      result.CodeBooking,
+		CodeFlight:       resultFlight.CodeFlight,
+		DepartureAirport: resultFlight.DepartureAirportName,
+		DepartureTime:    resultFlight.DepartureTime.Format("2006-01-02 15:04:05"),
+		Details:          bookDetails,
+		ID:               result.ID,
+		PaymentExpiredAt: paymentExpiredAt.Format("2006-01-02 15:04:05"),
+		TotalPrice:       resultFlightPrice.Price,
+	}
+
+	return bookResponse, nil
 
 }

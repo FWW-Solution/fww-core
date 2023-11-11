@@ -68,6 +68,30 @@ func (_m *UseCase) GetAirport(city string, province string, iata string) ([]dto_
 	return r0, r1
 }
 
+// GetDetailBooking provides a mock function with given fields: codeBooking
+func (_m *UseCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error) {
+	ret := _m.Called(codeBooking)
+
+	var r0 dto_booking.BookResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (dto_booking.BookResponse, error)); ok {
+		return rf(codeBooking)
+	}
+	if rf, ok := ret.Get(0).(func(string) dto_booking.BookResponse); ok {
+		r0 = rf(codeBooking)
+	} else {
+		r0 = ret.Get(0).(dto_booking.BookResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(codeBooking)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetDetailFlightByID provides a mock function with given fields: id
 func (_m *UseCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail, error) {
 	ret := _m.Called(id)

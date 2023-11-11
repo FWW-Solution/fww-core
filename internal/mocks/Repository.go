@@ -63,6 +63,32 @@ func (_m *Repository) FindBookingByBookingIDCode(bookingIDCode string) (entity.B
 	return r0, r1
 }
 
+// FindBookingDetailByBookingID provides a mock function with given fields: bookingID
+func (_m *Repository) FindBookingDetailByBookingID(bookingID int64) ([]entity.BookingDetail, error) {
+	ret := _m.Called(bookingID)
+
+	var r0 []entity.BookingDetail
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) ([]entity.BookingDetail, error)); ok {
+		return rf(bookingID)
+	}
+	if rf, ok := ret.Get(0).(func(int64) []entity.BookingDetail); ok {
+		r0 = rf(bookingID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.BookingDetail)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(bookingID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindDetailPassanger provides a mock function with given fields: id
 func (_m *Repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
 	ret := _m.Called(id)

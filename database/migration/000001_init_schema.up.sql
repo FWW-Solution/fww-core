@@ -20,13 +20,13 @@ CREATE TABLE IF NOT EXISTS passengers (
     is_id_verified BOOLEAN NOT NULL,
     case_id INT NOT NULL default 0,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS plane_informations (
     id SERIAL PRIMARY KEY,
     code_plane VARCHAR(255) NOT NULL,
-    total_bagage_capacity INT NOT NULL,
+    total_baggage_capacity INT NOT NULL,
     "type" VARCHAR(255) NOT NULL,
     variant VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS plane_information_details (
     class VARCHAR(255) NOT NULL,
     total_seat_capacity INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     plane_id BIGINT NOT NULL,
     deleted_at TIMESTAMP,
     FOREIGN KEY (plane_id) REFERENCES plane_informations(id)
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS booking_details (
     baggage_capacity INT NOT NULL,
     class VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     booking_id BIGINT NOT NULL,
     FOREIGN KEY (passenger_id) REFERENCES passengers(id),
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     is_boarding_pass BOOLEAN NOT NULL,
     is_eligible_to_flight BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     booking_id BIGINT NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(id)
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS workflow_details (
     task_id VARCHAR(255) NOT NULL,
     "status" VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     UNIQUE (case_id, task_id)
 );
