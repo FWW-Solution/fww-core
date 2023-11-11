@@ -3,6 +3,7 @@ package usecase
 import (
 	"fww-core/internal/adapter"
 	"fww-core/internal/data/dto_airport"
+	"fww-core/internal/data/dto_flight"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/repository"
 )
@@ -18,6 +19,9 @@ type UseCase interface {
 	UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error)
 	// Airport
 	GetAirport(city string, province string, iata string) ([]dto_airport.ResponseAirport, error)
+	// Flight
+	GetFlights(departureTime string, ArrivalTime string, limit int, offset int) ([]dto_flight.ResponseFlight, error)
+	GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail, error)
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter) UseCase {

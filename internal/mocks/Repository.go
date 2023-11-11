@@ -63,6 +63,104 @@ func (_m *Repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
 	return r0, r1
 }
 
+// FindFlightByID provides a mock function with given fields: id
+func (_m *Repository) FindFlightByID(id int64) (entity.Flight, error) {
+	ret := _m.Called(id)
+
+	var r0 entity.Flight
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (entity.Flight, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(int64) entity.Flight); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(entity.Flight)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindFlightPriceByID provides a mock function with given fields: id
+func (_m *Repository) FindFlightPriceByID(id int64) (entity.FlightPrice, error) {
+	ret := _m.Called(id)
+
+	var r0 entity.FlightPrice
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (entity.FlightPrice, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(int64) entity.FlightPrice); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(entity.FlightPrice)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindFlightReservationByID provides a mock function with given fields: flightID
+func (_m *Repository) FindFlightReservationByID(flightID int64) (entity.FlightReservation, error) {
+	ret := _m.Called(flightID)
+
+	var r0 entity.FlightReservation
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (entity.FlightReservation, error)); ok {
+		return rf(flightID)
+	}
+	if rf, ok := ret.Get(0).(func(int64) entity.FlightReservation); ok {
+		r0 = rf(flightID)
+	} else {
+		r0 = ret.Get(0).(entity.FlightReservation)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(flightID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindFlights provides a mock function with given fields: departureTime, arrivalTime, limit, offset
+func (_m *Repository) FindFlights(departureTime string, arrivalTime string, limit int, offset int) ([]entity.Flight, error) {
+	ret := _m.Called(departureTime, arrivalTime, limit, offset)
+
+	var r0 []entity.Flight
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, int, int) ([]entity.Flight, error)); ok {
+		return rf(departureTime, arrivalTime, limit, offset)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, int, int) []entity.Flight); ok {
+		r0 = rf(departureTime, arrivalTime, limit, offset)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Flight)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, int, int) error); ok {
+		r1 = rf(departureTime, arrivalTime, limit, offset)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RegisterPassanger provides a mock function with given fields: data
 func (_m *Repository) RegisterPassanger(data *entity.Passenger) (int64, error) {
 	ret := _m.Called(data)

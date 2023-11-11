@@ -57,42 +57,42 @@ type PlaneInformationDetail struct {
 
 // Flight represents a flight entity in the database.
 type Flight struct {
-	ID                   int64      `db:"id"`
-	CodeFlight           string     `db:"code_flight"`
-	DepartureTime        time.Time  `db:"departure_time"`
-	ArrivalTime          time.Time  `db:"arrival_time"`
-	DepartureAirportName string     `db:"departure_airport_name"`
-	ArrivalAirportName   string     `db:"arrival_airport_name"`
-	DepartureAirportID   int64      `db:"departure_airport_id"`
-	ArrivalAirportID     int64      `db:"arrival_airport_id"`
-	Status               string     `db:"status"` // enum (on_time, delayed, canceled)
-	CreatedAt            time.Time  `db:"created_at"`
-	UpdatedAt            time.Time  `db:"updated_at"`
-	DeletedAt            *time.Time `db:"deleted_at"`
-	PlaneID              int64      `db:"plane_id"`
+	ID                   int64        `db:"id"`
+	CodeFlight           string       `db:"code_flight"`
+	DepartureTime        time.Time    `db:"departure_time"`
+	ArrivalTime          time.Time    `db:"arrival_time"`
+	DepartureAirportName string       `db:"departure_airport_name"`
+	ArrivalAirportName   string       `db:"arrival_airport_name"`
+	DepartureAirportID   int64        `db:"departure_airport_id"`
+	ArrivalAirportID     int64        `db:"arrival_airport_id"`
+	Status               string       `db:"status"` // enum (on_time, delayed, canceled)
+	CreatedAt            time.Time    `db:"created_at"`
+	UpdatedAt            sql.NullTime `db:"updated_at"`
+	DeletedAt            sql.NullTime `db:"deleted_at"`
+	PlaneID              int64        `db:"plane_id"`
 }
 
 // FlightPrice represents the price of a flight and its metadata.
 type FlightPrice struct {
-	ID        int64      `db:"id"`
-	Price     float64    `db:"price"`
-	Class     string     `db:"class"` // enum (economy, business, first)
-	CreatedAt time.Time  `db:"created_at"`
-	UpdatedAt time.Time  `db:"updated_at"`
-	DeletedAt *time.Time `db:"deleted_at"`
-	FlightID  int        `db:"flight_id"`
+	ID        int64        `db:"id"`
+	Price     float64      `db:"price"`
+	Class     string       `db:"class"` // enum (economy, business, first)
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	FlightID  int64        `db:"flight_id"`
 }
 
 // FlightReservation represents a flight reservation entity in the database.
 type FlightReservation struct {
-	ID           int64      `db:"id"`
-	Class        string     `db:"class"` // enum (business, economy)
-	ReservedSeat int        `db:"reserved_seat"`
-	TotalSeat    int        `db:"total_seat"`
-	CreatedAt    time.Time  `db:"created_at"`
-	UpdatedAt    time.Time  `db:"updated_at"`
-	DeletedAt    *time.Time `db:"deleted_at"`
-	FlightID     int64      `db:"flight_id"`
+	ID           int64        `db:"id"`
+	Class        string       `db:"class"` // enum (business, economy)
+	ReservedSeat int          `db:"reserved_seat"`
+	TotalSeat    int          `db:"total_seat"`
+	CreatedAt    time.Time    `db:"created_at"`
+	UpdatedAt    sql.NullTime `db:"updated_at"`
+	DeletedAt    sql.NullTime `db:"deleted_at"`
+	FlightID     int64        `db:"flight_id"`
 }
 
 // Airport represents an airport entity in the database.

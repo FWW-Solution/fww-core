@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS flights (
     arrival_airport_name VARCHAR(255) NOT NULL,
     departure_airport_id BIGINT NOT NULL,
     arrival_airport_id BIGINT NOT NULL,
-    status VARCHAR(255) NOT NULL,
+    "status" VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS flight_prices (
     price FLOAT NOT NULL,
     class VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     flight_id BIGINT NOT NULL,
     FOREIGN KEY (flight_id) REFERENCES flights(id)
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS flight_reservations (
     reserved_seat INT NOT NULL,
     total_seat INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     flight_id BIGINT NOT NULL,
     FOREIGN KEY (flight_id) REFERENCES flights(id)

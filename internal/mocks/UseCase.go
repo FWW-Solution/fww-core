@@ -4,6 +4,8 @@ package mocks
 
 import (
 	dto_airport "fww-core/internal/data/dto_airport"
+	dto_flight "fww-core/internal/data/dto_flight"
+
 	dto_passanger "fww-core/internal/data/dto_passanger"
 
 	mock "github.com/stretchr/testify/mock"
@@ -57,6 +59,56 @@ func (_m *UseCase) GetAirport(city string, province string, iata string) ([]dto_
 
 	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
 		r1 = rf(city, province, iata)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetDetailFlightByID provides a mock function with given fields: id
+func (_m *UseCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail, error) {
+	ret := _m.Called(id)
+
+	var r0 dto_flight.ResponseFlightDetail
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (dto_flight.ResponseFlightDetail, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(int64) dto_flight.ResponseFlightDetail); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(dto_flight.ResponseFlightDetail)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetFlights provides a mock function with given fields: departureTime, ArrivalTime, limit, offset
+func (_m *UseCase) GetFlights(departureTime string, ArrivalTime string, limit int, offset int) ([]dto_flight.ResponseFlight, error) {
+	ret := _m.Called(departureTime, ArrivalTime, limit, offset)
+
+	var r0 []dto_flight.ResponseFlight
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, int, int) ([]dto_flight.ResponseFlight, error)); ok {
+		return rf(departureTime, ArrivalTime, limit, offset)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, int, int) []dto_flight.ResponseFlight); ok {
+		r0 = rf(departureTime, ArrivalTime, limit, offset)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]dto_flight.ResponseFlight)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, int, int) error); ok {
+		r1 = rf(departureTime, ArrivalTime, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}

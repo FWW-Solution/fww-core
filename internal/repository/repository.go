@@ -17,6 +17,12 @@ type Repository interface {
 
 	// Airport
 	FindAirport(city string, province string, iata string) ([]entity.Airport, error)
+
+	// Flight
+	FindFlightByID(id int64) (entity.Flight, error)
+	FindFlights(departureTime string, arrivalTime string, limit int, offset int) ([]entity.Flight, error)
+	FindFlightPriceByID(id int64) (entity.FlightPrice, error)
+	FindFlightReservationByID(flightID int64) (entity.FlightReservation, error)
 }
 
 func New(db *sqlx.DB) Repository {
