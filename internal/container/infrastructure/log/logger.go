@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fww-core/internal/config"
+	"io"
 	"log"
 	"os"
 
@@ -9,6 +10,14 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
+
+type ignoreSyncWriter struct {
+	io.Writer
+}
+
+func (ignoreSyncWriter) Sync() error {
+	return nil
+}
 
 func Initialize(cfg *config.Config) *zap.SugaredLogger {
 	atom := zap.NewAtomicLevel()
@@ -27,15 +36,13 @@ func Initialize(cfg *config.Config) *zap.SugaredLogger {
 		} else {
 			atom.SetLevel(zap.ErrorLevel)
 		}
-		core = ecszap.NewCore(encoderConfig, os.Stdout, atom)
+		core = ecszap.NewCore(encoderConfig, ignoreSyncWriter{os.Stdout}, atom)
 
 	} else {
-		core = zapcore.NewCore(
-			zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
-			// zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout)),
-			zapcore.NewMultiWriteSyncer(),
-			atom,
-		)
+		encoderConfig := zap.NewProductionEncoderConfig()
+		encoder := zapcore.NewJSONEncoder(encoderConfig)
+		writeSyncer := zapcore.AddSync(ignoreSyncWriter{os.Stdout})
+		core = zapcore.NewCore(encoder, writeSyncer, zap.InfoLevel)
 	}
 
 	logger := zap.New(
