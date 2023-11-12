@@ -56,7 +56,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	// Check Remining Seat
 
 	bookingDate := time.Now().Round(time.Minute)
-	paymentExpiredAt := time.Now().Add(time.Hour * 24).Round(time.Minute)
+	paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
 
 	// Insert Booking
 	bookingEntity := &entity.Booking{
@@ -107,6 +107,8 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		}
 	}
 
+	//TODO: Send Email Detail Booking
+
 	return err
 
 }
@@ -148,9 +150,6 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 	// booking expired at resultFlight i day before DepartureTime
 	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
 
-	// payment expired at 6 hours after booking date
-	paymentExpiredAt := result.BookingDate.Add(time.Hour * 6)
-
 	var bookDetails []dto_booking.BookResponseDetail
 
 	for _, v := range resultBookingDetails {
@@ -170,15 +169,15 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 
 	bookResponse := dto_booking.BookResponse{
 		ArrivalAirport:   resultFlight.ArrivalAirportName,
-		ArrivalTime:      resultFlight.ArrivalTime.Format("2006-01-02 15:04:05"),
-		BookExpiredAt:    bookingExpiredAt.Format("2006-01-02 15:04:05"),
+		ArrivalTime:      resultFlight.ArrivalTime.Round(time.Minute).Format("2006-01-02 15:04:05"),
+		BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
 		CodeBooking:      result.CodeBooking,
 		CodeFlight:       resultFlight.CodeFlight,
 		DepartureAirport: resultFlight.DepartureAirportName,
-		DepartureTime:    resultFlight.DepartureTime.Format("2006-01-02 15:04:05"),
+		DepartureTime:    resultFlight.DepartureTime.Round(time.Minute).Format("2006-01-02 15:04:05"),
 		Details:          bookDetails,
 		ID:               result.ID,
-		PaymentExpiredAt: paymentExpiredAt.Format("2006-01-02 15:04:05"),
+		PaymentExpiredAt: result.PaymentExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
 		TotalPrice:       resultFlightPrice.Price,
 	}
 

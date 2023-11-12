@@ -39,7 +39,7 @@ func TestRequestBooking(t *testing.T) {
 		entityBookingNull := entity.Booking{}
 
 		bookingDate := time.Now().Round(time.Minute)
-		paymentExpiredAt := time.Now().Add(time.Hour * 24).Round(time.Minute)
+		paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
 
 		entityBooking := &entity.Booking{
 			FlightID:         flightID,
@@ -93,7 +93,7 @@ func TestGetDetailBooking(t *testing.T) {
 		flightID := int64(1)
 
 		bookingDate := time.Now().Round(time.Minute)
-		paymentExpiredAt := time.Now().Add(time.Hour * 24).Round(time.Minute)
+		paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
 
 		entityBooking := entity.Booking{
 			ID:               ID,
@@ -108,7 +108,7 @@ func TestGetDetailBooking(t *testing.T) {
 
 		entityPassenger := entity.Passenger{
 			CovidVaccineStatus: "VACCINATED I",
-			CreatedAt:          time.Now(),
+			CreatedAt:          time.Now().Round(time.Minute),
 			DateOfBirth:        dateOnly,
 			FullName:           "John Doe",
 			Gender:             "Male",
@@ -116,7 +116,7 @@ func TestGetDetailBooking(t *testing.T) {
 			IDNumber:           "1234567890",
 			IDType:             "KTP",
 			IsIDVerified:       true,
-			UpdatedAt:          time.Now(),
+			UpdatedAt:          time.Now().Round(time.Minute),
 		}
 
 		entityBookingDetails := []entity.BookingDetail{
@@ -133,8 +133,8 @@ func TestGetDetailBooking(t *testing.T) {
 		entityFlight := entity.Flight{
 			ID:                   flightID,
 			CodeFlight:           codeFlight,
-			DepartureTime:        time.Now(),
-			ArrivalTime:          time.Now(),
+			DepartureTime:        time.Now().Round(time.Minute),
+			ArrivalTime:          time.Now().Round(time.Minute),
 			DepartureAirportName: "I Gusti Ngurah Rai International Airport",
 			ArrivalAirportName:   "Soekarno-Hatta International Airport",
 			DepartureAirportID:   ID,
@@ -153,13 +153,10 @@ func TestGetDetailBooking(t *testing.T) {
 		// booking expired at resultFlight i day before DepartureTime
 		bookingExpiredAt := entityFlight.DepartureTime.AddDate(0, 0, -1)
 
-		// payment expired at 6 hours after booking date
-		paymentExpiredAtResult := entityBooking.BookingDate.Add(time.Hour * 6)
-
 		expected := dto_booking.BookResponse{
 			ArrivalAirport:   "Soekarno-Hatta International Airport",
 			ArrivalTime:      timeNow,
-			BookExpiredAt:    bookingExpiredAt.Format("2006-01-02 15:04:05"),
+			BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
 			CodeBooking:      bookingIDCode,
 			CodeFlight:       codeFlight,
 			DepartureAirport: "I Gusti Ngurah Rai International Airport",
@@ -174,7 +171,7 @@ func TestGetDetailBooking(t *testing.T) {
 				},
 			},
 			ID:               ID,
-			PaymentExpiredAt: paymentExpiredAtResult.Format("2006-01-02 15:04:05"),
+			PaymentExpiredAt: entityBooking.PaymentExpiredAt.Format("2006-01-02 15:04:05"),
 			TotalPrice:       172,
 		}
 
