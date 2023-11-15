@@ -6,6 +6,7 @@ import (
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_flight"
 	"fww-core/internal/data/dto_passanger"
+	"fww-core/internal/data/dto_payment"
 	"fww-core/internal/repository"
 
 	"github.com/redis/go-redis/v9"
@@ -16,6 +17,8 @@ type useCase struct {
 	adapter    adapter.Adapter
 	redis      *redis.Client
 }
+
+
 
 type UseCase interface {
 	RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
@@ -29,6 +32,9 @@ type UseCase interface {
 	// Booking
 	RequestBooking(data *dto_booking.Request, bookingIDCode string) error
 	GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error)
+	// Payment
+	RequestPayment(req *dto_payment.Request, paymentCodeID string) error
+	GetDetailPayment(codePayment string) (dto_payment.StatusResponse, error)
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {

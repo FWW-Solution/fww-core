@@ -28,6 +28,9 @@ func Initialize(app *fiber.App, ctrl *controller.Controller) *fiber.App {
 
 	//Booking
 	v1.Get("/booking", ctrl.GetDetailBooking)
+
+	//Payment
+	v1.Get("/payment/status", ctrl.GetPaymentStatus)
 	return app
 
 }
