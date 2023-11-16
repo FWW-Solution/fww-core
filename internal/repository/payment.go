@@ -11,3 +11,8 @@ func (r *repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Pa
 func (r *repository) UpdatePayment(data *entity.Payment) (int64, error) {
 	panic("unimplemented")
 }
+
+// FindPaymentMethodStatus implements Repository.
+func (*repository) FindPaymentMethodStatus() ([]entity.PaymentMethod, error) {
+	panic("unimplemented")
+}

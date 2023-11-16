@@ -22,3 +22,8 @@ func (a *adapter) CheckPassangerInformations(data interface{}) {
 func (a *adapter) RequestPayment(data interface{}) {
 	fmt.Println("Do Payment")
 }
+
+// SendNotification implements Adapter.
+func (a *adapter) SendNotification(data interface{}) {
+	fmt.Println("Send Notification")
+}

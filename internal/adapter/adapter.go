@@ -1,6 +1,8 @@
 package adapter
 
-import "github.com/ThreeDotsLabs/watermill/message"
+import (
+	"github.com/ThreeDotsLabs/watermill/message"
+)
 
 type adapter struct {
 	pub *message.Publisher
@@ -11,4 +13,5 @@ type Adapter interface {
 	CheckPassangerInformations(data interface{})
 	// Payment
 	RequestPayment(data interface{})
+	SendNotification(data interface{})
 }

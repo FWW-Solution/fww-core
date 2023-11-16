@@ -34,6 +34,7 @@ type Repository interface {
 	// Payment
 	FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error)
 	UpdatePayment(data *entity.Payment) (int64, error)
+	FindPaymentMethodStatus() ([]entity.PaymentMethod, error)
 }
 
 func New(db *sqlx.DB) Repository {

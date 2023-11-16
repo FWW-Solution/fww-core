@@ -150,6 +150,15 @@ type Payment struct {
 	BookingID     int64      `db:"booking_id"`
 }
 
+type PaymentMethod struct {
+	ID        int64        `db:"id"`
+	Name      string       `db:"name"`
+	IsActive  bool         `db:"is_active"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+}
+
 // Ticket represents a flight ticket entity
 type Ticket struct {
 	ID                 int64      `db:"id"`
