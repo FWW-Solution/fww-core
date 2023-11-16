@@ -18,8 +18,6 @@ type useCase struct {
 	redis      *redis.Client
 }
 
-
-
 type UseCase interface {
 	RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
 	DetailPassanger(id int64) (dto_passanger.ResponseDetail, error)
@@ -34,7 +32,7 @@ type UseCase interface {
 	GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error)
 	// Payment
 	RequestPayment(req *dto_payment.Request, paymentCodeID string) error
-	GetDetailPayment(codePayment string) (dto_payment.StatusResponse, error)
+	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {

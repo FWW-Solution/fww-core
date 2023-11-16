@@ -30,6 +30,10 @@ type Repository interface {
 	UpdateFlightReservation(data *entity.FlightReservation) (int64, error)
 	FindBookingByBookingIDCode(bookingIDCode string) (entity.Booking, error)
 	FindBookingDetailByBookingID(bookingID int64) ([]entity.BookingDetail, error)
+	FindBookingByID(id int64) (entity.Booking, error)
+	// Payment
+	FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error)
+	UpdatePayment(data *entity.Payment) (int64, error)
 }
 
 func New(db *sqlx.DB) Repository {

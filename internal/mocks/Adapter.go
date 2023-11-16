@@ -14,6 +14,11 @@ func (_m *Adapter) CheckPassangerInformations(data interface{}) {
 	_m.Called(data)
 }
 
+// RequestPayment provides a mock function with given fields: data
+func (_m *Adapter) RequestPayment(data interface{}) {
+	_m.Called(data)
+}
+
 type mockConstructorTestingTNewAdapter interface {
 	mock.TestingT
 	Cleanup(func())

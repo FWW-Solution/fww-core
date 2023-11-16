@@ -33,7 +33,7 @@ func (c *Controller) RequestPayment(msg *message.Message) error {
 func (c *Controller) GetPaymentStatus(ctx *fiber.Ctx) error {
 	codePayment := ctx.Query("code_payment", "")
 
-	result, err := c.UseCase.GetDetailPayment(codePayment)
+	result, err := c.UseCase.GetPaymentStatus(codePayment)
 	if err != nil {
 		c.Log.Error(err)
 		return err

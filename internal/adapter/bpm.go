@@ -17,3 +17,8 @@ func NewBPM(publisher *message.Publisher, subscriber *message.Subscriber) Adapte
 func (a *adapter) CheckPassangerInformations(data interface{}) {
 	fmt.Println("CheckPassangerInformations")
 }
+
+// RequestPayment implements Adapter.
+func (a *adapter) RequestPayment(data interface{}) {
+	fmt.Println("Do Payment")
+}

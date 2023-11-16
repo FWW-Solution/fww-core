@@ -63,6 +63,30 @@ func (_m *Repository) FindBookingByBookingIDCode(bookingIDCode string) (entity.B
 	return r0, r1
 }
 
+// FindBookingByID provides a mock function with given fields: id
+func (_m *Repository) FindBookingByID(id int64) (entity.Booking, error) {
+	ret := _m.Called(id)
+
+	var r0 entity.Booking
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (entity.Booking, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(int64) entity.Booking); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(entity.Booking)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindBookingDetailByBookingID provides a mock function with given fields: bookingID
 func (_m *Repository) FindBookingDetailByBookingID(bookingID int64) ([]entity.BookingDetail, error) {
 	ret := _m.Called(bookingID)
@@ -211,6 +235,30 @@ func (_m *Repository) FindFlights(departureTime string, arrivalTime string, limi
 	return r0, r1
 }
 
+// FindPaymentDetailByInvoice provides a mock function with given fields: invoiceNumber
+func (_m *Repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error) {
+	ret := _m.Called(invoiceNumber)
+
+	var r0 entity.Payment
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (entity.Payment, error)); ok {
+		return rf(invoiceNumber)
+	}
+	if rf, ok := ret.Get(0).(func(string) entity.Payment); ok {
+		r0 = rf(invoiceNumber)
+	} else {
+		r0 = ret.Get(0).(entity.Payment)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(invoiceNumber)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindReminingSeat provides a mock function with given fields: flightID
 func (_m *Repository) FindReminingSeat(flightID int64) (int, error) {
 	ret := _m.Called(flightID)
@@ -347,6 +395,30 @@ func (_m *Repository) UpdatePassanger(data *entity.Passenger) (int64, error) {
 	}
 
 	if rf, ok := ret.Get(1).(func(*entity.Passenger) error); ok {
+		r1 = rf(data)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdatePayment provides a mock function with given fields: data
+func (_m *Repository) UpdatePayment(data *entity.Payment) (int64, error) {
+	ret := _m.Called(data)
+
+	var r0 int64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*entity.Payment) (int64, error)); ok {
+		return rf(data)
+	}
+	if rf, ok := ret.Get(0).(func(*entity.Payment) int64); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	if rf, ok := ret.Get(1).(func(*entity.Payment) error); ok {
 		r1 = rf(data)
 	} else {
 		r1 = ret.Error(1)

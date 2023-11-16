@@ -9,4 +9,6 @@ type adapter struct {
 
 type Adapter interface {
 	CheckPassangerInformations(data interface{})
+	// Payment
+	RequestPayment(data interface{})
 }

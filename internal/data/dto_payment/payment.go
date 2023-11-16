@@ -1,7 +1,7 @@
 package dto_payment
 
 type Request struct {
-	BookingID     string `json:"booking_id"`
+	BookingID     int64  `json:"booking_id"`
 	PaymentMethod string `json:"payment_method"`
 }
 

@@ -10,6 +10,8 @@ import (
 
 	dto_passanger "fww-core/internal/data/dto_passanger"
 
+	dto_payment "fww-core/internal/data/dto_payment"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -142,6 +144,30 @@ func (_m *UseCase) GetFlights(departureTime string, ArrivalTime string, limit in
 	return r0, r1
 }
 
+// GetPaymentStatus provides a mock function with given fields: codePayment
+func (_m *UseCase) GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error) {
+	ret := _m.Called(codePayment)
+
+	var r0 dto_payment.StatusResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (dto_payment.StatusResponse, error)); ok {
+		return rf(codePayment)
+	}
+	if rf, ok := ret.Get(0).(func(string) dto_payment.StatusResponse); ok {
+		r0 = rf(codePayment)
+	} else {
+		r0 = ret.Get(0).(dto_payment.StatusResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(codePayment)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RegisterPassanger provides a mock function with given fields: data
 func (_m *UseCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error) {
 	ret := _m.Called(data)
@@ -173,6 +199,20 @@ func (_m *UseCase) RequestBooking(data *dto_booking.Request, bookingIDCode strin
 	var r0 error
 	if rf, ok := ret.Get(0).(func(*dto_booking.Request, string) error); ok {
 		r0 = rf(data, bookingIDCode)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// RequestPayment provides a mock function with given fields: req, paymentCodeID
+func (_m *UseCase) RequestPayment(req *dto_payment.Request, paymentCodeID string) error {
+	ret := _m.Called(req, paymentCodeID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_payment.Request, string) error); ok {
+		r0 = rf(req, paymentCodeID)
 	} else {
 		r0 = ret.Error(0)
 	}
