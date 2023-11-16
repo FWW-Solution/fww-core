@@ -6,6 +6,8 @@ import (
 	"fww-core/internal/container"
 	"fww-core/internal/container/infrastructure/http"
 	"log"
+
+	"github.com/ThreeDotsLabs/watermill/message"
 )
 
 func main() {
@@ -17,12 +19,12 @@ func main() {
 
 	for _, router := range routers {
 		ctx := context.Background()
-		go func() {
+		go func(router message.Router) {
 			err := router.Run(ctx)
 			if err != nil {
 				log.Fatal(err)
 			}
-		}()
+		}(router)
 	}
 
 	// run service

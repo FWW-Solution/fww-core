@@ -20,6 +20,21 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		return errors.New("booking not found")
 	}
 
+	// Total payment from booking details and flight price
+	totalPayment := float64(0)
+
+	bookingDetails, err := u.repository.FindBookingDetailByBookingID(resultBooking.ID)
+	if err != nil {
+		return err
+	}
+
+	bookingPrice, err := u.repository.FindFlightPriceByID(resultBooking.FlightID)
+	if err != nil {
+		return err
+	}
+
+	totalPayment += bookingPrice.Price * float64(len(bookingDetails))
+
 	// Validate payment expired
 
 	if resultBooking.PaymentExpiredAt.After(time.Now()) {
@@ -46,14 +61,21 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 
 	// TODO: Do payment process
 
-	entityPayment := entity.Payment{}
+	entityPayment := entity.Payment{
+		InvoiceNumber: paymentCodeID,
+		TotalPayment:  totalPayment,
+		PaymentMethod: req.PaymentMethod,
+		PaymentDate:   time.Now(),
+		PaymentStatus: "pending",
+		BookingID:     resultBooking.ID,
+	}
 	u.adapter.RequestPayment(entityPayment)
 
 	// TODO: Create callback url (optional)
 
 	// TODO: Update database payment status
 
-	_, err = u.repository.UpdatePayment(&entityPayment)
+	_, err = u.repository.UpsertPayment(&entityPayment)
 	if err != nil {
 		return err
 	}

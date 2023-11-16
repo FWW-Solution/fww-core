@@ -80,7 +80,20 @@ func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 		log.Fatal(err)
 	}
 
-	messageRouters = append(messageRouters, *requestBookingRouter)
+	requestPaymentRouter, err := messagestream.NewRouter(
+		pub,
+		"do_payment_poisoned",
+		"do_payment_handler",
+		"do_payment",
+		sub,
+		ctrl.RequestPayment,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	messageRouters = append(messageRouters, *requestBookingRouter, *requestPaymentRouter)
 
 	// Init Router
 	app := router.Initialize(server, &ctrl)

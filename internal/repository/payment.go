@@ -33,25 +33,25 @@ func (r *repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Pa
 }
 
 // UpdatePayment implements Repository.
-func (r *repository) UpdatePayment(data *entity.Payment) (int64, error) {
-	query := fmt.Sprintf(`UPDATE payments SET payment_status = '%s' WHERE invoice_number = '%s'`, data.PaymentStatus, data.InvoiceNumber)
+func (r *repository) UpsertPayment(data *entity.Payment) (int64, error) {
+	query := fmt.Sprintf(`INSERT INTO payments (invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES ('%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (conflict_target) DO UPDATE payments SET payment_status = '%s' WHERE id = %d`, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate, data.PaymentStatus, data.BookingID, data.PaymentStatus, data.ID)
 
 	result, err := r.db.Exec(query)
 	if err != nil {
 		return 0, err
 	}
 
-	LastInsertId, err := result.LastInsertId()
+	lastInsertID, err := result.LastInsertId()
 	if err != nil {
 		return 0, err
 	}
 
-	return LastInsertId, nil
+	return lastInsertID, nil
 }
 
 // FindPaymentMethodStatus implements Repository.
 func (r *repository) FindPaymentMethodStatus() ([]entity.PaymentMethod, error) {
-	query := fmt.Sprintf(`SELECT id, name, status FROM payment_methods`)
+	query := fmt.Sprintf(`SELECT id, name, is_active FROM payment_methods`)
 	var rows []entity.PaymentMethod
 
 	result, err := r.db.Queryx(query)

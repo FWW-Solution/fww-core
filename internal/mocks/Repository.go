@@ -429,8 +429,8 @@ func (_m *Repository) UpdatePassanger(data *entity.Passenger) (int64, error) {
 	return r0, r1
 }
 
-// UpdatePayment provides a mock function with given fields: data
-func (_m *Repository) UpdatePayment(data *entity.Payment) (int64, error) {
+// UpsertPayment provides a mock function with given fields: data
+func (_m *Repository) UpsertPayment(data *entity.Payment) (int64, error) {
 	ret := _m.Called(data)
 
 	var r0 int64

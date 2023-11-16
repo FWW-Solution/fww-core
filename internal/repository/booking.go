@@ -125,5 +125,15 @@ func (r *repository) FindBookingDetailByBookingID(bookingID int64) ([]entity.Boo
 
 // FindBookingByID implements Repository.
 func (r *repository) FindBookingByID(id int64) (entity.Booking, error) {
-	panic("unimplemented")
+	query := `SELECT id, code_booking, booking_date, payment_expired_at, booking_status, case_id, user_id, flight_id FROM bookings WHERE id = $1 AND deleted_at IS NULL`
+	var result entity.Booking
+	err := r.db.QueryRowx(query, id).StructScan(&result)
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return entity.Booking{}, nil
+	}
+	if err != nil {
+		return entity.Booking{}, err
+	}
+
+	return result, nil
 }
