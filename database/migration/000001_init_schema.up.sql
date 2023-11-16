@@ -134,6 +134,16 @@ CREATE TABLE IF NOT EXISTS payments (
     booking_id BIGINT NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(id)
 );
+
+CREATE TABLE IF NOT EXISTS payment_methods (
+    id SERIAL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS tickets (
     id SERIAL PRIMARY KEY,
     code_ticket VARCHAR(255) NOT NULL,

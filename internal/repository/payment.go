@@ -1,18 +1,76 @@
 package repository
 
-import "fww-core/internal/entity"
+import (
+	"fmt"
+	"fww-core/internal/entity"
+)
 
 // FindPaymentDetailByInvoice implements Repository.
 func (r *repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error) {
-	panic("unimplemented")
+	query := fmt.Sprintf(`SELECT id, invoice_number, total_payment, payment_method, payment_date, payment_status, created_at, updated_at, deleted_at, booking_id FROM payments WHERE invoice_number = '%s'`, invoiceNumber)
+
+	// hanldle entity
+	var row entity.Payment
+
+	result, err := r.db.Queryx(query)
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return entity.Payment{}, nil
+	}
+
+	if err != nil {
+		return entity.Payment{}, err
+	}
+
+	for result.Next() {
+		err := result.StructScan(&row)
+		if err != nil {
+			return entity.Payment{}, err
+		}
+	}
+
+	return row, nil
+
 }
 
 // UpdatePayment implements Repository.
 func (r *repository) UpdatePayment(data *entity.Payment) (int64, error) {
-	panic("unimplemented")
+	query := fmt.Sprintf(`UPDATE payments SET payment_status = '%s' WHERE invoice_number = '%s'`, data.PaymentStatus, data.InvoiceNumber)
+
+	result, err := r.db.Exec(query)
+	if err != nil {
+		return 0, err
+	}
+
+	LastInsertId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return LastInsertId, nil
 }
 
 // FindPaymentMethodStatus implements Repository.
-func (*repository) FindPaymentMethodStatus() ([]entity.PaymentMethod, error) {
-	panic("unimplemented")
+func (r *repository) FindPaymentMethodStatus() ([]entity.PaymentMethod, error) {
+	query := fmt.Sprintf(`SELECT id, name, status FROM payment_methods`)
+	var rows []entity.PaymentMethod
+
+	result, err := r.db.Queryx(query)
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return []entity.PaymentMethod{}, nil
+	}
+
+	if err != nil {
+		return []entity.PaymentMethod{}, err
+	}
+
+	for result.Next() {
+		var row entity.PaymentMethod
+		err := result.StructScan(&row)
+		if err != nil {
+			return []entity.PaymentMethod{}, err
+		}
+		rows = append(rows, row)
+	}
+
+	return rows, nil
 }
