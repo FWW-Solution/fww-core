@@ -12,7 +12,7 @@ func (r *repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Pa
 	// hanldle entity
 	var row entity.Payment
 
-	result, err := r.db.Queryx(query)
+	err := r.db.QueryRowx(query).StructScan(&row)
 	if err != nil && err.Error() == "sql: no rows in result set" {
 		return entity.Payment{}, nil
 	}
@@ -21,32 +21,35 @@ func (r *repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Pa
 		return entity.Payment{}, err
 	}
 
-	for result.Next() {
-		err := result.StructScan(&row)
-		if err != nil {
-			return entity.Payment{}, err
-		}
-	}
-
 	return row, nil
 
 }
 
 // UpdatePayment implements Repository.
 func (r *repository) UpsertPayment(data *entity.Payment) (int64, error) {
-	query := fmt.Sprintf(`INSERT INTO payments (invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES ('%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (conflict_target) DO UPDATE payments SET payment_status = '%s' WHERE id = %d`, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate, data.PaymentStatus, data.BookingID, data.PaymentStatus, data.ID)
+	var query string
+	if data.ID == 0 {
+		query = fmt.Sprintf(`INSERT INTO payments (invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES ('%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (id) DO UPDATE SET payment_status = '%s', updated_at = NOW() WHERE payments.id = %d RETURNING id`, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.PaymentStatus, data.BookingID, data.PaymentStatus, data.ID)
+	} else {
+		query = fmt.Sprintf(`INSERT INTO payments (id, invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES (%d,'%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (id) DO UPDATE SET payment_status = '%s', updated_at = NOW() WHERE payments.id = %d RETURNING id`, data.ID, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.PaymentStatus, data.BookingID, data.PaymentStatus, data.ID)
+	}
 
-	result, err := r.db.Exec(query)
+	// do sqlx transaction
+	tx, err := r.db.Beginx()
 	if err != nil {
 		return 0, err
 	}
 
-	lastInsertID, err := result.LastInsertId()
+	var id int64
+	err = tx.QueryRowx(query).Scan(&id)
+
 	if err != nil {
+		tx.Rollback()
 		return 0, err
 	}
 
-	return lastInsertID, nil
+	tx.Commit()
+	return id, nil
 }
 
 // FindPaymentMethodStatus implements Repository.

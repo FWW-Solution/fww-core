@@ -21,7 +21,7 @@ func (r *repository) FindFlightByID(id int64) (entity.Flight, error) {
 
 // FindFlightPriceByID implements Repository.
 func (r *repository) FindFlightPriceByID(id int64) (entity.FlightPrice, error) {
-	query := `SELECT id, flight_id, price, created_at, updated_at FROM flight_prices WHERE flight_id = $1 AND deleted_at IS NULL`
+	query := `SELECT id, flight_id, price, created_at, updated_at FROM flight_prices WHERE flight_id = $1 AND class = 'Economy' AND deleted_at IS NULL`
 	var result entity.FlightPrice
 	err := r.db.QueryRowx(query, id).StructScan(&result)
 	if err != nil && err.Error() == "sql: no rows in result set" {

@@ -138,16 +138,16 @@ type BookingDetail struct {
 
 // Payment represents a payment made by a user for a booking.
 type Payment struct {
-	ID            int64      `db:"id"`
-	InvoiceNumber string     `db:"invoice_number"`
-	TotalPayment  float64    `db:"total_payment"`
-	PaymentMethod string     `db:"payment_method"` // enum (credit_card, debit_card, bank_transfer)
-	PaymentDate   time.Time  `db:"payment_date"`
-	PaymentStatus string     `db:"payment_status"` // enum (pending, paid, canceled)
-	CreatedAt     time.Time  `db:"created_at"`
-	UpdatedAt     time.Time  `db:"updated_at"`
-	DeletedAt     *time.Time `db:"deleted_at"`
-	BookingID     int64      `db:"booking_id"`
+	ID            int64        `db:"id"`
+	InvoiceNumber string       `db:"invoice_number"`
+	TotalPayment  float64      `db:"total_payment"`
+	PaymentMethod string       `db:"payment_method"` // enum (credit_card, debit_card, bank_transfer)
+	PaymentDate   time.Time    `db:"payment_date"`
+	PaymentStatus string       `db:"payment_status"` // enum (pending, paid, canceled)
+	CreatedAt     time.Time    `db:"created_at"`
+	UpdatedAt     sql.NullTime `db:"updated_at"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+	BookingID     int64        `db:"booking_id"`
 }
 
 type PaymentMethod struct {

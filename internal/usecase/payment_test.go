@@ -27,8 +27,8 @@ func TestGetPaymentStatus(t *testing.T) {
 			PaymentDate:   time.Now(),
 			PaymentStatus: "success",
 			CreatedAt:     time.Now(),
-			UpdatedAt:     time.Time{},
-			DeletedAt:     &time.Time{},
+			UpdatedAt:     sql.NullTime{},
+			DeletedAt:     sql.NullTime{},
 			BookingID:     1,
 		}
 
@@ -99,6 +99,8 @@ func TestRequestPayment(t *testing.T) {
 		}
 
 		repositoryMock.On("FindBookingByID", request.BookingID).Return(entityBooking, nil).Once()
+		repositoryMock.On("FindBookingDetailByBookingID", request.BookingID).Return(nil, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", entityBooking.FlightID).Return(nil, nil).Once()
 		repositoryMock.On("FindPaymentMethodStatus").Return(entitiesPaymentMethod, nil).Once()
 		adapterMock.On("RequestPayment", entity.Payment{}).Return(nil).Once()
 		adapterMock.On("SendNotification", entity.Payment{}).Return(nil).Once()

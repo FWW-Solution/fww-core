@@ -33,7 +33,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		return err
 	}
 
-	totalPayment += bookingPrice.Price * float64(len(bookingDetails))
+	totalPayment += (bookingPrice.Price * float64(len(bookingDetails)))
 
 	// Validate payment expired
 

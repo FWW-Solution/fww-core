@@ -21,6 +21,7 @@ func (c *Controller) RequestPayment(msg *message.Message) error {
 
 	if err := c.UseCase.RequestPayment(&req, paymentCodeID); err != nil {
 		msg.Ack()
+		c.Log.Error(err)
 		return err
 	}
 
@@ -31,7 +32,7 @@ func (c *Controller) RequestPayment(msg *message.Message) error {
 }
 
 func (c *Controller) GetPaymentStatus(ctx *fiber.Ctx) error {
-	codePayment := ctx.Query("code_payment", "")
+	codePayment := ctx.Query("payment_code", "")
 
 	result, err := c.UseCase.GetPaymentStatus(codePayment)
 	if err != nil {
