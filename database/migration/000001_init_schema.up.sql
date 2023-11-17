@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     code_booking VARCHAR(255) NOT NULL,
     booking_date TIMESTAMP NOT NULL,
     payment_expired_at TIMESTAMP NOT NULL,
+    booking_expired_at TIMESTAMP NOT NULL,
     booking_status VARCHAR(255) NOT NULL,
     case_id INT NOT NULL default 0,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -134,7 +135,6 @@ CREATE TABLE IF NOT EXISTS payments (
     booking_id BIGINT NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(id)
 );
-
 CREATE TABLE IF NOT EXISTS payment_methods (
     id SERIAL PRIMARY KEY,
     "name" VARCHAR(255) NOT NULL,
@@ -143,7 +143,6 @@ CREATE TABLE IF NOT EXISTS payment_methods (
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
-
 CREATE TABLE IF NOT EXISTS tickets (
     id SERIAL PRIMARY KEY,
     code_ticket VARCHAR(255) NOT NULL,

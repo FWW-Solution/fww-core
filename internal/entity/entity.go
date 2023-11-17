@@ -113,6 +113,7 @@ type Booking struct {
 	ID               int64        `db:"id"`
 	CodeBooking      string       `db:"code_booking"`
 	BookingDate      time.Time    `db:"booking_date"`
+	BookingExpiredAt time.Time    `db:"booking_expired_at"`
 	PaymentExpiredAt time.Time    `db:"payment_expired_at"`
 	BookingStatus    string       `db:"booking_status"` // enum (pending, paid, canceled)
 	CaseID           int64        `db:"case_id"`
@@ -161,14 +162,14 @@ type PaymentMethod struct {
 
 // Ticket represents a flight ticket entity
 type Ticket struct {
-	ID                 int64      `db:"id"`
-	CodeTicket         string     `db:"code_ticket"`
-	IsBoardingPass     bool       `db:"is_boarding_pass"`
-	IsEligibleToFlight bool       `db:"is_eligible_to_flight"`
-	CreatedAt          time.Time  `db:"created_at"`
-	UpdatedAt          time.Time  `db:"updated_at"`
-	DeletedAt          *time.Time `db:"deleted_at"`
-	BookingID          int64      `db:"booking_id"`
+	ID                 int64        `db:"id"`
+	CodeTicket         string       `db:"code_ticket"`
+	IsBoardingPass     bool         `db:"is_boarding_pass"`
+	IsEligibleToFlight bool         `db:"is_eligible_to_flight"`
+	CreatedAt          time.Time    `db:"created_at"`
+	UpdatedAt          sql.NullTime `db:"updated_at"`
+	DeletedAt          sql.NullTime `db:"deleted_at"`
+	BookingID          int64        `db:"booking_id"`
 }
 
 type WorkflowDetail struct {

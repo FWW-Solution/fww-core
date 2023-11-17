@@ -155,12 +155,12 @@ func TestGetDetailBooking(t *testing.T) {
 
 		expected := dto_booking.BookResponse{
 			ArrivalAirport:   "Soekarno-Hatta International Airport",
-			ArrivalTime:      timeNow,
+			ArrivalTime:      time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
 			BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
 			CodeBooking:      bookingIDCode,
 			CodeFlight:       codeFlight,
 			DepartureAirport: "I Gusti Ngurah Rai International Airport",
-			DepartureTime:    timeNow,
+			DepartureTime:    time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
 			Details: []dto_booking.BookResponseDetail{
 				{
 					Baggage:       20,

@@ -14,9 +14,9 @@ func TestGetDetailFlightByID(t *testing.T) {
 		id := int64(1)
 		expected := dto_flight.ResponseFlightDetail{
 			ArrivalAirportName:  "Soekarno-Hatta International Airport",
-			ArrivalTime:         timeNow,
+			ArrivalTime:         time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
 			CodeFlight:          "GA-001",
-			DepartureTime:       timeNow,
+			DepartureTime:       time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
 			DepatureAirportName: "New International Airport - Yogyakarta",
 			FlightPrice:         1000000,
 			ReminingSeat:        172,
@@ -26,16 +26,16 @@ func TestGetDetailFlightByID(t *testing.T) {
 		entityFlight := entity.Flight{
 			ID:                   id,
 			CodeFlight:           "GA-001",
-			DepartureTime:        time.Now(),
-			ArrivalTime:          time.Now(),
+			DepartureTime:        time.Now().Round(time.Hour),
+			ArrivalTime:          time.Now().Round(time.Hour),
 			DepartureAirportName: "New International Airport - Yogyakarta",
 			ArrivalAirportName:   "Soekarno-Hatta International Airport",
 			DepartureAirportID:   id,
 			ArrivalAirportID:     id,
 			Status:               "On Time",
-			CreatedAt:            time.Now(),
+			CreatedAt:            time.Now().Round(time.Hour),
 			UpdatedAt: sql.NullTime{
-				Time:  time.Now(),
+				Time:  time.Now().Round(time.Hour),
 				Valid: true,
 			},
 			DeletedAt: sql.NullTime{
@@ -49,9 +49,9 @@ func TestGetDetailFlightByID(t *testing.T) {
 			ID:        1,
 			Price:     1000000,
 			Class:     "Economy",
-			CreatedAt: time.Now(),
+			CreatedAt: time.Now().Round(time.Hour),
 			UpdatedAt: sql.NullTime{
-				Time:  time.Now(),
+				Time:  time.Now().Round(time.Hour),
 				Valid: true,
 			},
 			DeletedAt: sql.NullTime{
@@ -66,9 +66,9 @@ func TestGetDetailFlightByID(t *testing.T) {
 			Class:        "Economy",
 			ReservedSeat: 0,
 			TotalSeat:    172,
-			CreatedAt:    time.Now(),
+			CreatedAt:    time.Now().Round(time.Hour),
 			UpdatedAt: sql.NullTime{
-				Time:  time.Now(),
+				Time:  time.Now().Round(time.Hour),
 				Valid: true,
 			},
 			DeletedAt: sql.NullTime{
@@ -103,9 +103,9 @@ func TestGetFlights(t *testing.T) {
 		expected := []dto_flight.ResponseFlight{
 			{
 				ArrivalAirportName:  "Soekarno-Hatta International Airport",
-				ArrivalTime:         timeNow,
+				ArrivalTime:         time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
 				CodeFlight:          "GA-001",
-				DepartureTime:       timeNow,
+				DepartureTime:       time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
 				DepatureAirportName: "New International Airport - Yogyakarta",
 				FlightPrice:         1000000,
 				ReminingSeat:        172,
@@ -127,14 +127,14 @@ func TestGetFlights(t *testing.T) {
 			{
 				ID:                   1,
 				CodeFlight:           "GA-001",
-				DepartureTime:        time.Now(),
-				ArrivalTime:          time.Now(),
+				DepartureTime:        time.Now().Round(time.Hour),
+				ArrivalTime:          time.Now().Round(time.Hour),
 				DepartureAirportName: "New International Airport - Yogyakarta",
 				ArrivalAirportName:   "Soekarno-Hatta International Airport",
 				DepartureAirportID:   1,
 				ArrivalAirportID:     1,
 				Status:               "On Time",
-				CreatedAt:            time.Now(),
+				CreatedAt:            time.Now().Round(time.Hour),
 				UpdatedAt: sql.NullTime{
 					Time:  time.Now(),
 					Valid: true,
@@ -148,14 +148,14 @@ func TestGetFlights(t *testing.T) {
 			{
 				ID:                   2,
 				CodeFlight:           "GA-001",
-				DepartureTime:        time.Now(),
-				ArrivalTime:          time.Now(),
+				DepartureTime:        time.Now().Round(time.Minute),
+				ArrivalTime:          time.Now().Round(time.Minute),
 				DepartureAirportName: "New International Airport - Yogyakarta",
 				ArrivalAirportName:   "Soekarno-Hatta International Airport",
 				DepartureAirportID:   1,
 				ArrivalAirportID:     1,
 				Status:               "On Time",
-				CreatedAt:            time.Now(),
+				CreatedAt:            time.Now().Round(time.Minute),
 				UpdatedAt: sql.NullTime{
 					Time:  time.Now(),
 					Valid: true,

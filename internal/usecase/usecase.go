@@ -7,6 +7,7 @@ import (
 	"fww-core/internal/data/dto_flight"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/data/dto_payment"
+	"fww-core/internal/data/dto_ticket"
 	"fww-core/internal/repository"
 
 	"github.com/redis/go-redis/v9"
@@ -34,6 +35,8 @@ type UseCase interface {
 	RequestPayment(req *dto_payment.Request, paymentCodeID string) error
 	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)
 	GetPaymentMethod() ([]dto_payment.MethodResponse, error)
+	// Ticket
+	RedeemTicket(codeBooking string) (dto_ticket.Response, error)
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {

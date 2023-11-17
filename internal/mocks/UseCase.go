@@ -12,6 +12,8 @@ import (
 
 	dto_payment "fww-core/internal/data/dto_payment"
 
+	dto_ticket "fww-core/internal/data/dto_ticket"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -187,6 +189,30 @@ func (_m *UseCase) GetPaymentStatus(codePayment string) (dto_payment.StatusRespo
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(codePayment)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RedeemTicket provides a mock function with given fields: codeBooking
+func (_m *UseCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) {
+	ret := _m.Called(codeBooking)
+
+	var r0 dto_ticket.Response
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (dto_ticket.Response, error)); ok {
+		return rf(codeBooking)
+	}
+	if rf, ok := ret.Get(0).(func(string) dto_ticket.Response); ok {
+		r0 = rf(codeBooking)
+	} else {
+		r0 = ret.Get(0).(dto_ticket.Response)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(codeBooking)
 	} else {
 		r1 = ret.Error(1)
 	}

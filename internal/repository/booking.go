@@ -137,3 +137,8 @@ func (r *repository) FindBookingByID(id int64) (entity.Booking, error) {
 
 	return result, nil
 }
+
+// UpdateBooking implements Repository.
+func (r *repository) UpdateBooking(data *entity.Booking) (int64, error) {
+	panic("unimplemented")
+}

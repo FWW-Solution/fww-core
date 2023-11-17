@@ -21,3 +21,15 @@ func ResponseBadRequest(errMessage error) dto.BaseResponse {
 
 	return ResponseBuilder(nil, meta)
 }
+
+func ResponseInternalServerError(err error) dto.BaseResponse {
+	return dto.BaseResponse{
+		Meta: dto.MetaResponse{
+			StatusCode: "ERR500",
+			IsSuccess:  false,
+			Message:    err.Error(),
+		},
+		Data: nil,
+	}
+
+}

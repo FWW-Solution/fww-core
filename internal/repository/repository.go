@@ -26,6 +26,7 @@ type Repository interface {
 	// Booking
 	FindReminingSeat(flightID int64) (int, error)
 	InsertBooking(data *entity.Booking) (int64, error)
+	UpdateBooking(data *entity.Booking) (int64, error)
 	InsertBookingDetail(data *entity.BookingDetail) (int64, error)
 	UpdateFlightReservation(data *entity.FlightReservation) (int64, error)
 	FindBookingByBookingIDCode(bookingIDCode string) (entity.Booking, error)
@@ -35,6 +36,8 @@ type Repository interface {
 	FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error)
 	UpsertPayment(data *entity.Payment) (int64, error)
 	FindPaymentMethodStatus() ([]entity.PaymentMethod, error)
+	// Ticket
+	UpsertTicket(data *entity.Ticket) (int64, error)
 }
 
 func New(db *sqlx.DB) Repository {

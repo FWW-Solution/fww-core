@@ -381,6 +381,30 @@ func (_m *Repository) RegisterPassanger(data *entity.Passenger) (int64, error) {
 	return r0, r1
 }
 
+// UpdateBooking provides a mock function with given fields: data
+func (_m *Repository) UpdateBooking(data *entity.Booking) (int64, error) {
+	ret := _m.Called(data)
+
+	var r0 int64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*entity.Booking) (int64, error)); ok {
+		return rf(data)
+	}
+	if rf, ok := ret.Get(0).(func(*entity.Booking) int64); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	if rf, ok := ret.Get(1).(func(*entity.Booking) error); ok {
+		r1 = rf(data)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateFlightReservation provides a mock function with given fields: data
 func (_m *Repository) UpdateFlightReservation(data *entity.FlightReservation) (int64, error) {
 	ret := _m.Called(data)
@@ -445,6 +469,30 @@ func (_m *Repository) UpsertPayment(data *entity.Payment) (int64, error) {
 	}
 
 	if rf, ok := ret.Get(1).(func(*entity.Payment) error); ok {
+		r1 = rf(data)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpsertTicket provides a mock function with given fields: data
+func (_m *Repository) UpsertTicket(data *entity.Ticket) (int64, error) {
+	ret := _m.Called(data)
+
+	var r0 int64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*entity.Ticket) (int64, error)); ok {
+		return rf(data)
+	}
+	if rf, ok := ret.Get(0).(func(*entity.Ticket) int64); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	if rf, ok := ret.Get(1).(func(*entity.Ticket) error); ok {
 		r1 = rf(data)
 	} else {
 		r1 = ret.Error(1)

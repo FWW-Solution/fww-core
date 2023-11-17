@@ -37,7 +37,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 
 	// Validate payment expired
 
-	if resultBooking.PaymentExpiredAt.After(time.Now()) {
+	if resultBooking.PaymentExpiredAt.Before(time.Now()) {
 		return errors.New("payment expired")
 	}
 
@@ -65,7 +65,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		InvoiceNumber: paymentCodeID,
 		TotalPayment:  totalPayment,
 		PaymentMethod: req.PaymentMethod,
-		PaymentDate:   time.Now(),
+		PaymentDate:   time.Now().Round(time.Second),
 		PaymentStatus: "pending",
 		BookingID:     resultBooking.ID,
 	}
