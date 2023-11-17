@@ -103,3 +103,23 @@ func (u *useCase) GetPaymentStatus(codePayment string) (dto_payment.StatusRespon
 	}, nil
 
 }
+
+// GetPaymentMethod implements UseCase.
+func (u *useCase) GetPaymentMethod() ([]dto_payment.MethodResponse, error) {
+	result, err := u.repository.FindPaymentMethodStatus()
+	if err != nil {
+		return []dto_payment.MethodResponse{}, err
+	}
+
+	var response []dto_payment.MethodResponse
+
+	for _, v := range result {
+		response = append(response, dto_payment.MethodResponse{
+			ID:       v.ID,
+			IsActive: v.IsActive,
+			Name:     v.Name,
+		})
+	}
+
+	return response, nil
+}

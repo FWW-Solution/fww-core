@@ -33,6 +33,7 @@ type UseCase interface {
 	// Payment
 	RequestPayment(req *dto_payment.Request, paymentCodeID string) error
 	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)
+	GetPaymentMethod() ([]dto_payment.MethodResponse, error)
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {

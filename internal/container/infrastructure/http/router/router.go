@@ -31,7 +31,7 @@ func Initialize(app *fiber.App, ctrl *controller.Controller) *fiber.App {
 
 	//Payment
 	v1.Get("/payment/status", ctrl.GetPaymentStatus)
-	// TODO: add payment method
+	v1.Get("/payment/method", ctrl.GetPaymentMethod)
 	return app
 
 }

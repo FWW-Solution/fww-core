@@ -50,3 +50,22 @@ func (c *Controller) GetPaymentStatus(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(response)
 }
+
+
+func (c *Controller) GetPaymentMethod(ctx *fiber.Ctx) error {
+	result, err := c.UseCase.GetPaymentMethod()
+	if err != nil {
+		c.Log.Error(err)
+		return err
+	}
+
+	meta := dto.MetaResponse{
+		StatusCode: "200",
+		IsSuccess:  true,
+		Message:    "Success",
+	}
+
+	response := tools.ResponseBuilder(result, meta)
+
+	return ctx.Status(fiber.StatusOK).JSON(response)
+}

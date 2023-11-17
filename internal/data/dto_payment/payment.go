@@ -12,3 +12,9 @@ type AsyncPaymentResponse struct {
 type StatusResponse struct {
 	Status string `json:"status"`
 }
+
+type MethodResponse struct {
+	ID       int64  `json:"id"`
+	IsActive bool   `json:"is_active"`
+	Name     string `json:"name"`
+}
