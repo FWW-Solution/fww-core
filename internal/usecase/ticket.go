@@ -6,6 +6,8 @@ import (
 	"fww-core/internal/entity"
 	"time"
 
+	"log"
+
 	"github.com/google/uuid"
 )
 
@@ -47,6 +49,7 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 
 	_, err = u.repository.UpsertTicket(&entityTicket)
 	if err != nil {
+		log.Println(err)
 		return dto_ticket.Response{}, err
 	}
 

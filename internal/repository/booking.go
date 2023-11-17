@@ -18,7 +18,7 @@ func (r *repository) FindReminingSeat(flightID int64) (int, error) {
 
 // GetBookingByBookingIDCode implements Repository.
 func (r *repository) FindBookingByBookingIDCode(bookingIDCode string) (entity.Booking, error) {
-	query := `SELECT id, code_booking, booking_date, payment_expired_at, booking_status, case_id, user_id, flight_id FROM bookings WHERE code_booking = $1 AND deleted_at IS NULL`
+	query := `SELECT id, code_booking, booking_date, payment_expired_at, booking_expired_at, booking_status, case_id, user_id, flight_id FROM bookings WHERE code_booking = $1 AND deleted_at IS NULL`
 	var result entity.Booking
 	err := r.db.QueryRowx(query, bookingIDCode).StructScan(&result)
 	if err != nil && err.Error() == "sql: no rows in result set" {
@@ -140,5 +140,23 @@ func (r *repository) FindBookingByID(id int64) (entity.Booking, error) {
 
 // UpdateBooking implements Repository.
 func (r *repository) UpdateBooking(data *entity.Booking) (int64, error) {
-	panic("unimplemented")
+	query := `UPDATE bookings SET booking_status = $1, updated_at = NOW() WHERE id = $2`
+
+	// do sqlx transaction
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return 0, err
+	}
+
+	// update booking
+	_, err = tx.Exec(query, data.BookingStatus, data.ID)
+
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	tx.Commit()
+
+	return data.ID, nil
 }
