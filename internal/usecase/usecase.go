@@ -23,6 +23,7 @@ type UseCase interface {
 	RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
 	DetailPassanger(id int64) (dto_passanger.ResponseDetail, error)
 	UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error)
+	UpdatePassangerByIDNumber(data *dto_passanger.RequestUpdateBPM) error
 	// Airport
 	GetAirport(city string, province string, iata string) ([]dto_airport.ResponseAirport, error)
 	// Flight

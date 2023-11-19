@@ -17,6 +17,17 @@ type RequestUpdate struct {
 	IDType      string `json:"id_type" validate:"required"`
 }
 
+type RequestBPM struct {
+	IDNumber string `json:"id_number"`
+}
+
+type RequestUpdateBPM struct {
+	IDNumber           string `json:"id_number"`
+	VaccineStatus      string `json:"vaccine_status"`
+	IsVerifiedDukcapil bool   `json:"is_verified_dukcapil"`
+	CaseID             int64  `json:"case_id"`
+}
+
 type ResponseRegistered struct {
 	ID int64 `json:"id"`
 }

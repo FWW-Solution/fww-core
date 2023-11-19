@@ -296,6 +296,20 @@ func (_m *UseCase) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passa
 	return r0, r1
 }
 
+// UpdatePassangerByIDNumber provides a mock function with given fields: data
+func (_m *UseCase) UpdatePassangerByIDNumber(data *dto_passanger.RequestUpdateBPM) error {
+	ret := _m.Called(data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_passanger.RequestUpdateBPM) error); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewUseCase interface {
 	mock.TestingT
 	Cleanup(func())

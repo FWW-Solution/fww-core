@@ -55,9 +55,15 @@ func (u *useCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_pa
 	if err != nil {
 		return dto_passanger.ResponseRegistered{}, err
 	}
-
+	dataPassanger := dto_passanger.RequestBPM{
+		IDNumber: data.IDNumber,
+	}
 	// Check Passanger Information
-	u.adapter.CheckPassangerInformations(nil)
+	err = u.adapter.CheckPassangerInformations(&dataPassanger)
+
+	if err != nil {
+		return dto_passanger.ResponseRegistered{}, err
+	}
 
 	return dto_passanger.ResponseRegistered{
 		ID: result,
@@ -107,4 +113,36 @@ func (u *useCase) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passan
 	}
 
 	return response, nil
+}
+
+// UpdatePassangerByIDNumber implements UseCase.
+func (u *useCase) UpdatePassangerByIDNumber(data *dto_passanger.RequestUpdateBPM) error {
+	// find passanger by id number
+
+	result, err := u.repository.FindPassangerByIDNumber(data.IDNumber)
+	if err != nil {
+		return err
+	}
+
+	if result.ID == 0 {
+		return errors.New("passanger not found")
+	}
+
+	// update result partially if data request is not empty
+	if data.VaccineStatus != "" {
+		result.CovidVaccineStatus = data.VaccineStatus
+	}
+	if data.IsVerifiedDukcapil {
+		result.IsIDVerified = true
+	}
+	if data.CaseID != 0 {
+		result.CaseID = data.CaseID
+	}
+
+	_, err = u.repository.UpdatePassanger(&result)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

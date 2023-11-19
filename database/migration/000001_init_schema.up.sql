@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS passengers (
     id_type VARCHAR(255) NOT NULL,
     covid_vaccine_status VARCHAR(255) NOT NULL,
     is_id_verified BOOLEAN NOT NULL,
-    case_id INT NOT NULL default 0,
+    case_id BIGINT NOT NULL default 0,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP

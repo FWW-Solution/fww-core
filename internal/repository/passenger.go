@@ -1,6 +1,8 @@
 package repository
 
-import "fww-core/internal/entity"
+import (
+	"fww-core/internal/entity"
+)
 
 // FindDetailPassanger implements Repository.
 func (r *repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
@@ -46,14 +48,34 @@ func (r *repository) RegisterPassanger(data *entity.Passenger) (int64, error) {
 // UpdatePassanger implements Repository.
 func (r *repository) UpdatePassanger(data *entity.Passenger) (int64, error) {
 	query := `UPDATE passengers 
-SET full_name = $1, gender = $2, date_of_birth = $3, id_number = $4, id_type = $5, covid_vaccine_status = $6, is_id_verified = $7, updated_at = $8
-WHERE id = $9
+SET full_name = $1, gender = $2, date_of_birth = $3, id_number = $4, id_type = $5, covid_vaccine_status = $6, is_id_verified = $7, updated_at = NOW()
+WHERE id = $8
 RETURNING id`
 
 	var id int64
-	err := r.db.QueryRowx(query, data.FullName, data.Gender, data.DateOfBirth, data.IDNumber, data.IDType, data.CovidVaccineStatus, data.IsIDVerified, data.UpdatedAt, data.ID).Scan(&id)
+	err := r.db.QueryRowx(query, data.FullName, data.Gender, data.DateOfBirth, data.IDNumber, data.IDType, data.CovidVaccineStatus, data.IsIDVerified, data.ID).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 	return id, nil
+}
+
+// FindPassangerByIDNumber implements Repository.
+func (r *repository) FindPassangerByIDNumber(idNumber string) (entity.Passenger, error) {
+	query := `SELECT id, full_name, gender, date_of_birth, id_number, id_type, covid_vaccine_status, is_id_verified, case_id, created_at, updated_at, deleted_at 
+	FROM passengers 
+	WHERE id_number = $1`
+
+	var row entity.Passenger
+
+	err := r.db.QueryRowx(query, idNumber).StructScan(&row)
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return entity.Passenger{}, nil
+	}
+
+	if err != nil {
+		return entity.Passenger{}, err
+	}
+
+	return row, nil
 }

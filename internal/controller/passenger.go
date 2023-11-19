@@ -8,6 +8,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/ThreeDotsLabs/watermill/message"
+	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -107,4 +109,24 @@ func (c *Controller) UpdatePassanger(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusCreated).JSON(response)
 
+}
+
+func (c *Controller) UpdatePassangerByIDNumberHandler(msg *message.Message) error {
+	var body dto_passanger.RequestUpdateBPM
+
+	if err := json.Unmarshal(msg.Payload, &body); err != nil {
+		msg.Ack()
+		return err
+	}
+
+	err := c.UseCase.UpdatePassangerByIDNumber(&body)
+	if err != nil {
+		msg.Ack()
+		c.Log.Error(err)
+		return err
+	}
+
+	msg.Ack()
+
+	return nil
 }

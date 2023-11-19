@@ -59,7 +59,7 @@ func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 	// Init Publisher
 
 	// Init Adapter
-	adapter := adapter.NewBPM(nil, nil)
+	adapter := adapter.NewBPM(pub, sub)
 	// Init Repository
 	repo := repository.New(db)
 	// Init UseCase
@@ -89,11 +89,20 @@ func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 		ctrl.RequestPayment,
 	)
 
+	updatePassangerBPM, err := messagestream.NewRouter(
+		pub,
+		"update_passanger_from_bpm_poisoned",
+		"update_passanger_from_bpm_handler",
+		"update_passanger_from_bpm",
+		sub,
+		ctrl.UpdatePassangerByIDNumberHandler,
+	)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	messageRouters = append(messageRouters, *requestBookingRouter, *requestPaymentRouter)
+	messageRouters = append(messageRouters, *requestBookingRouter, *requestPaymentRouter, *updatePassangerBPM)
 
 	// Init Router
 	app := router.Initialize(server, &ctrl)

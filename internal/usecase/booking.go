@@ -24,7 +24,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		return errors.New("booking id code already exist")
 	}
 
-	// Check Remining Sea
+	// Check Remining Seat
 	flightIDReminingSeat := fmt.Sprintf("flight-%d-seat", data.FlightID)
 	result := u.redis.Get(ctx, flightIDReminingSeat)
 	if result.Err() != nil {
@@ -106,6 +106,8 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 			return err
 		}
 	}
+
+	// TODO: Insert Payment Data
 
 	//TODO: Send Email Detail Booking
 

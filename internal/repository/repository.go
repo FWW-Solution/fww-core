@@ -14,6 +14,7 @@ type Repository interface {
 	FindDetailPassanger(id int64) (entity.Passenger, error)
 	RegisterPassanger(data *entity.Passenger) (int64, error)
 	UpdatePassanger(data *entity.Passenger) (int64, error)
+	FindPassangerByIDNumber(idNumber string) (entity.Passenger, error)
 
 	// Airport
 	FindAirport(city string, province string, iata string) ([]entity.Airport, error)
