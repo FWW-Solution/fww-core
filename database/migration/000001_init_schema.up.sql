@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     payment_expired_at TIMESTAMP NOT NULL,
     booking_expired_at TIMESTAMP NOT NULL,
     booking_status VARCHAR(255) NOT NULL,
-    case_id INT NOT NULL default 0,
+    case_id BIGINT NOT NULL default 0,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,

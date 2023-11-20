@@ -63,14 +63,21 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	}()
 	// Check Remining Seat
 
+	// find flight
+	resultFlight, err := u.repository.FindFlightByID(data.FlightID)
+	if err != nil {
+		return err
+	}
 	bookingDate := time.Now().Round(time.Minute)
 	paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
-
+	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
+	
 	// Insert Booking
 	bookingEntity := &entity.Booking{
 		CodeBooking:      bookingIDCode,
 		BookingDate:      bookingDate,
 		PaymentExpiredAt: paymentExpiredAt,
+		BookingExpiredAt: bookingExpiredAt,
 		BookingStatus:    "pending",
 		CaseID:           0,
 		UserID:           data.UserID,

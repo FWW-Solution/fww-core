@@ -286,13 +286,13 @@ func (_m *UseCase) RequestBooking(data *dto_booking.Request, bookingIDCode strin
 	return r0
 }
 
-// RequestPayment provides a mock function with given fields: req, paymentCodeID
-func (_m *UseCase) RequestPayment(req *dto_payment.Request, paymentCodeID string) error {
-	ret := _m.Called(req, paymentCodeID)
+// RequestPayment provides a mock function with given fields: req
+func (_m *UseCase) RequestPayment(req *dto_payment.Request) error {
+	ret := _m.Called(req)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*dto_payment.Request, string) error); ok {
-		r0 = rf(req, paymentCodeID)
+	if rf, ok := ret.Get(0).(func(*dto_payment.Request) error); ok {
+		r0 = rf(req)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -331,6 +331,20 @@ func (_m *UseCase) UpdatePassangerByIDNumber(data *dto_passanger.RequestUpdateBP
 	var r0 error
 	if rf, ok := ret.Get(0).(func(*dto_passanger.RequestUpdateBPM) error); ok {
 		r0 = rf(data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdatePayment provides a mock function with given fields: req
+func (_m *UseCase) UpdatePayment(req *dto_payment.RequestUpdatePayment) error {
+	ret := _m.Called(req)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_payment.RequestUpdatePayment) error); ok {
+		r0 = rf(req)
 	} else {
 		r0 = ret.Error(0)
 	}

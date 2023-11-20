@@ -152,7 +152,7 @@ func TestRequestPayment(t *testing.T) {
 		repositoryMock.On("UpsertPayment", &entityPayment).Return(entityPayment.ID, nil).Once()
 		// repositoryMock.On("InsertTicket", entityTicket).Return(entityBooking.ID, nil).Once()
 
-		err := uc.RequestPayment(&request, paymentCodeUUID)
+		err := uc.RequestPayment(&request)
 		assert.Nil(t, err)
 
 	})

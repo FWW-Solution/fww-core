@@ -12,14 +12,13 @@ import (
 
 func (c *Controller) RequestPayment(msg *message.Message) error {
 	var req dto_payment.Request
-	paymentCodeID := msg.UUID
 
 	if err := json.Unmarshal(msg.Payload, &req); err != nil {
 		msg.Ack()
 		return err
 	}
 
-	if err := c.UseCase.RequestPayment(&req, paymentCodeID); err != nil {
+	if err := c.UseCase.RequestPayment(&req); err != nil {
 		msg.Ack()
 		c.Log.Error(err)
 		return err
@@ -79,6 +78,26 @@ func (c *Controller) GenerateInvoiceHandler(msg *message.Message) error {
 	}
 
 	if err := c.UseCase.GenerateInvoice(req.CaseID, req.CodeBooking); err != nil {
+		msg.Ack()
+		c.Log.Error(err)
+		return err
+	}
+
+	msg.Ack()
+
+	return nil
+}
+
+// Handling Update Payment
+func (c *Controller) UpdatePaymentHandler(msg *message.Message) error {
+	var req dto_payment.RequestUpdatePayment
+
+	if err := json.Unmarshal(msg.Payload, &req); err != nil {
+		msg.Ack()
+		return err
+	}
+
+	if err := c.UseCase.UpdatePayment(&req); err != nil {
 		msg.Ack()
 		c.Log.Error(err)
 		return err

@@ -86,3 +86,23 @@ func (r *repository) FindPaymentMethodStatus() ([]entity.PaymentMethod, error) {
 
 	return rows, nil
 }
+
+// FindPaymentByBookingID implements Repository.
+func (r *repository) FindPaymentByBookingID(bookingID int64) (entity.Payment, error) {
+	query := `SELECT id, invoice_number, total_payment, payment_method, payment_date, payment_status, created_at, updated_at, deleted_at, booking_id FROM payments WHERE booking_id = $1 AND deleted_at IS NULL`
+
+	// hanldle entity
+	var row entity.Payment
+
+	err := r.db.QueryRowx(query, bookingID).StructScan(&row)
+
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return entity.Payment{}, nil
+	}
+
+	if err != nil {
+		return entity.Payment{}, err
+	}
+
+	return row, nil
+}

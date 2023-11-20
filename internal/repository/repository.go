@@ -37,6 +37,7 @@ type Repository interface {
 	FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error)
 	UpsertPayment(data *entity.Payment) (int64, error)
 	FindPaymentMethodStatus() ([]entity.PaymentMethod, error)
+	FindPaymentByBookingID(bookingID int64) (entity.Payment, error)
 	// Ticket
 	UpsertTicket(data *entity.Ticket) (int64, error)
 }

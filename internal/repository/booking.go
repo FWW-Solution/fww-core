@@ -32,7 +32,7 @@ func (r *repository) FindBookingByBookingIDCode(bookingIDCode string) (entity.Bo
 
 // InsertBooking implements Repository.
 func (r *repository) InsertBooking(data *entity.Booking) (int64, error) {
-	query := `INSERT INTO bookings (code_booking, booking_date, payment_expired_at, booking_status, case_id, user_id, flight_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`
+	query := `INSERT INTO bookings (code_booking, booking_date, payment_expired_at, booking_expired_at, booking_status, case_id, user_id, flight_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
 	var id int64
 
 	// do sqlx transaction
@@ -42,7 +42,7 @@ func (r *repository) InsertBooking(data *entity.Booking) (int64, error) {
 	}
 
 	// insert booking
-	err = tx.QueryRowx(query, data.CodeBooking, data.BookingDate, data.PaymentExpiredAt, data.BookingStatus, data.CaseID, data.UserID, data.FlightID).Scan(&id)
+	err = tx.QueryRowx(query, data.CodeBooking, data.BookingDate, data.PaymentExpiredAt, data.BookingExpiredAt, data.BookingStatus, data.CaseID, data.UserID, data.FlightID).Scan(&id)
 	if err != nil {
 		err = tx.Rollback()
 		if err != nil {
@@ -171,7 +171,7 @@ func (r *repository) FindBookingByID(id int64) (entity.Booking, error) {
 
 // UpdateBooking implements Repository.
 func (r *repository) UpdateBooking(data *entity.Booking) (int64, error) {
-	query := `UPDATE bookings SET booking_status = $1, updated_at = NOW() WHERE id = $2`
+	query := `UPDATE bookings SET case_id = $1, booking_status = $2, updated_at = NOW() WHERE id = $3`
 
 	// do sqlx transaction
 	tx, err := r.db.Beginx()
@@ -180,7 +180,7 @@ func (r *repository) UpdateBooking(data *entity.Booking) (int64, error) {
 	}
 
 	// update booking
-	_, err = tx.Exec(query, data.BookingStatus, data.ID)
+	_, err = tx.Exec(query, data.CaseID, data.BookingStatus, data.ID)
 
 	if err != nil {
 		err = tx.Rollback()

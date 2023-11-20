@@ -58,7 +58,7 @@ func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
 }
 
 // RequestPayment implements UseCase.
-func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string) error {
+func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 	resultBooking, err := u.repository.FindBookingByID(req.BookingID)
 	if err != nil {
 		return err
@@ -90,38 +90,42 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		return errors.New("payment method not found / not active")
 	}
 
-	resultPayment, err := u.repository.FindPaymentDetailByInvoice(paymentCodeID)
+	resultPayment, err := u.repository.FindPaymentByBookingID(resultBooking.ID)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Do payment process (async) trigger BPM
 	specDoPayment := dto_payment.DoPayment{
-		CodePayment:    paymentCodeID,
-		PaymentMethod:  req.PaymentMethod,
-		PaymentAmmount: resultPayment.TotalPayment,
+		CaseID:        resultBooking.CaseID,
+		InvoiceNumber: resultPayment.InvoiceNumber,
+		PaymentMethod: req.PaymentMethod,
+		PaymentAmount: resultPayment.TotalPayment,
 	}
 	err = u.adapter.DoPayment(&specDoPayment)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Create new Private API for payment process (DoPayment)
-
-	// resultPayment.PaymentMethod = req.PaymentMethod
-	// resultPayment.PaymentDate = time.Now().Round(time.Second)
-	// resultPayment.PaymentStatus = "pending"
-
-	// u.adapter.RequestPayment(resultPayment)
-
-	// _, err = u.repository.UpsertPayment(&resultPayment)
-	// if err != nil {
-	// 	return err
-	// }
-
 	// TODO: Send  payment receipt to user (email) (async)
 
 	u.adapter.SendNotification(resultPayment)
+
+	return nil
+}
+
+// UpdatePayment implements UseCase.
+func (u *useCase) UpdatePayment(req *dto_payment.RequestUpdatePayment) error {
+	resultPayment, err := u.repository.FindPaymentDetailByInvoice(req.InvoiceNumber)
+	if err != nil {
+		return err
+	}
+
+	resultPayment.PaymentStatus = req.Status
+
+	_, err = u.repository.UpsertPayment(&resultPayment)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -33,11 +33,12 @@ type UseCase interface {
 	RequestBooking(data *dto_booking.Request, bookingIDCode string) error
 	GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error)
 	// Payment
-	RequestPayment(req *dto_payment.Request, paymentCodeID string) error
+	RequestPayment(req *dto_payment.Request) error
 	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)
 	GetPaymentMethod() ([]dto_payment.MethodResponse, error)
 	DoPayment(codePayment string) error
 	GenerateInvoice(caseID int64, codeBooking string) error
+	UpdatePayment(req *dto_payment.RequestUpdatePayment) error
 	// Ticket
 	RedeemTicket(codeBooking string) (dto_ticket.Response, error)
 }

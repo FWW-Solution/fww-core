@@ -259,6 +259,30 @@ func (_m *Repository) FindPassangerByIDNumber(idNumber string) (entity.Passenger
 	return r0, r1
 }
 
+// FindPaymentByBookingID provides a mock function with given fields: bookingID
+func (_m *Repository) FindPaymentByBookingID(bookingID int64) (entity.Payment, error) {
+	ret := _m.Called(bookingID)
+
+	var r0 entity.Payment
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (entity.Payment, error)); ok {
+		return rf(bookingID)
+	}
+	if rf, ok := ret.Get(0).(func(int64) entity.Payment); ok {
+		r0 = rf(bookingID)
+	} else {
+		r0 = ret.Get(0).(entity.Payment)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(bookingID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindPaymentDetailByInvoice provides a mock function with given fields: invoiceNumber
 func (_m *Repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error) {
 	ret := _m.Called(invoiceNumber)
