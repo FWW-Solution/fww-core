@@ -6,6 +6,10 @@ type Request struct {
 	UserID      int64        `json:"user_id"`
 }
 
+type RequestBPM struct {
+	CodeBooking string `json:"code_booking"`
+}
+
 type BookDetail struct {
 	Baggage     int    `json:"baggage"`
 	Class       string `json:"class"`

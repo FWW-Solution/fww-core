@@ -2,7 +2,9 @@ package adapter
 
 import (
 	"fmt"
+	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_passanger"
+	"fww-core/internal/data/dto_payment"
 
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
@@ -33,9 +35,36 @@ func (a *adapter) CheckPassangerInformations(data *dto_passanger.RequestBPM) err
 	return nil
 }
 
+// RequestGenerateInvoice implements Adapter.
+func (a *adapter) RequestGenerateInvoice(data *dto_booking.RequestBPM) error {
+	json, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	ID := watermill.NewUUID()
+	err = a.pub.Publish("start_process_booking", message.NewMessage(ID, json))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // RequestPayment implements Adapter.
-func (a *adapter) RequestPayment(data interface{}) {
-	fmt.Println("Do Payment")
+func (a *adapter) DoPayment(data *dto_payment.DoPayment) error {
+	json, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	ID := watermill.NewUUID()
+	err = a.pub.Publish("do_payment_bpm", message.NewMessage(ID, json))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // SendNotification implements Adapter.

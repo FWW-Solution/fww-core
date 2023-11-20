@@ -51,7 +51,6 @@ func (c *Controller) GetPaymentStatus(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(response)
 }
 
-
 func (c *Controller) GetPaymentMethod(ctx *fiber.Ctx) error {
 	result, err := c.UseCase.GetPaymentMethod()
 	if err != nil {
@@ -68,4 +67,24 @@ func (c *Controller) GetPaymentMethod(ctx *fiber.Ctx) error {
 	response := tools.ResponseBuilder(result, meta)
 
 	return ctx.Status(fiber.StatusOK).JSON(response)
+}
+
+// Handling Generate Invoice
+func (c *Controller) GenerateInvoiceHandler(msg *message.Message) error {
+	var req dto_payment.RequestInvoice
+
+	if err := json.Unmarshal(msg.Payload, &req); err != nil {
+		msg.Ack()
+		return err
+	}
+
+	if err := c.UseCase.GenerateInvoice(req.CaseID, req.CodeBooking); err != nil {
+		msg.Ack()
+		c.Log.Error(err)
+		return err
+	}
+
+	msg.Ack()
+
+	return nil
 }

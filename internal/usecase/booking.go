@@ -115,9 +115,16 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		}
 	}
 
-	// TODO: Insert Payment Data
-
 	//TODO: Send Email Detail Booking To BPM
+
+	specBooking := dto_booking.RequestBPM{
+		CodeBooking: bookingIDCode,
+	}
+
+	err = u.adapter.RequestGenerateInvoice(&specBooking)
+	if err != nil {
+		return err
+	}
 
 	return err
 

@@ -106,7 +106,20 @@ func InitService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		log.Fatal(err)
 	}
 
-	messageRouters = append(messageRouters, requestBookingRouter, requestPaymentRouter, updatePassangerBPM)
+	requestGenerateInvoiceBPM, err := messagestream.NewRouter(
+		pub,
+		"generate_invoice_from_bpm_poisoned",
+		"generate_invoice_from_bpm_handler",
+		"generate_invoice_from_bpm",
+		sub,
+		ctrl.GenerateInvoiceHandler,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	messageRouters = append(messageRouters, requestBookingRouter, requestPaymentRouter, updatePassangerBPM, requestGenerateInvoiceBPM)
 
 	// Init Router
 	app := router.Initialize(server, &ctrl)

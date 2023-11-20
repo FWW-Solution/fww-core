@@ -46,6 +46,34 @@ func (_m *UseCase) DetailPassanger(id int64) (dto_passanger.ResponseDetail, erro
 	return r0, r1
 }
 
+// DoPayment provides a mock function with given fields: codePayment
+func (_m *UseCase) DoPayment(codePayment string) error {
+	ret := _m.Called(codePayment)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(codePayment)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GenerateInvoice provides a mock function with given fields: caseID, codeBooking
+func (_m *UseCase) GenerateInvoice(caseID int64, codeBooking string) error {
+	ret := _m.Called(caseID, codeBooking)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int64, string) error); ok {
+		r0 = rf(caseID, codeBooking)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAirport provides a mock function with given fields: city, province, iata
 func (_m *UseCase) GetAirport(city string, province string, iata string) ([]dto_airport.ResponseAirport, error) {
 	ret := _m.Called(city, province, iata)

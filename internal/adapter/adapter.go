@@ -1,7 +1,9 @@
 package adapter
 
 import (
+	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_passanger"
+	"fww-core/internal/data/dto_payment"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 )
@@ -12,8 +14,10 @@ type adapter struct {
 }
 
 type Adapter interface {
+	// Passanger
 	CheckPassangerInformations(data *dto_passanger.RequestBPM) error
 	// Payment
-	RequestPayment(data interface{})
+	RequestGenerateInvoice(data *dto_booking.RequestBPM) error
+	DoPayment(data *dto_payment.DoPayment) error
 	SendNotification(data interface{})
 }

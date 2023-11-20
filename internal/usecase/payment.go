@@ -7,11 +7,9 @@ import (
 	"time"
 )
 
-// RequestPayment implements UseCase.
-func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string) error {
-	// TODO: validate payment expiration date
-
-	resultBooking, err := u.repository.FindBookingByID(req.BookingID)
+// GenerateInvoice implements UseCase.
+func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
+	resultBooking, err := u.repository.FindBookingByBookingIDCode(codeBooking)
 	if err != nil {
 		return err
 	}
@@ -19,7 +17,6 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 	if resultBooking.ID == 0 {
 		return errors.New("booking not found")
 	}
-
 	// Total payment from booking details and flight price
 	totalPayment := float64(0)
 
@@ -33,15 +30,49 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		return err
 	}
 
+	// Update Booking Case ID
+	resultBooking.CaseID = caseID
+	_, err = u.repository.UpdateBooking(&resultBooking)
+	if err != nil {
+		return err
+	}
+
 	totalPayment += (bookingPrice.Price * float64(len(bookingDetails)))
+
+	InvoiceNumber := "INV-" + time.Now().Round(time.Second).Format("20060102150405")
+	entityPayment := entity.Payment{
+		InvoiceNumber: InvoiceNumber,
+		TotalPayment:  totalPayment,
+		PaymentStatus: "pending",
+		BookingID:     resultBooking.ID,
+	}
+
+	_, err = u.repository.UpsertPayment(&entityPayment)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Send Notification to user (email) (async)
+
+	return nil
+}
+
+// RequestPayment implements UseCase.
+func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string) error {
+	resultBooking, err := u.repository.FindBookingByID(req.BookingID)
+	if err != nil {
+		return err
+	}
+
+	if resultBooking.ID == 0 {
+		return errors.New("booking not found")
+	}
 
 	// Validate payment expired
 
 	if resultBooking.PaymentExpiredAt.Before(time.Now()) {
 		return errors.New("payment expired")
 	}
-
-	// TODO: validate payment method
 
 	paymentMethods, err := u.repository.FindPaymentMethodStatus()
 	if err != nil {
@@ -59,29 +90,38 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		return errors.New("payment method not found / not active")
 	}
 
-	// TODO: Do payment process (async) trigger BPM
-
-	// TODO: Create new Private API for payment process (DoPayment)
-
-	entityPayment := entity.Payment{
-		InvoiceNumber: paymentCodeID,
-		TotalPayment:  totalPayment,
-		PaymentMethod: req.PaymentMethod,
-		PaymentDate:   time.Now().Round(time.Second),
-		PaymentStatus: "pending",
-		BookingID:     resultBooking.ID,
-	}
-	u.adapter.RequestPayment(entityPayment)
-
-	// NOTE: Reuse this for booking seat feature
-	_, err = u.repository.UpsertPayment(&entityPayment)
+	resultPayment, err := u.repository.FindPaymentDetailByInvoice(paymentCodeID)
 	if err != nil {
 		return err
 	}
 
+	// TODO: Do payment process (async) trigger BPM
+	specDoPayment := dto_payment.DoPayment{
+		CodePayment:    paymentCodeID,
+		PaymentMethod:  req.PaymentMethod,
+		PaymentAmmount: resultPayment.TotalPayment,
+	}
+	err = u.adapter.DoPayment(&specDoPayment)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Create new Private API for payment process (DoPayment)
+
+	// resultPayment.PaymentMethod = req.PaymentMethod
+	// resultPayment.PaymentDate = time.Now().Round(time.Second)
+	// resultPayment.PaymentStatus = "pending"
+
+	// u.adapter.RequestPayment(resultPayment)
+
+	// _, err = u.repository.UpsertPayment(&resultPayment)
+	// if err != nil {
+	// 	return err
+	// }
+
 	// TODO: Send  payment receipt to user (email) (async)
 
-	u.adapter.SendNotification(entityPayment)
+	u.adapter.SendNotification(resultPayment)
 
 	return nil
 }
@@ -90,7 +130,6 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 func (u *useCase) DoPayment(codePayment string) error {
 	panic("unimplemented")
 }
-
 
 // GetDetailPayment implements UseCase.
 func (u *useCase) GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error) {

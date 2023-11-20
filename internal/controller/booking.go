@@ -5,7 +5,6 @@ import (
 	"fww-core/internal/data/dto"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/tools"
-	"log"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/goccy/go-json"
@@ -32,7 +31,6 @@ func (c *Controller) RequestBooking(msg *message.Message) error {
 	err = c.UseCase.RequestBooking(&body, bookingIDCode)
 	if err != nil {
 		c.Log.Error(err)
-		log.Println(err)
 		msg.Ack()
 		return err
 	}
