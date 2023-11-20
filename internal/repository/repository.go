@@ -9,7 +9,6 @@ import (
 type repository struct {
 	db *sqlx.DB
 }
-
 type Repository interface {
 	FindDetailPassanger(id int64) (entity.Passenger, error)
 	RegisterPassanger(data *entity.Passenger) (int64, error)
@@ -40,6 +39,7 @@ type Repository interface {
 	FindPaymentByBookingID(bookingID int64) (entity.Payment, error)
 	// Ticket
 	UpsertTicket(data *entity.Ticket) (int64, error)
+	FindTicketByCodeTicket(codeTicket string) (entity.Ticket, error)
 }
 
 func New(db *sqlx.DB) Repository {

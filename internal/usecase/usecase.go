@@ -41,6 +41,7 @@ type UseCase interface {
 	UpdatePayment(req *dto_payment.RequestUpdatePayment) error
 	// Ticket
 	RedeemTicket(codeBooking string) (dto_ticket.Response, error)
+	UpdateTicket(req *dto_ticket.RequestUpdateTicket) error
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {

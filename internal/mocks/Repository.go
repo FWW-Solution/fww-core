@@ -357,6 +357,30 @@ func (_m *Repository) FindReminingSeat(flightID int64) (int, error) {
 	return r0, r1
 }
 
+// FindTicketByCodeTicket provides a mock function with given fields: codeTicket
+func (_m *Repository) FindTicketByCodeTicket(codeTicket string) (entity.Ticket, error) {
+	ret := _m.Called(codeTicket)
+
+	var r0 entity.Ticket
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (entity.Ticket, error)); ok {
+		return rf(codeTicket)
+	}
+	if rf, ok := ret.Get(0).(func(string) entity.Ticket); ok {
+		r0 = rf(codeTicket)
+	} else {
+		r0 = ret.Get(0).(entity.Ticket)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(codeTicket)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // InsertBooking provides a mock function with given fields: data
 func (_m *Repository) InsertBooking(data *entity.Booking) (int64, error) {
 	ret := _m.Called(data)

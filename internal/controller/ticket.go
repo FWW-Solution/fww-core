@@ -5,6 +5,7 @@ import (
 	"fww-core/internal/data/dto_ticket"
 	"fww-core/internal/tools"
 
+	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -32,4 +33,14 @@ func (c *Controller) RedeemTicket(ctx *fiber.Ctx) error {
 
 	response := tools.ResponseBuilder(result, meta)
 	return ctx.Status(fiber.StatusOK).JSON(response)
+}
+
+func (c *Controller) UpdateTicketHandler(msg *message.Message) error {
+	var body dto_ticket.RequestUpdateTicket
+	err := c.UseCase.UpdateTicket(&body)
+	if err != nil {
+		c.Log.Error(err)
+		return err
+	}
+	return nil
 }

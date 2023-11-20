@@ -121,6 +121,7 @@ func (u *useCase) UpdatePayment(req *dto_payment.RequestUpdatePayment) error {
 	}
 
 	resultPayment.PaymentStatus = req.Status
+	resultPayment.PaymentDate = time.Now().Round(time.Second)
 
 	_, err = u.repository.UpsertPayment(&resultPayment)
 	if err != nil {

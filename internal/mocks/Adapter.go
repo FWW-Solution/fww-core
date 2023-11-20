@@ -8,6 +8,8 @@ import (
 
 	dto_payment "fww-core/internal/data/dto_payment"
 
+	dto_ticket "fww-core/internal/data/dto_ticket"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,6 +38,20 @@ func (_m *Adapter) DoPayment(data *dto_payment.DoPayment) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(*dto_payment.DoPayment) error); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// RedeemTicket provides a mock function with given fields: data
+func (_m *Adapter) RedeemTicket(data *dto_ticket.RequestRedeemTicketToBPM) error {
+	ret := _m.Called(data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_ticket.RequestRedeemTicketToBPM) error); ok {
 		r0 = rf(data)
 	} else {
 		r0 = ret.Error(0)
