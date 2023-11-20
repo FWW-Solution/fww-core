@@ -44,10 +44,20 @@ func (r *repository) InsertBooking(data *entity.Booking) (int64, error) {
 	// insert booking
 	err = tx.QueryRowx(query, data.CodeBooking, data.BookingDate, data.PaymentExpiredAt, data.BookingStatus, data.CaseID, data.UserID, data.FlightID).Scan(&id)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+		return 0, err
+	}
 	return id, nil
 }
 
@@ -65,10 +75,19 @@ func (r *repository) InsertBookingDetail(data *entity.BookingDetail) (int64, err
 	// insert booking
 	err = tx.QueryRowx(query, data.PassengerID, data.SeatNumber, data.BaggageCapacity, data.Class, data.BookingID).Scan(&id)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+	}
 	return id, nil
 }
 
@@ -91,18 +110,30 @@ func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (in
 	// get flight reservation
 	err = tx.QueryRowx(querySelect, data.FlightID, data.Class).StructScan(&result)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 
 	// update booking reservation
 	err = tx.QueryRowx(queryUpdate, data.ReservedSeat, data.UpdatedAt, data.FlightID).Scan(&id)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+	}
 
 	return id, nil
 }
@@ -152,11 +183,20 @@ func (r *repository) UpdateBooking(data *entity.Booking) (int64, error) {
 	_, err = tx.Exec(query, data.BookingStatus, data.ID)
 
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+	}
 
 	return data.ID, nil
 }

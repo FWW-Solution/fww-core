@@ -21,9 +21,6 @@ func InitRedisClient(client *redis.Client) {
 	redisClient = client
 }
 
-type redisUtils struct {
-}
-
 // CacheMiddleware is a middleware that checks if the response is already cached in Redis.
 func CacheMiddleware(c *fiber.Ctx) error {
 	// Check if the response is already cached in Redis

@@ -43,6 +43,9 @@ func (c *Controller) GetDetailFlightByID(ctx *fiber.Ctx) error {
 	id := ctx.Query("id", "")
 
 	idInt64, err := tools.StringToInt64(id)
+	if err != nil {
+		return err
+	}
 
 	result, err := c.UseCase.GetDetailFlightByID(idInt64)
 	if err != nil {

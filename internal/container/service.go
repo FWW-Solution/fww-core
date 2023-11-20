@@ -19,7 +19,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
+func InitService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	// init database
 	db := database.GetConnection(&cfg.Database)
 	// init redis
@@ -66,7 +66,7 @@ func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 	usecase := usecase.New(repo, adapter, clientRedis)
 	// Init Controller
 	ctrl := controller.Controller{UseCase: usecase, Log: log}
-	var messageRouters []message.Router
+	var messageRouters []*message.Router
 	// Init Router
 	requestBookingRouter, err := messagestream.NewRouter(
 		pub,
@@ -89,6 +89,10 @@ func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 		ctrl.RequestPayment,
 	)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	updatePassangerBPM, err := messagestream.NewRouter(
 		pub,
 		"update_passanger_from_bpm_poisoned",
@@ -102,7 +106,7 @@ func InitService(cfg *config.Config) (*fiber.App, []message.Router) {
 		log.Fatal(err)
 	}
 
-	messageRouters = append(messageRouters, *requestBookingRouter, *requestPaymentRouter, *updatePassangerBPM)
+	messageRouters = append(messageRouters, requestBookingRouter, requestPaymentRouter, updatePassangerBPM)
 
 	// Init Router
 	app := router.Initialize(server, &ctrl)

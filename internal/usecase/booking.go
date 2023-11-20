@@ -51,8 +51,16 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 	// Lock Transaction Redis
 	rc := redis.InitMutex(flightIDKey)
-	redis.LockMutex(rc)
-	defer redis.UnlockMutex(rc)
+	err = redis.LockMutex(rc)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = redis.UnlockMutex(rc)
+		if err != nil {
+			return
+		}
+	}()
 	// Check Remining Seat
 
 	bookingDate := time.Now().Round(time.Minute)
@@ -109,7 +117,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 	// TODO: Insert Payment Data
 
-	//TODO: Send Email Detail Booking
+	//TODO: Send Email Detail Booking To BPM
 
 	return err
 

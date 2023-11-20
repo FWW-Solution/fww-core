@@ -59,7 +59,9 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 		return errors.New("payment method not found / not active")
 	}
 
-	// TODO: Do payment process
+	// TODO: Do payment process (async) trigger BPM
+
+	// TODO: Create new Private API for payment process (DoPayment)
 
 	entityPayment := entity.Payment{
 		InvoiceNumber: paymentCodeID,
@@ -71,10 +73,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 	}
 	u.adapter.RequestPayment(entityPayment)
 
-	// TODO: Create callback url (optional)
-
-	// TODO: Update database payment status
-
+	// NOTE: Reuse this for booking seat feature
 	_, err = u.repository.UpsertPayment(&entityPayment)
 	if err != nil {
 		return err
@@ -86,6 +85,12 @@ func (u *useCase) RequestPayment(req *dto_payment.Request, paymentCodeID string)
 
 	return nil
 }
+
+// DoPayment implements UseCase.
+func (u *useCase) DoPayment(codePayment string) error {
+	panic("unimplemented")
+}
+
 
 // GetDetailPayment implements UseCase.
 func (u *useCase) GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error) {

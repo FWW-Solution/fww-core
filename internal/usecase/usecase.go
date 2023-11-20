@@ -18,7 +18,6 @@ type useCase struct {
 	adapter    adapter.Adapter
 	redis      *redis.Client
 }
-
 type UseCase interface {
 	RegisterPassanger(data *dto_passanger.RequestRegister) (dto_passanger.ResponseRegistered, error)
 	DetailPassanger(id int64) (dto_passanger.ResponseDetail, error)
@@ -36,6 +35,7 @@ type UseCase interface {
 	RequestPayment(req *dto_payment.Request, paymentCodeID string) error
 	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)
 	GetPaymentMethod() ([]dto_payment.MethodResponse, error)
+	DoPayment(codePayment string) error
 	// Ticket
 	RedeemTicket(codeBooking string) (dto_ticket.Response, error)
 }

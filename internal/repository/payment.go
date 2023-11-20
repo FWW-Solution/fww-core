@@ -44,17 +44,26 @@ func (r *repository) UpsertPayment(data *entity.Payment) (int64, error) {
 	err = tx.QueryRowx(query).Scan(&id)
 
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+	}
 	return id, nil
 }
 
 // FindPaymentMethodStatus implements Repository.
 func (r *repository) FindPaymentMethodStatus() ([]entity.PaymentMethod, error) {
-	query := fmt.Sprintf(`SELECT id, name, is_active FROM payment_methods`)
+	query := `SELECT id, name, is_active FROM payment_methods`
 	var rows []entity.PaymentMethod
 
 	result, err := r.db.Queryx(query)

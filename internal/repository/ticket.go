@@ -26,10 +26,19 @@ func (r *repository) UpsertTicket(data *entity.Ticket) (int64, error) {
 	err = tx.QueryRowx(query).Scan(&id)
 
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+	}
 	return id, nil
 }

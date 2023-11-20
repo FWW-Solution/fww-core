@@ -29,6 +29,9 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 		return dto_ticket.Response{}, errors.New("booking expired")
 	}
 
+	// TODO: Trigger redeem to BPM
+
+	// TODO: Update Below Triggered by BPM
 	// Update Booking Status
 	booking.BookingStatus = "redeemed"
 	_, err = u.repository.UpdateBooking(&booking)
@@ -52,6 +55,7 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 		log.Println(err)
 		return dto_ticket.Response{}, err
 	}
+	// TODO: Update Above Triggered by BPM
 
 	boardingTime := booking.BookingExpiredAt.Add((24 * time.Hour) - (time.Minute * 30))
 
