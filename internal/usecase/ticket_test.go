@@ -36,21 +36,22 @@ func TestRedeemTicket(t *testing.T) {
 			FlightID:         1,
 		}
 
-		// entityTicket := entity.Ticket{
-		// 	ID:                 1,
-		// 	CodeTicket:         "",
-		// 	IsBoardingPass:     false,
-		// 	IsEligibleToFlight: false,
-		// 	BookingID:          1,
-		// }
+		entityBookingDetails := []entity.BookingDetail{
+			{
+				ID:          1,
+				BookingID:   1,
+				PassengerID: 1,
+				SeatNumber:  "1A",
+				Class:       "economy",
+			},
+		}
 
-		// entityTicketUpdate := entity.Ticket{
-		// 	ID:                 1,
-		// 	CodeTicket:         "",
-		// 	IsBoardingPass:     false,
-		// 	IsEligibleToFlight: false,
-		// 	BookingID:          1,
-		// }
+		entityPassenger := entity.Passenger{
+			ID:       1,
+			IDNumber: "1234567890",
+			IDType:   "KTP",
+			FullName: "John Doe",
+		}
 
 		boardingTime := entityBooking.BookingExpiredAt.Add((24 * time.Hour) - (time.Minute * 30))
 
@@ -66,10 +67,23 @@ func TestRedeemTicket(t *testing.T) {
 		// Check Peduli Lindungi
 		repositoryMock.On("UpsertTicket", mock.Anything).Return(ticketID64, nil)
 
+		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetails, nil)
+
+		repositoryMock.On("FindDetailPassanger", entityBookingDetails[0].ID).Return(entityPassenger, nil).Once()
+
+		adapterMock.On("RedeemTicket", mock.Anything).Return(nil)
+
 		result, err := uc.RedeemTicket(codeBookingUUID)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectBordingTicket, result.BordingTime)
+
+	})
+}
+
+func TestUpdateTicket(t *testing.T) {
+	setup()
+	t.Run("success", func(t *testing.T) {
 
 	})
 }

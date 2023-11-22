@@ -50,17 +50,20 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	flightIDKey := fmt.Sprintf("flight-%d", data.FlightID)
 
 	// Lock Transaction Redis
+	// rc := redis.InitMutex(flightIDKey)
+	// err = redis.LockMutex(rc)
+	// if err != nil {
+	// 	return err
+	// }
+	// defer func() {
+	// 	err = redis.UnlockMutex(rc)
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// }()
 	rc := redis.InitMutex(flightIDKey)
-	err = redis.LockMutex(rc)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		err = redis.UnlockMutex(rc)
-		if err != nil {
-			return
-		}
-	}()
+	redis.LockMutex(rc)
+	defer redis.UnlockMutex(rc)
 	// Check Remining Seat
 
 	// find flight
@@ -71,7 +74,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	bookingDate := time.Now().Round(time.Minute)
 	paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
 	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
-	
+
 	// Insert Booking
 	bookingEntity := &entity.Booking{
 		CodeBooking:      bookingIDCode,

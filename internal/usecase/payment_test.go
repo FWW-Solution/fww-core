@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestGetPaymentStatus(t *testing.T) {
@@ -70,20 +71,6 @@ func TestRequestPayment(t *testing.T) {
 			FlightID:         1,
 		}
 
-		entitiesBookingDetail := []entity.BookingDetail{
-			{
-				ID:              bookingID,
-				PassengerID:     1,
-				SeatNumber:      "A1",
-				BaggageCapacity: 20,
-				Class:           "Economy",
-				CreatedAt:       time.Now().Round(time.Minute),
-				UpdatedAt:       sql.NullTime{},
-				DeletedAt:       sql.NullTime{},
-				BookingID:       bookingID,
-			},
-		}
-
 		entitiesPaymentMethod := []entity.PaymentMethod{
 			{
 				ID:        1,
@@ -111,16 +98,6 @@ func TestRequestPayment(t *testing.T) {
 			},
 		}
 
-		entityPrice := entity.FlightPrice{
-			ID:        1,
-			Price:     100,
-			Class:     "Economy",
-			CreatedAt: time.Now().Round(time.Minute),
-			UpdatedAt: sql.NullTime{},
-			DeletedAt: sql.NullTime{},
-			FlightID:  1,
-		}
-
 		totalPayment := float64(100)
 
 		entityPayment := entity.Payment{
@@ -131,29 +108,154 @@ func TestRequestPayment(t *testing.T) {
 			PaymentStatus: "pending",
 			BookingID:     request.BookingID,
 		}
-
-		// entityTicket := entity.Ticket{
-		// 	ID:                 1,
-		// 	CodeTicket:         codeTicketUUID,
-		// 	IsBoardingPass:     false,
-		// 	IsEligibleToFlight: false,
-		// 	CreatedAt:          time.Now(),
-		// 	UpdatedAt:          sql.NullTime{},
-		// 	DeletedAt:          sql.NullTime{},
-		// 	BookingID:          1,
-		// }
+		specDoPayment := &dto_payment.DoPayment{
+			CaseID:        entityBooking.CaseID,
+			InvoiceNumber: entityPayment.InvoiceNumber,
+			PaymentMethod: entityPayment.PaymentMethod,
+			PaymentAmount: entityPayment.TotalPayment,
+		}
 
 		repositoryMock.On("FindBookingByID", request.BookingID).Return(entityBooking, nil).Once()
-		repositoryMock.On("FindBookingDetailByBookingID", request.BookingID).Return(entitiesBookingDetail, nil).Once()
-		repositoryMock.On("FindFlightPriceByID", entityBooking.FlightID).Return(entityPrice, nil).Once()
 		repositoryMock.On("FindPaymentMethodStatus").Return(entitiesPaymentMethod, nil).Once()
-		adapterMock.On("RequestPayment", entityPayment).Return(nil).Once()
+		repositoryMock.On("FindPaymentByBookingID", request.BookingID).Return(entityPayment, nil).Once()
+		adapterMock.On("DoPayment", specDoPayment).Return(nil).Once()
 		adapterMock.On("SendNotification", entityPayment).Return(nil).Once()
-		repositoryMock.On("UpsertPayment", &entityPayment).Return(entityPayment.ID, nil).Once()
-		// repositoryMock.On("InsertTicket", entityTicket).Return(entityBooking.ID, nil).Once()
 
 		err := uc.RequestPayment(&request)
 		assert.Nil(t, err)
 
+	})
+}
+
+func TestGenerateInvoice(t *testing.T) {
+	setup()
+	t.Run("Sucess", func(t *testing.T) {
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		bookingID := int64(1)
+		caseID := int64(1234)
+
+		request := dto_payment.RequestInvoice{
+			CaseID:      bookingID,
+			CodeBooking: codeBookingUUID,
+		}
+
+		entityBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           0,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		entityBookingDetails := []entity.BookingDetail{
+			{
+				ID:          1,
+				BookingID:   1,
+				PassengerID: 1,
+				SeatNumber:  "1A",
+				Class:       "economy",
+			},
+		}
+
+		flightPrice := entity.FlightPrice{
+			ID:       1,
+			FlightID: 1,
+			Price:    100000,
+			Class:    "economy",
+		}
+
+		updateBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           caseID,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		entityPayment := entity.Payment{
+			InvoiceNumber: "INV-" + time.Now().Round(time.Second).Format("2006019123"),
+			TotalPayment:  100000,
+			PaymentMethod: "bank_transfer",
+			PaymentDate:   time.Now().Round(time.Second),
+			PaymentStatus: "pending",
+			BookingID:     bookingID,
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil).Once()
+		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetails, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", entityBooking.FlightID).Return(flightPrice, nil).Once()
+		repositoryMock.On("UpdateBooking", &updateBooking).Return(entityPayment.ID, nil).Once()
+		repositoryMock.On("UpsertPayment", mock.Anything).Return(entityPayment.ID, nil).Once()
+
+		err := uc.GenerateInvoice(caseID, codeBookingUUID)
+		assert.Nil(t, err)
+	})
+}
+
+func TestGetPaymentMethod(t *testing.T) {
+	setup()
+	t.Run("Sucess", func(t *testing.T) {
+		expect := []dto_payment.MethodResponse{
+			{
+				ID:       1,
+				Name:     "bca",
+				IsActive: true,
+			},
+			{
+				ID:       2,
+				Name:     "bni",
+				IsActive: true,
+			},
+			{
+				ID:       3,
+				Name:     "bri",
+				IsActive: false,
+			},
+		}
+
+		entitiesPaymentMethod := []entity.PaymentMethod{
+			{
+				ID:        1,
+				Name:      "bca",
+				IsActive:  true,
+				CreatedAt: time.Now().Round(time.Minute),
+				UpdatedAt: sql.NullTime{},
+				DeletedAt: sql.NullTime{},
+			},
+			{
+				ID:        2,
+				Name:      "bni",
+				IsActive:  true,
+				CreatedAt: time.Now().Round(time.Minute),
+				UpdatedAt: sql.NullTime{},
+				DeletedAt: sql.NullTime{},
+			},
+			{
+				ID:        3,
+				Name:      "bri",
+				IsActive:  false,
+				CreatedAt: time.Now().Round(time.Minute),
+				UpdatedAt: sql.NullTime{},
+				DeletedAt: sql.NullTime{},
+			},
+		}
+
+		repositoryMock.On("FindPaymentMethodStatus").Return(entitiesPaymentMethod, nil).Once()
+
+		result, err := uc.GetPaymentMethod()
+		assert.Nil(t, err)
+		assert.Equal(t, expect, result)
 	})
 }

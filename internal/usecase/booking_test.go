@@ -73,9 +73,11 @@ func TestRequestBooking(t *testing.T) {
 		repositoryMock.On("FindBookingByBookingIDCode", mock.Anything).Return(entityBookingNull, nil)
 		redisMock.ExpectGet("flight-1-seat").SetVal(resultReminingSeatString)
 		repositoryMock.On("FindReminingSeat", req.FlightID).Return(reminingSeat, nil)
-		repositoryMock.On("UpdateFlightReservation", entityReservation).Return(ID, nil)
+		repositoryMock.On("FindFlightByID", req.FlightID, reminingIntSeat).Return(nil)
 		repositoryMock.On("InsertBooking", entityBooking).Return(ID, nil)
-		repositoryMock.On("InsertBookingDetail", entityBookingDetail).Return(ID, nil)
+		repositoryMock.On("UpdateFlightReservation", entityReservation).Return(ID, nil)
+		repositoryMock.On("InsertBookingDetail", entityBookingDetail).Return(ID, nil).Once()
+		adapterMock.On("RequestGenerateInvoice").Return(nil)
 
 		err := uc.RequestBooking(req, bookingIDCode)
 

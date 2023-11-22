@@ -69,12 +69,16 @@ func TestRegisterPassanger(t *testing.T) {
 			DateOfBirth:        dateOnly,
 			IsIDVerified:       false,
 		}
+		dataPassanger := &dto_passanger.RequestBPM{
+			IDNumber: entity.IDNumber,
+		}
+
 		expected := dto_passanger.ResponseRegistered{
 			ID: 1,
 		}
 		id := int64(1)
 		repositoryMock.On("RegisterPassanger", entity).Return(id, nil)
-		adapterMock.On("CheckPassangerInformations", nil)
+		adapterMock.On("CheckPassangerInformations", dataPassanger).Return(nil)
 
 		res, err := uc.RegisterPassanger(req)
 		if err != nil {
