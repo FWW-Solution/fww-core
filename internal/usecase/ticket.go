@@ -109,7 +109,7 @@ func (u *useCase) UpdateTicket(req *dto_ticket.RequestUpdateTicket) error {
 
 	// Update Detail Passenger
 	specUpdate := dto_booking.BookDetailRequest{
-		BookingDetailID:    req.BookinDetailID,
+		BookingDetailID:    req.BookingDetailID,
 		IsEligibleToFlight: req.IsEligibleToFlight,
 	}
 	err = u.UpdateDetailBooking(&specUpdate)

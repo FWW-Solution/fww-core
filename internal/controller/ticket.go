@@ -6,6 +6,7 @@ import (
 	"fww-core/internal/tools"
 
 	"github.com/ThreeDotsLabs/watermill/message"
+	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -37,10 +38,18 @@ func (c *Controller) RedeemTicket(ctx *fiber.Ctx) error {
 
 func (c *Controller) UpdateTicketHandler(msg *message.Message) error {
 	var body dto_ticket.RequestUpdateTicket
-	err := c.UseCase.UpdateTicket(&body)
-	if err != nil {
+
+	if err := json.Unmarshal(msg.Payload, &body); err != nil {
+		msg.Ack()
 		c.Log.Error(err)
 		return err
 	}
+	err := c.UseCase.UpdateTicket(&body)
+	if err != nil {
+		msg.Ack()
+		c.Log.Error(err)
+		return err
+	}
+	msg.Ack()
 	return nil
 }

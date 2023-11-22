@@ -6,7 +6,7 @@ type Request struct {
 
 type RequestUpdateTicket struct {
 	CodeTicket         string `json:"code_ticket"`
-	BookinDetailID     int64  `json:"booking_detail_id"`
+	BookingDetailID    int64  `json:"booking_detail_id"`
 	IsEligibleToFlight bool   `json:"is_eligible_to_flight"`
 }
 
