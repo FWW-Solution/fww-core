@@ -10,6 +10,11 @@ type RequestBPM struct {
 	CodeBooking string `json:"code_booking"`
 }
 
+type BookDetailRequest struct {
+	BookingDetailID    int64 `json:"booking_detail_id"`
+	IsEligibleToFlight bool  `json:"is_eligible_to_flight"`
+}
+
 type BookDetail struct {
 	Baggage     int    `json:"baggage"`
 	Class       string `json:"class"`

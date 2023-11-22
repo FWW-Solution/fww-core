@@ -9,6 +9,7 @@ import (
 type repository struct {
 	db *sqlx.DB
 }
+
 type Repository interface {
 	FindDetailPassanger(id int64) (entity.Passenger, error)
 	RegisterPassanger(data *entity.Passenger) (int64, error)
@@ -31,6 +32,8 @@ type Repository interface {
 	UpdateFlightReservation(data *entity.FlightReservation) (int64, error)
 	FindBookingByBookingIDCode(bookingIDCode string) (entity.Booking, error)
 	FindBookingDetailByBookingID(bookingID int64) ([]entity.BookingDetail, error)
+	FindBookingDetailByID(id int64) (entity.BookingDetail, error)
+	UpdateBookingDetail(data *entity.BookingDetail) (int64, error)
 	FindBookingByID(id int64) (entity.Booking, error)
 	// Payment
 	FindPaymentDetailByInvoice(invoiceNumber string) (entity.Payment, error)

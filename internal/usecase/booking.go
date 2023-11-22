@@ -211,3 +211,24 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 	return bookResponse, nil
 
 }
+
+// UpdateDetailBooking implements UseCase.
+func (u *useCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error {
+	resultBookingDetail, err := u.repository.FindBookingDetailByID(data.BookingDetailID)
+	if err != nil {
+		return err
+	}
+
+	if resultBookingDetail.ID == 0 {
+		return errors.New("booking detail not found")
+	}
+
+	// Update Booking Detail
+	resultBookingDetail.IsEligibleToFlight = data.IsEligibleToFlight
+	_, err = u.repository.UpdateBookingDetail(&resultBookingDetail)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

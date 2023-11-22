@@ -300,6 +300,20 @@ func (_m *UseCase) RequestPayment(req *dto_payment.Request) error {
 	return r0
 }
 
+// UpdateDetailBooking provides a mock function with given fields: data
+func (_m *UseCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error {
+	ret := _m.Called(data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_booking.BookDetailRequest) error); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UpdatePassanger provides a mock function with given fields: data
 func (_m *UseCase) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passanger.ResponseUpdate, error) {
 	ret := _m.Called(data)

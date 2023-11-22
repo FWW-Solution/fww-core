@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_ticket"
 	"fww-core/internal/entity"
 	"time"
@@ -55,19 +56,23 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 		return dto_ticket.Response{}, err
 	}
 
-	idNumbers := make([]string, 0)
+	passengersInfo := make([]dto_ticket.PassengerInfoData, 0)
 	for _, bookingDetail := range bookingDetails {
 		passenger, err := u.repository.FindDetailPassanger(bookingDetail.PassengerID)
 		if err != nil {
 			return dto_ticket.Response{}, err
 		}
-		idNumbers = append(idNumbers, passenger.IDNumber)
+		passengersInfo = append(passengersInfo, dto_ticket.PassengerInfoData{
+			BookingDetailID: bookingDetail.ID,
+			IDNumber:        passenger.IDNumber,
+			VaccineStatus:   passenger.CovidVaccineStatus,
+		})
 	}
 
 	specRedeem := dto_ticket.RequestRedeemTicketToBPM{
-		CaseID:     booking.CaseID,
-		CodeTicket: entityTicket.CodeTicket,
-		IdNumbers:  idNumbers,
+		CaseID:         booking.CaseID,
+		CodeTicket:     entityTicket.CodeTicket,
+		PassengersInfo: passengersInfo,
 	}
 
 	err = u.adapter.RedeemTicket(&specRedeem)
@@ -98,10 +103,12 @@ func (u *useCase) UpdateTicket(req *dto_ticket.RequestUpdateTicket) error {
 		return errors.New("ticket not found")
 	}
 
-	// Update Ticket
-	ticket.IsBoardingPass = req.IsBoardingPass
-	ticket.IsEligibleToFlight = req.IsEligibleToFlight
-	_, err = u.repository.UpsertTicket(&ticket)
+	// Update Detail Passenger
+	specUpdate := dto_booking.BookDetailRequest{
+		BookingDetailID:    req.BookingDetailID,
+		IsEligibleToFlight: req.IsEligibleToFlight,
+	}
+	err = u.UpdateDetailBooking(&specUpdate)
 	if err != nil {
 		return err
 	}

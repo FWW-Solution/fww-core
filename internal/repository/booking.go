@@ -200,3 +200,53 @@ func (r *repository) UpdateBooking(data *entity.Booking) (int64, error) {
 
 	return data.ID, nil
 }
+
+// FindBookingDetailByID implements Repository.
+func (r *repository) FindBookingDetailByID(id int64) (entity.BookingDetail, error) {
+	query := `SELECT id, passenger_id, seat_number, baggage_capacity, class, booking_id FROM booking_details WHERE id = $1 AND deleted_at IS NULL`
+
+	var result entity.BookingDetail
+	err := r.db.QueryRowx(query, id).StructScan(&result)
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return entity.BookingDetail{}, nil
+	}
+	if err != nil {
+		return entity.BookingDetail{}, err
+	}
+
+	return result, nil
+}
+
+// UpdateBookingDetail implements Repository.
+func (r *repository) UpdateBookingDetail(data *entity.BookingDetail) (int64, error) {
+	query := `UPDATE booking_details SET seat_number = $1, baggage_capacity = $2, class = $3, is_eligible_to_flight = $4, updated_at = NOW() WHERE id = $5 RETURNING id`
+
+	// do sqlx transaction
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return 0, err
+	}
+
+	// update booking
+	var id int64
+	err = tx.QueryRowx(query, data.SeatNumber, data.BaggageCapacity, data.Class, data.IsEligibleToFlight, data.ID).Scan(&id)
+
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+		return 0, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		err = tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
+		return 0, err
+	}
+
+	return id, nil
+}
