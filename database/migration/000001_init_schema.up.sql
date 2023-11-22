@@ -147,6 +147,7 @@ CREATE TABLE IF NOT EXISTS payment_methods (
 CREATE TABLE IF NOT EXISTS tickets (
     id SERIAL PRIMARY KEY,
     code_ticket VARCHAR(255) NOT NULL,
+    boarding_time TIMESTAMP,
     is_boarding_pass BOOLEAN NOT NULL,
     is_eligible_to_flight BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,

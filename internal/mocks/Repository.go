@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	dto_notification "fww-core/internal/data/dto_notification"
 	entity "fww-core/internal/entity"
 
 	mock "github.com/stretchr/testify/mock"
@@ -453,6 +454,54 @@ func (_m *Repository) InsertBookingDetail(data *entity.BookingDetail) (int64, er
 	return r0, r1
 }
 
+// PaymentInvoiceReportByBookingCode provides a mock function with given fields: bookingCode
+func (_m *Repository) PaymentInvoiceReportByBookingCode(bookingCode string) (dto_notification.PaymentInvoiceAggregator, error) {
+	ret := _m.Called(bookingCode)
+
+	var r0 dto_notification.PaymentInvoiceAggregator
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (dto_notification.PaymentInvoiceAggregator, error)); ok {
+		return rf(bookingCode)
+	}
+	if rf, ok := ret.Get(0).(func(string) dto_notification.PaymentInvoiceAggregator); ok {
+		r0 = rf(bookingCode)
+	} else {
+		r0 = ret.Get(0).(dto_notification.PaymentInvoiceAggregator)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(bookingCode)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// PaymentReceiptReportByBookingCode provides a mock function with given fields: bookingCode
+func (_m *Repository) PaymentReceiptReportByBookingCode(bookingCode string) (dto_notification.PaymentReceiptAggregator, error) {
+	ret := _m.Called(bookingCode)
+
+	var r0 dto_notification.PaymentReceiptAggregator
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (dto_notification.PaymentReceiptAggregator, error)); ok {
+		return rf(bookingCode)
+	}
+	if rf, ok := ret.Get(0).(func(string) dto_notification.PaymentReceiptAggregator); ok {
+		r0 = rf(bookingCode)
+	} else {
+		r0 = ret.Get(0).(dto_notification.PaymentReceiptAggregator)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(bookingCode)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RegisterPassanger provides a mock function with given fields: data
 func (_m *Repository) RegisterPassanger(data *entity.Passenger) (int64, error) {
 	ret := _m.Called(data)
@@ -470,6 +519,30 @@ func (_m *Repository) RegisterPassanger(data *entity.Passenger) (int64, error) {
 
 	if rf, ok := ret.Get(1).(func(*entity.Passenger) error); ok {
 		r1 = rf(data)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// TicketRedeemedReportByBookingCode provides a mock function with given fields: bookingCode
+func (_m *Repository) TicketRedeemedReportByBookingCode(bookingCode string) (dto_notification.TicketRedeemAgregator, error) {
+	ret := _m.Called(bookingCode)
+
+	var r0 dto_notification.TicketRedeemAgregator
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (dto_notification.TicketRedeemAgregator, error)); ok {
+		return rf(bookingCode)
+	}
+	if rf, ok := ret.Get(0).(func(string) dto_notification.TicketRedeemAgregator); ok {
+		r0 = rf(bookingCode)
+	} else {
+		r0 = ret.Get(0).(dto_notification.TicketRedeemAgregator)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(bookingCode)
 	} else {
 		r1 = ret.Error(1)
 	}

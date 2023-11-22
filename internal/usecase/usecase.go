@@ -5,6 +5,7 @@ import (
 	"fww-core/internal/data/dto_airport"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_flight"
+	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/data/dto_payment"
 	"fww-core/internal/data/dto_ticket"
@@ -43,6 +44,8 @@ type UseCase interface {
 	// Ticket
 	RedeemTicket(codeBooking string) (dto_ticket.Response, error)
 	UpdateTicket(req *dto_ticket.RequestUpdateTicket) error
+	// Notification
+	InquiryNotification(data *dto_notification.Request) error
 }
 
 func New(repository repository.Repository, adapter adapter.Adapter, redis *redis.Client) UseCase {

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/entity"
 
 	"github.com/jmoiron/sqlx"
@@ -43,6 +44,10 @@ type Repository interface {
 	// Ticket
 	UpsertTicket(data *entity.Ticket) (int64, error)
 	FindTicketByCodeTicket(codeTicket string) (entity.Ticket, error)
+	// Notification
+	PaymentInvoiceReportByBookingCode(bookingCode string) (dto_notification.PaymentInvoiceAggregator, error)
+	PaymentReceiptReportByBookingCode(bookingCode string) (dto_notification.PaymentReceiptAggregator, error)
+	TicketRedeemedReportByBookingCode(bookingCode string) (dto_notification.TicketRedeemAgregator, error)
 }
 
 func New(db *sqlx.DB) Repository {

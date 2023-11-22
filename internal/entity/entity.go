@@ -165,6 +165,7 @@ type PaymentMethod struct {
 type Ticket struct {
 	ID                 int64        `db:"id"`
 	CodeTicket         string       `db:"code_ticket"`
+	BoardingTime       sql.NullTime `db:"boarding_time"`
 	IsBoardingPass     bool         `db:"is_boarding_pass"`
 	IsEligibleToFlight bool         `db:"is_eligible_to_flight"`
 	CreatedAt          time.Time    `db:"created_at"`
