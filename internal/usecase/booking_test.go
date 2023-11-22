@@ -38,13 +38,31 @@ func TestRequestBooking(t *testing.T) {
 
 		entityBookingNull := entity.Booking{}
 
+		entityFlight := entity.Flight{
+			ID:                   flightID,
+			CodeFlight:           "123qwe",
+			DepartureTime:        time.Now().Round(time.Minute),
+			ArrivalTime:          time.Now().Round(time.Minute),
+			DepartureAirportName: "Soekarno-Hatta International Airport",
+			ArrivalAirportName:   "I Gusti Ngurah Rai International Airport",
+			DepartureAirportID:   ID,
+			ArrivalAirportID:     ID,
+			Status:               "On Time",
+			CreatedAt:            time.Now().Round(time.Minute),
+			UpdatedAt:            sql.NullTime{},
+			DeletedAt:            sql.NullTime{},
+			PlaneID:              ID,
+		}
+
 		bookingDate := time.Now().Round(time.Minute)
 		paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
+		bookingExpiredAt := entityFlight.DepartureTime.AddDate(0, 0, -1).Round(time.Minute)
 
 		entityBooking := &entity.Booking{
 			FlightID:         flightID,
 			CodeBooking:      bookingIDCode,
 			BookingDate:      bookingDate,
+			BookingExpiredAt: bookingExpiredAt,
 			PaymentExpiredAt: paymentExpiredAt,
 			BookingStatus:    "pending",
 			CaseID:           0,
@@ -70,14 +88,18 @@ func TestRequestBooking(t *testing.T) {
 			},
 		}
 
+		requestBpm := dto_booking.RequestBPM{
+			CodeBooking: "123qwe",
+		}
+
 		repositoryMock.On("FindBookingByBookingIDCode", mock.Anything).Return(entityBookingNull, nil)
 		redisMock.ExpectGet("flight-1-seat").SetVal(resultReminingSeatString)
 		repositoryMock.On("FindReminingSeat", req.FlightID).Return(reminingSeat, nil)
-		repositoryMock.On("FindFlightByID", req.FlightID, reminingIntSeat).Return(nil)
+		repositoryMock.On("FindFlightByID", req.FlightID).Return(entityFlight, nil)
 		repositoryMock.On("InsertBooking", entityBooking).Return(ID, nil)
 		repositoryMock.On("UpdateFlightReservation", entityReservation).Return(ID, nil)
 		repositoryMock.On("InsertBookingDetail", entityBookingDetail).Return(ID, nil).Once()
-		adapterMock.On("RequestGenerateInvoice").Return(nil)
+		adapterMock.On("RequestGenerateInvoice", &requestBpm).Return(nil)
 
 		err := uc.RequestBooking(req, bookingIDCode)
 
