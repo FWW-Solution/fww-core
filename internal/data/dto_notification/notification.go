@@ -13,22 +13,22 @@ type Request struct {
 
 type PaymentInvoiceAggregator struct {
 	Payment        entity.Payment         `json:"payment"`
-	Passenger      entity.Passenger       `json:"passenger"`
-	BookingDetail  entity.BookingDetail   `json:"booking_detail"`
+	BookingDetails []entity.BookingDetail `json:"booking_detail"`
 	PaymentMethods []entity.PaymentMethod `json:"payment_methods"`
 	Booking        entity.Booking         `json:"booking"`
 }
 
 type PaymentReceiptAggregator struct {
-	Payment       entity.Payment       `json:"payment"`
-	BookingDetail entity.BookingDetail `json:"booking_detail"`
-	Booking       entity.Booking       `json:"booking"`
+	Payment        entity.Payment         `json:"payment"`
+	BookingDetails []entity.BookingDetail `json:"booking_detail"`
+	Booking        entity.Booking         `json:"booking"`
 }
 
 type TicketRedeemAgregator struct {
-	Ticket  entity.Ticket  `json:"ticket"`
-	Booking entity.Booking `json:"booking"`
-	Flight  entity.Flight  `json:"flight"`
+	Ticket         entity.Ticket          `json:"ticket"`
+	Booking        entity.Booking         `json:"booking"`
+	BookingDetails []entity.BookingDetail `json:"booking_detail"`
+	Flight         entity.Flight          `json:"flight"`
 }
 
 type ModelTicketRedeemed struct {
