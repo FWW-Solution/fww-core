@@ -4,6 +4,8 @@ package mocks
 
 import (
 	dto_booking "fww-core/internal/data/dto_booking"
+	dto_notification "fww-core/internal/data/dto_notification"
+
 	dto_passanger "fww-core/internal/data/dto_passanger"
 
 	dto_payment "fww-core/internal/data/dto_payment"
@@ -75,8 +77,17 @@ func (_m *Adapter) RequestGenerateInvoice(data *dto_booking.RequestBPM) error {
 }
 
 // SendNotification provides a mock function with given fields: data
-func (_m *Adapter) SendNotification(data interface{}) {
-	_m.Called(data)
+func (_m *Adapter) SendNotification(data *dto_notification.SendEmailRequest) error {
+	ret := _m.Called(data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*dto_notification.SendEmailRequest) error); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewAdapter creates a new instance of Adapter. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

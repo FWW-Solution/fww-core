@@ -1,8 +1,8 @@
 package adapter
 
 import (
-	"fmt"
 	"fww-core/internal/data/dto_booking"
+	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/data/dto_payment"
 	"fww-core/internal/data/dto_ticket"
@@ -85,6 +85,17 @@ func (a *adapter) RedeemTicket(data *dto_ticket.RequestRedeemTicketToBPM) error 
 }
 
 // SendNotification implements Adapter.
-func (a *adapter) SendNotification(data interface{}) {
-	fmt.Println("Send Notification")
+func (a *adapter) SendNotification(data *dto_notification.SendEmailRequest) error {
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	id := watermill.NewUUID()
+
+	err = a.pub.Publish("send_email_notification", message.NewMessage(id, payload))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

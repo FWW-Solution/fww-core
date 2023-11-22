@@ -81,7 +81,16 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 		// TODO: Populate data to template
 		// spec := dto_notification.ModelInvoice{}
 
-		u.adapter.SendNotification(result)
+		specNotification := dto_notification.SendEmailRequest{
+			To:      result.User.Email,
+			Subject: "[FWW] Invoice",
+			Body:    templateSendInvoice,
+		}
+
+		err = u.adapter.SendNotification(&specNotification)
+		if err != nil {
+			return err
+		}
 
 	case "send_receipt":
 		result, err := u.repository.PaymentReceiptReportByBookingCode(data.CodeBooking)
@@ -92,7 +101,16 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 		// TODO: Populate data to template
 		// spec := dto_notification.ModelPaymentReceipt{}
 
-		u.adapter.SendNotification(result)
+		specNotification := dto_notification.SendEmailRequest{
+			To:      result.User.Email,
+			Subject: "[FWW] Receipt",
+			Body:    templateSendReceipt,
+		}
+
+		err = u.adapter.SendNotification(&specNotification)
+		if err != nil {
+			return err
+		}
 
 	case "send_ticket":
 		result, err := u.repository.TicketRedeemedReportByBookingCode(data.CodeBooking)
@@ -103,7 +121,17 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 		// TODO: Populate data to template
 		// spec := dto_notification.ModelTicketRedeemed{}
 
-		u.adapter.SendNotification(result)
+		specNotification := dto_notification.SendEmailRequest{
+			To:      result.User.Email,
+			Subject: "[FWW] Ticket",
+			Body:    templateSendTicket,
+		}
+
+		err = u.adapter.SendNotification(&specNotification)
+		if err != nil {
+			return err
+		}
+
 	default:
 		return errors.New("route not found")
 

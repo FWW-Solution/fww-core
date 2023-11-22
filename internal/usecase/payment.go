@@ -106,10 +106,6 @@ func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 		return err
 	}
 
-	// TODO: Send  payment receipt to user (email) (async)
-
-	u.adapter.SendNotification(resultPayment)
-
 	return nil
 }
 

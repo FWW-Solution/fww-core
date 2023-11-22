@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"fww-core/internal/data/dto_booking"
+	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/data/dto_payment"
 	"fww-core/internal/data/dto_ticket"
@@ -14,8 +15,6 @@ type adapter struct {
 	sub message.Subscriber
 }
 
-
-
 type Adapter interface {
 	// Passanger
 	CheckPassangerInformations(data *dto_passanger.RequestBPM) error
@@ -23,5 +22,5 @@ type Adapter interface {
 	RequestGenerateInvoice(data *dto_booking.RequestBPM) error
 	DoPayment(data *dto_payment.DoPayment) error
 	RedeemTicket(data *dto_ticket.RequestRedeemTicketToBPM) error
-	SendNotification(data interface{})
+	SendNotification(data *dto_notification.SendEmailRequest) error
 }

@@ -11,17 +11,29 @@ type Request struct {
 	Route       string `json:"route"`
 }
 
+type SendEmailRequest struct {
+	EmailAddress string   `json:"email_address" validate:"email"`
+	To           string   `json:"to" validate:"required,email"`
+	Cc           string   `json:"cc" validate:"email"`
+	Bcc          string   `json:"bcc" validate:"email"`
+	Subject      string   `json:"subject" validate:"required"`
+	Body         string   `json:"body" validate:"required"`
+	Attachments  []string `json:"attachments"`
+}
+
 type PaymentInvoiceAggregator struct {
 	Payment        entity.Payment         `json:"payment"`
 	BookingDetails []entity.BookingDetail `json:"booking_detail"`
 	PaymentMethods []entity.PaymentMethod `json:"payment_methods"`
 	Booking        entity.Booking         `json:"booking"`
+	User           entity.User            `json:"user"`
 }
 
 type PaymentReceiptAggregator struct {
 	Payment        entity.Payment         `json:"payment"`
 	BookingDetails []entity.BookingDetail `json:"booking_detail"`
 	Booking        entity.Booking         `json:"booking"`
+	User           entity.User            `json:"user"`
 }
 
 type TicketRedeemAgregator struct {
@@ -29,6 +41,7 @@ type TicketRedeemAgregator struct {
 	Booking        entity.Booking         `json:"booking"`
 	BookingDetails []entity.BookingDetail `json:"booking_detail"`
 	Flight         entity.Flight          `json:"flight"`
+	User           entity.User            `json:"user"`
 }
 
 type ModelTicketRedeemed struct {
