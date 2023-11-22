@@ -27,6 +27,7 @@ jobs:
   test:
     needs: lint
     runs-on: ubuntu-latest
+    if: ${{ always() }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go 1.21.1
@@ -44,6 +45,7 @@ jobs:
   scan:
     needs: test
     runs-on: ubuntu-latest
+    if: ${{ always() }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go 1.21.1
