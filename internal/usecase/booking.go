@@ -71,7 +71,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	bookingDate := time.Now().Round(time.Minute)
 	paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
 	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
-	
+
 	// Insert Booking
 	bookingEntity := &entity.Booking{
 		CodeBooking:      bookingIDCode,
@@ -207,4 +207,25 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 
 	return bookResponse, nil
 
+}
+
+// UpdateDetailBooking implements UseCase.
+func (u *useCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error {
+	resultBookingDetail, err := u.repository.FindBookingDetailByID(data.BookingDetailID)
+	if err != nil {
+		return err
+	}
+
+	if resultBookingDetail.ID == 0 {
+		return errors.New("booking detail not found")
+	}
+
+	// Update Booking Detail
+	resultBookingDetail.IsEligibleToFlight = data.IsEligibleToFlight
+	_, err = u.repository.UpdateBookingDetail(&resultBookingDetail)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS booking_details (
     passenger_id BIGINT NOT NULL,
     seat_number VARCHAR(255) NOT NULL,
     baggage_capacity INT NOT NULL,
+    is_eligible_to_flight BOOLEAN NOT NULL DEFAULT true,
     class VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP,

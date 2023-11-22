@@ -126,15 +126,16 @@ type Booking struct {
 
 // BookingDetail represents the details of a booking made by a passenger.
 type BookingDetail struct {
-	ID              int64        `db:"id"`
-	PassengerID     int64        `db:"passenger_id"`
-	SeatNumber      string       `db:"seat_number"`
-	BaggageCapacity int          `db:"baggage_capacity"`
-	Class           string       `db:"class"` // enum (economy, business, first)
-	CreatedAt       time.Time    `db:"created_at"`
-	UpdatedAt       sql.NullTime `db:"updated_at"`
-	DeletedAt       sql.NullTime `db:"deleted_at"`
-	BookingID       int64        `db:"booking_id"`
+	ID                 int64        `db:"id"`
+	PassengerID        int64        `db:"passenger_id"`
+	SeatNumber         string       `db:"seat_number"`
+	BaggageCapacity    int          `db:"baggage_capacity"`
+	Class              string       `db:"class"` // enum (economy, business, first)
+	IsEligibleToFlight bool         `db:"is_eligible_to_flight"`
+	CreatedAt          time.Time    `db:"created_at"`
+	UpdatedAt          sql.NullTime `db:"updated_at"`
+	DeletedAt          sql.NullTime `db:"deleted_at"`
+	BookingID          int64        `db:"booking_id"`
 }
 
 // Payment represents a payment made by a user for a booking.

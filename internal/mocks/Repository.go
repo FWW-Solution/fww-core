@@ -113,6 +113,30 @@ func (_m *Repository) FindBookingDetailByBookingID(bookingID int64) ([]entity.Bo
 	return r0, r1
 }
 
+// FindBookingDetailByID provides a mock function with given fields: id
+func (_m *Repository) FindBookingDetailByID(id int64) (entity.BookingDetail, error) {
+	ret := _m.Called(id)
+
+	var r0 entity.BookingDetail
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) (entity.BookingDetail, error)); ok {
+		return rf(id)
+	}
+	if rf, ok := ret.Get(0).(func(int64) entity.BookingDetail); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Get(0).(entity.BookingDetail)
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindDetailPassanger provides a mock function with given fields: id
 func (_m *Repository) FindDetailPassanger(id int64) (entity.Passenger, error) {
 	ret := _m.Called(id)
@@ -469,6 +493,30 @@ func (_m *Repository) UpdateBooking(data *entity.Booking) (int64, error) {
 	}
 
 	if rf, ok := ret.Get(1).(func(*entity.Booking) error); ok {
+		r1 = rf(data)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateBookingDetail provides a mock function with given fields: data
+func (_m *Repository) UpdateBookingDetail(data *entity.BookingDetail) (int64, error) {
+	ret := _m.Called(data)
+
+	var r0 int64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*entity.BookingDetail) (int64, error)); ok {
+		return rf(data)
+	}
+	if rf, ok := ret.Get(0).(func(*entity.BookingDetail) int64); ok {
+		r0 = rf(data)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	if rf, ok := ret.Get(1).(func(*entity.BookingDetail) error); ok {
 		r1 = rf(data)
 	} else {
 		r1 = ret.Error(1)
