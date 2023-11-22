@@ -14,7 +14,7 @@ lint:
 
 test:
 	@echo "Running tests..."
-	go test ./internal/... -v -cover
+	go test ./internal/... -v -coverprofile=coverage.txt -covermode=atomic
 
 scan:
 	@echo "Running scann..."
