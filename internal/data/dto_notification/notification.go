@@ -25,6 +25,7 @@ type PaymentInvoiceAggregator struct {
 	Payment        entity.Payment         `json:"payment"`
 	BookingDetails []entity.BookingDetail `json:"booking_detail"`
 	PaymentMethods []entity.PaymentMethod `json:"payment_methods"`
+	Passengers     []entity.Passenger     `json:"passengers"`
 	Booking        entity.Booking         `json:"booking"`
 	User           entity.User            `json:"user"`
 }

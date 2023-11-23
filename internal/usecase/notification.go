@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"errors"
+	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_notification"
+	"fww-core/internal/data/dto_payment"
 )
 
 var (
@@ -78,8 +80,36 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			return err
 		}
 
+		// Transform data to model
+		var paymentMethodResponse []dto_payment.MethodResponse
+		for _, paymentMethod := range result.PaymentMethods {
+			spec := dto_payment.MethodResponse{
+				ID:       paymentMethod.ID,
+				Name:     paymentMethod.Name,
+				IsActive: paymentMethod.IsActive,
+			}
+			paymentMethodResponse = append(paymentMethodResponse, spec)
+		}
+
+		var passengerDetails []dto_booking.BookResponseDetail
+		for i, bookingDetail := range result.BookingDetails {
+			spec := dto_booking.BookResponseDetail{
+				SeatNumber:    bookingDetail.SeatNumber,
+				Class:         bookingDetail.Class,
+				Baggage:       bookingDetail.BaggageCapacity,
+				PassangerName: result.Passengers[i].FullName,
+			}
+			passengerDetails = append(passengerDetails, spec)
+		}
+		// spec := dto_notification.ModelInvoice{
+		// 	InvoiceNumber:     result.Payment.InvoiceNumber,
+		// 	BookingCode:       result.Booking.CodeBooking,
+		// 	PaymentAmount:     result.Payment.TotalPayment,
+		// 	PassengerDetails:  passengerDetails,
+		// 	PaymentMethodList: paymentMethodResponse,
+		// }
+
 		// TODO: Populate data to template
-		// spec := dto_notification.ModelInvoice{}
 
 		specNotification := dto_notification.SendEmailRequest{
 			To:      result.User.Email,
