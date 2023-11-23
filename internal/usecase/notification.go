@@ -1,12 +1,14 @@
 package usecase
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_payment"
+	"text/template"
 )
 
 var (
@@ -19,13 +21,11 @@ var (
 					<h1>Invoice</h1>
 					<p>Invoice Number: {{.InvoiceNumber}}</p>
 					<p>Booking Code: {{.BookingCode}}</p>
-					<p>Payment Method: {{.PaymentMethod}}</p>
 					<p>Payment Amount: {{.PaymentAmount}}</p>
-					<p>Payment Date: {{.PaymentDate}}</p>
 					<p>Passenger Details:</p>
 					<ul>
 						{{range .PassengerDetails}}
-							<li>{{.Name}}</li>
+							<li>{{.PassangerName}}</li>
 							<l1>{{.SeatNumber}}</li>
 							{{end}}
 							</ul>
@@ -63,7 +63,7 @@ var (
 					<p>Passenger Details:</p>
 					<ul>
 						{{range .PassengerDetails}}
-							<li>{{.Name}}</li>
+							<li>{{.PassangerName}}</li>
 							<l1>{{.SeatNumber}}</li>
 							{{end}}
 							</ul>
@@ -111,23 +111,26 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			PaymentMethodList: paymentMethodResponse,
 		}
 
-		jsonData, err := json.Marshal(specModel)
+		// // TODO: Populate data to template
+
+		templateSendInvoice, err := u.populateTemplateInvoice(&specModel, templateSendInvoice)
+		if err != nil {
+			return err
+		}
+
+		specNotification := dto_notification.SendEmailRequest{
+			To:      result.User.Email,
+			Subject: "[FWW] Invoice",
+			Body:    templateSendInvoice,
+		}
+
+		jsonData, err := json.Marshal(specNotification)
 		if err != nil {
 			return err
 		}
 
 		fmt.Println(string(jsonData))
-
 		return nil
-
-		// // TODO: Populate data to template
-
-		// specNotification := dto_notification.SendEmailRequest{
-		// 	To:      result.User.Email,
-		// 	Subject: "[FWW] Invoice",
-		// 	Body:    templateSendInvoice,
-		// }
-
 		// err = u.adapter.SendNotification(&specNotification)
 		// if err != nil {
 		// 	return err
@@ -148,23 +151,27 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			PaymentMethod: result.Payment.PaymentMethod,
 		}
 
-		jsonData, err := json.Marshal(specModel)
+		// TODO: Populate data to template
+		// spec := dto_notification.ModelPaymentReceipt{}
+
+		templateSendReceipt, err := u.populateTemplateReceipt(&specModel, templateSendReceipt)
+		if err != nil {
+			return err
+		}
+
+		specNotification := dto_notification.SendEmailRequest{
+			To:      result.User.Email,
+			Subject: "[FWW] Receipt",
+			Body:    templateSendReceipt,
+		}
+
+		jsonData, err := json.Marshal(specNotification)
 		if err != nil {
 			return err
 		}
 
 		fmt.Println(string(jsonData))
-
 		return nil
-
-		// TODO: Populate data to template
-		// spec := dto_notification.ModelPaymentReceipt{}
-
-		// specNotification := dto_notification.SendEmailRequest{
-		// 	To:      result.User.Email,
-		// 	Subject: "[FWW] Receipt",
-		// 	Body:    templateSendReceipt,
-		// }
 
 		// // err = u.adapter.SendNotification(&specNotification)
 		// // if err != nil {
@@ -176,8 +183,6 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 		if err != nil {
 			return err
 		}
-
-		fmt.Println(result)
 
 		// Transform data to model
 		var passengerDetails []dto_booking.BookResponseDetail
@@ -202,23 +207,25 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
 		}
 
-		jsonData, err := json.Marshal(specModel)
+		// // TODO: Populate data to template
+		// // spec := dto_notification.ModelTicketRedeemed{}
+		templateSendReceipt, err := u.populateTemplateTicket(&specModel, templateSendTicket)
+		if err != nil {
+			return err
+		}
+
+		specNotification := dto_notification.SendEmailRequest{
+			To:      result.User.Email,
+			Subject: "[FWW] Receipt",
+			Body:    templateSendReceipt,
+		}
+
+		jsonData, err := json.Marshal(specNotification)
 		if err != nil {
 			return err
 		}
 
 		fmt.Println(string(jsonData))
-
-		return nil
-
-		// // TODO: Populate data to template
-		// // spec := dto_notification.ModelTicketRedeemed{}
-
-		// specNotification := dto_notification.SendEmailRequest{
-		// 	To:      result.User.Email,
-		// 	Subject: "[FWW] Ticket",
-		// 	Body:    templateSendTicket,
-		// }
 
 		// err = u.adapter.SendNotification(&specNotification)
 		// if err != nil {
@@ -230,4 +237,31 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 
 	}
 	return nil
+}
+
+func (u *useCase) populateTemplateInvoice(data *dto_notification.ModelInvoice, templateHtml string) (string, error) {
+	var buf bytes.Buffer
+	t := template.Must(template.New("").Parse(templateHtml))
+	if err := t.Execute(&buf, data); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func (u *useCase) populateTemplateReceipt(data *dto_notification.ModelPaymentReceipt, templateHtml string) (string, error) {
+	var buf bytes.Buffer
+	t := template.Must(template.New("").Parse(templateHtml))
+	if err := t.Execute(&buf, data); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func (u *useCase) populateTemplateTicket(data *dto_notification.ModelTicketRedeemed, templateHtml string) (string, error) {
+	var buf bytes.Buffer
+	t := template.Must(template.New("").Parse(templateHtml))
+	if err := t.Execute(&buf, data); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
