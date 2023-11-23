@@ -50,20 +50,21 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	flightIDKey := fmt.Sprintf("flight-%d", data.FlightID)
 
 	// Lock Transaction Redis
-	rc := redis.InitMutex(flightIDKey)
-	err = redis.LockMutex(rc)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		err = redis.UnlockMutex(rc)
-		if err != nil {
-			return
-		}
-	}()
 	// rc := redis.InitMutex(flightIDKey)
-	// redis.LockMutex(rc)
-	// defer redis.UnlockMutex(rc)
+	// err = redis.LockMutex(rc)
+	// if err != nil {
+	// 	return err
+	// }
+	// defer func() {
+	// 	err = redis.UnlockMutex(rc)
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// }()
+	rc := redis.InitMutex(flightIDKey)
+	redis.LockMutex(rc)
+	defer redis.UnlockMutex(rc)
+
 	// Check Remining Seat
 
 	// find flight
