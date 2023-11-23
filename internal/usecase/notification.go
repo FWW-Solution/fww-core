@@ -2,9 +2,7 @@ package usecase
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_payment"
@@ -111,8 +109,6 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			PaymentMethodList: paymentMethodResponse,
 		}
 
-		// // TODO: Populate data to template
-
 		templateSendInvoice, err := u.populateTemplateInvoice(&specModel, templateSendInvoice)
 		if err != nil {
 			return err
@@ -124,17 +120,10 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			Body:    templateSendInvoice,
 		}
 
-		jsonData, err := json.Marshal(specNotification)
+		err = u.adapter.SendNotification(&specNotification)
 		if err != nil {
 			return err
 		}
-
-		fmt.Println(string(jsonData))
-		return nil
-		// err = u.adapter.SendNotification(&specNotification)
-		// if err != nil {
-		// 	return err
-		// }
 
 	case "send_receipt":
 		result, err := u.repository.PaymentReceiptReportByBookingCode(data.CodeBooking)
@@ -151,9 +140,6 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			PaymentMethod: result.Payment.PaymentMethod,
 		}
 
-		// TODO: Populate data to template
-		// spec := dto_notification.ModelPaymentReceipt{}
-
 		templateSendReceipt, err := u.populateTemplateReceipt(&specModel, templateSendReceipt)
 		if err != nil {
 			return err
@@ -165,18 +151,10 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			Body:    templateSendReceipt,
 		}
 
-		jsonData, err := json.Marshal(specNotification)
+		err = u.adapter.SendNotification(&specNotification)
 		if err != nil {
 			return err
 		}
-
-		fmt.Println(string(jsonData))
-		return nil
-
-		// // err = u.adapter.SendNotification(&specNotification)
-		// // if err != nil {
-		// // 	return err
-		// // }
 
 	case "send_ticket":
 		result, err := u.repository.TicketRedeemedReportByBookingCode(data.CodeBooking)
@@ -207,8 +185,6 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
 		}
 
-		// // TODO: Populate data to template
-		// // spec := dto_notification.ModelTicketRedeemed{}
 		templateSendReceipt, err := u.populateTemplateTicket(&specModel, templateSendTicket)
 		if err != nil {
 			return err
@@ -220,17 +196,10 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			Body:    templateSendReceipt,
 		}
 
-		jsonData, err := json.Marshal(specNotification)
+		err = u.adapter.SendNotification(&specNotification)
 		if err != nil {
 			return err
 		}
-
-		fmt.Println(string(jsonData))
-
-		// err = u.adapter.SendNotification(&specNotification)
-		// if err != nil {
-		// 	return err
-		// }
 
 	default:
 		return errors.New("route not found")
