@@ -42,6 +42,7 @@ type TicketRedeemAgregator struct {
 	Ticket         entity.Ticket          `json:"ticket"`
 	Booking        entity.Booking         `json:"booking"`
 	BookingDetails []entity.BookingDetail `json:"booking_detail"`
+	Passengers     []entity.Passenger     `json:"passengers"`
 	Flight         entity.Flight          `json:"flight"`
 	User           entity.User            `json:"user"`
 }

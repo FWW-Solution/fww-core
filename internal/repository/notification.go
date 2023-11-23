@@ -124,6 +124,70 @@ func (r *repository) PaymentReceiptReportByBookingCode(bookingCode string) (dto_
 }
 
 // TicketRedeemedReportByBookingID implements Repository.
-func (*repository) TicketRedeemedReportByBookingCode(bookingCode string) (dto_notification.TicketRedeemAgregator, error) {
-	panic("unimplemented")
+func (r *repository) TicketRedeemedReportByBookingCode(bookingCode string) (dto_notification.TicketRedeemAgregator, error) {
+	query := `SELECT f.code_flight, f.departure_time, f.arrival_time, f.departure_airport_name, f.arrival_airport_name,  t.code_ticket, t.boarding_time, u.email FROM bookings as b INNER JOIN users as u ON b.user_id = u.id INNER JOIN flights as f ON f.id = b.flight_id INNER JOIN tickets as t ON t.booking_id = b.id WHERE b.code_booking = '$1'`
+
+	rows, err := r.db.Queryx(query, bookingCode)
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		return dto_notification.TicketRedeemAgregator{}, nil
+	}
+
+	if err != nil {
+		return dto_notification.TicketRedeemAgregator{}, err
+	}
+
+	defer rows.Close()
+
+	var entityTicket entity.Ticket
+	var entityBooking entity.Booking
+	var entityFlight entity.Flight
+	var entityUser entity.User
+	var entityBookingDetails []entity.BookingDetail
+	var entityPassengers []entity.Passenger
+
+	for rows.Next() {
+		err = rows.Scan(&entityFlight.CodeFlight, &entityFlight.DepartureTime, &entityFlight.ArrivalTime, &entityFlight.DepartureAirportName, &entityFlight.ArrivalAirportName, &entityTicket.CodeTicket, &entityTicket.BoardingTime, &entityUser.Email)
+		if err != nil {
+			return dto_notification.TicketRedeemAgregator{}, err
+		}
+	}
+
+	// Find Booking Detail
+
+	// Find Booking Detail
+	queryBookingDetail := `SELECT p.full_name, bd.seat_number, bd.class, bd.baggage_capacity FROM booking_details as bd INNER JOIN passengers as p ON p.id = bd.passenger_id WHERE booking_id = $1`
+
+	rowsBookingDetail, err := r.db.Queryx(queryBookingDetail, entityBooking.ID)
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		return dto_notification.TicketRedeemAgregator{}, nil
+	}
+
+	if err != nil {
+		return dto_notification.TicketRedeemAgregator{}, err
+	}
+
+	defer rowsBookingDetail.Close()
+
+	for rowsBookingDetail.Next() {
+		var entityBookingDetail entity.BookingDetail
+		var entityPassenger entity.Passenger
+		err = rowsBookingDetail.Scan(&entityPassenger.FullName, &entityBookingDetail.SeatNumber, &entityBookingDetail.Class, &entityBookingDetail.BaggageCapacity)
+		if err != nil {
+			return dto_notification.TicketRedeemAgregator{}, err
+		}
+		entityBookingDetails = append(entityBookingDetails, entityBookingDetail)
+		entityPassengers = append(entityPassengers, entityPassenger)
+	}
+
+	aggregator := dto_notification.TicketRedeemAgregator{
+		Ticket:         entityTicket,
+		Booking:        entityBooking,
+		BookingDetails: entityBookingDetails,
+		Flight:         entityFlight,
+		Passengers:     entityPassengers,
+		User:           entityUser,
+	}
+
+	return aggregator, nil
+
 }

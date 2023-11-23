@@ -157,6 +157,29 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			return err
 		}
 
+		// Transform data to model
+		var passengerDetails []dto_booking.BookResponseDetail
+		for i, bookingDetail := range result.BookingDetails {
+			spec := dto_booking.BookResponseDetail{
+				SeatNumber:    bookingDetail.SeatNumber,
+				Class:         bookingDetail.Class,
+				Baggage:       bookingDetail.BaggageCapacity,
+				PassangerName: result.Passengers[i].FullName,
+			}
+			passengerDetails = append(passengerDetails, spec)
+		}
+
+		// specModel := dto_notification.ModelTicketRedeemed{
+		// 	TicketCode:             result.Ticket.CodeTicket,
+		// 	FlightNumber:           result.Flight.CodeFlight,
+		// 	FlightDepartureTime:    result.Flight.DepartureTime.Format("2006-01-02 15:04:05"),
+		// 	FlightArrivalTime:      result.Flight.ArrivalTime.Format("2006-01-02 15:04:05"),
+		// 	FlightDepartureAirport: result.Flight.DepartureAirportName,
+		// 	FlightArrivalAirport:   result.Flight.ArrivalAirportName,
+		// 	PassengerDetails:       passengerDetails,
+		// 	BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
+		// }
+
 		// TODO: Populate data to template
 		// spec := dto_notification.ModelTicketRedeemed{}
 
