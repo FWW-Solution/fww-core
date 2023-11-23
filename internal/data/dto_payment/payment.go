@@ -13,6 +13,7 @@ type RequestInvoice struct {
 type RequestUpdatePayment struct {
 	InvoiceNumber string `json:"invoice_number"`
 	Status        string `json:"status"`
+	PaymentMethod string `json:"payment_method"`
 }
 
 type DoPayment struct {
