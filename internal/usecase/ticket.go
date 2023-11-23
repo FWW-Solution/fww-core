@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"database/sql"
 	"errors"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_ticket"
@@ -38,12 +39,18 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 	// Upsert Ticket
 	generatedUUID := uuid.New()
 
+	boardingTime := booking.BookingExpiredAt.Add((24 * time.Hour) - (time.Minute * 30))
+
 	entityTicket := entity.Ticket{
 		ID:                 0,
 		CodeTicket:         generatedUUID.String(),
-		IsBoardingPass:     false,
-		IsEligibleToFlight: false,
+		IsBoardingPass:     true,
+		IsEligibleToFlight: true,
 		BookingID:          booking.ID,
+		BoardingTime: sql.NullTime{
+			Time:  boardingTime,
+			Valid: true,
+		},
 	}
 
 	_, err = u.repository.UpsertTicket(&entityTicket)
@@ -79,8 +86,6 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 	if err != nil {
 		return dto_ticket.Response{}, err
 	}
-
-	boardingTime := booking.BookingExpiredAt.Add((24 * time.Hour) - (time.Minute * 30))
 
 	response := dto_ticket.Response{
 		CodeTicket:  entityTicket.CodeTicket,

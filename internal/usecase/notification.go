@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_payment"
@@ -101,26 +102,30 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			}
 			passengerDetails = append(passengerDetails, spec)
 		}
-		// spec := dto_notification.ModelInvoice{
-		// 	InvoiceNumber:     result.Payment.InvoiceNumber,
-		// 	BookingCode:       result.Booking.CodeBooking,
-		// 	PaymentAmount:     result.Payment.TotalPayment,
-		// 	PassengerDetails:  passengerDetails,
-		// 	PaymentMethodList: paymentMethodResponse,
+		specModel := dto_notification.ModelInvoice{
+			InvoiceNumber:     result.Payment.InvoiceNumber,
+			BookingCode:       result.Booking.CodeBooking,
+			PaymentAmount:     result.Payment.TotalPayment,
+			PassengerDetails:  passengerDetails,
+			PaymentMethodList: paymentMethodResponse,
+		}
+
+		fmt.Println(specModel)
+
+		return nil
+
+		// // TODO: Populate data to template
+
+		// specNotification := dto_notification.SendEmailRequest{
+		// 	To:      result.User.Email,
+		// 	Subject: "[FWW] Invoice",
+		// 	Body:    templateSendInvoice,
 		// }
 
-		// TODO: Populate data to template
-
-		specNotification := dto_notification.SendEmailRequest{
-			To:      result.User.Email,
-			Subject: "[FWW] Invoice",
-			Body:    templateSendInvoice,
-		}
-
-		err = u.adapter.SendNotification(&specNotification)
-		if err != nil {
-			return err
-		}
+		// err = u.adapter.SendNotification(&specNotification)
+		// if err != nil {
+		// 	return err
+		// }
 
 	case "send_receipt":
 		result, err := u.repository.PaymentReceiptReportByBookingCode(data.CodeBooking)
@@ -129,27 +134,31 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 		}
 
 		// Transform data to model
-		// specModel := dto_notification.ModelPaymentReceipt{
-		// 	InvoiceNumber: result.Payment.InvoiceNumber,
-		// 	BookingCode:   result.Booking.CodeBooking,
-		// 	PaymentAmount: result.Payment.TotalPayment,
-		// 	PaymentDate:  result.Payment.PaymentDate,
-		// 	PaymentMethod: result.Payment.PaymentMethod,
-		// }
+		specModel := dto_notification.ModelPaymentReceipt{
+			InvoiceNumber: result.Payment.InvoiceNumber,
+			BookingCode:   result.Booking.CodeBooking,
+			PaymentAmount: result.Payment.TotalPayment,
+			PaymentDate:   result.Payment.PaymentDate,
+			PaymentMethod: result.Payment.PaymentMethod,
+		}
+
+		fmt.Println(specModel)
+
+		return nil
 
 		// TODO: Populate data to template
 		// spec := dto_notification.ModelPaymentReceipt{}
 
-		specNotification := dto_notification.SendEmailRequest{
-			To:      result.User.Email,
-			Subject: "[FWW] Receipt",
-			Body:    templateSendReceipt,
-		}
+		// specNotification := dto_notification.SendEmailRequest{
+		// 	To:      result.User.Email,
+		// 	Subject: "[FWW] Receipt",
+		// 	Body:    templateSendReceipt,
+		// }
 
-		err = u.adapter.SendNotification(&specNotification)
-		if err != nil {
-			return err
-		}
+		// // err = u.adapter.SendNotification(&specNotification)
+		// // if err != nil {
+		// // 	return err
+		// // }
 
 	case "send_ticket":
 		result, err := u.repository.TicketRedeemedReportByBookingCode(data.CodeBooking)
@@ -169,30 +178,34 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			passengerDetails = append(passengerDetails, spec)
 		}
 
-		// specModel := dto_notification.ModelTicketRedeemed{
-		// 	TicketCode:             result.Ticket.CodeTicket,
-		// 	FlightNumber:           result.Flight.CodeFlight,
-		// 	FlightDepartureTime:    result.Flight.DepartureTime.Format("2006-01-02 15:04:05"),
-		// 	FlightArrivalTime:      result.Flight.ArrivalTime.Format("2006-01-02 15:04:05"),
-		// 	FlightDepartureAirport: result.Flight.DepartureAirportName,
-		// 	FlightArrivalAirport:   result.Flight.ArrivalAirportName,
-		// 	PassengerDetails:       passengerDetails,
-		// 	BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
+		specModel := dto_notification.ModelTicketRedeemed{
+			TicketCode:             result.Ticket.CodeTicket,
+			FlightNumber:           result.Flight.CodeFlight,
+			FlightDepartureTime:    result.Flight.DepartureTime.Format("2006-01-02 15:04:05"),
+			FlightArrivalTime:      result.Flight.ArrivalTime.Format("2006-01-02 15:04:05"),
+			FlightDepartureAirport: result.Flight.DepartureAirportName,
+			FlightArrivalAirport:   result.Flight.ArrivalAirportName,
+			PassengerDetails:       passengerDetails,
+			BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
+		}
+
+		fmt.Println(specModel)
+
+		return nil
+
+		// // TODO: Populate data to template
+		// // spec := dto_notification.ModelTicketRedeemed{}
+
+		// specNotification := dto_notification.SendEmailRequest{
+		// 	To:      result.User.Email,
+		// 	Subject: "[FWW] Ticket",
+		// 	Body:    templateSendTicket,
 		// }
 
-		// TODO: Populate data to template
-		// spec := dto_notification.ModelTicketRedeemed{}
-
-		specNotification := dto_notification.SendEmailRequest{
-			To:      result.User.Email,
-			Subject: "[FWW] Ticket",
-			Body:    templateSendTicket,
-		}
-
-		err = u.adapter.SendNotification(&specNotification)
-		if err != nil {
-			return err
-		}
+		// err = u.adapter.SendNotification(&specNotification)
+		// if err != nil {
+		// 	return err
+		// }
 
 	default:
 		return errors.New("route not found")
