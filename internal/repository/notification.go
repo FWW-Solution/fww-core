@@ -91,8 +91,36 @@ func (r *repository) PaymentInvoiceReportByBookingCode(bookingCode string) (dto_
 }
 
 // PaymentReceiptReportByBookingID implements Repository.
-func (*repository) PaymentReceiptReportByBookingCode(bookingCode string) (dto_notification.PaymentReceiptAggregator, error) {
-	panic("unimplemented")
+func (r *repository) PaymentReceiptReportByBookingCode(bookingCode string) (dto_notification.PaymentReceiptAggregator, error) {
+	query := `SELECT p.invoice_number, b.code_booking, p.total_payment, p.payment_method, p.payment_date, u.email FROM bookings as b INNER JOIN users as u ON u.id = b.user_id INNER JOIN payments as p ON p.booking_id = b.id WHERE b.code_booking = $1591c7a41-bc59-46ac-a067-d0e14ef04e43'`
+	rows, err := r.db.Queryx(query, bookingCode)
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		return dto_notification.PaymentReceiptAggregator{}, nil
+	}
+
+	if err != nil {
+		return dto_notification.PaymentReceiptAggregator{}, err
+	}
+
+	defer rows.Close()
+
+	var entityPayment entity.Payment
+	var entityBooking entity.Booking
+	var entityUser entity.User
+	for rows.Next() {
+		err = rows.Scan(&entityPayment.InvoiceNumber, &entityBooking.CodeBooking, &entityPayment.TotalPayment, &entityPayment.PaymentMethod, &entityPayment.PaymentDate, &entityUser.Email)
+		if err != nil {
+			return dto_notification.PaymentReceiptAggregator{}, err
+		}
+	}
+
+	aggregator := dto_notification.PaymentReceiptAggregator{
+		Payment: entityPayment,
+		Booking: entityBooking,
+		User:    entityUser,
+	}
+
+	return aggregator, nil
 }
 
 // TicketRedeemedReportByBookingID implements Repository.

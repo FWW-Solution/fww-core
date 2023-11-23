@@ -4,6 +4,7 @@ import (
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_payment"
 	"fww-core/internal/entity"
+	"time"
 )
 
 type Request struct {
@@ -65,9 +66,9 @@ type ModelInvoice struct {
 }
 
 type ModelPaymentReceipt struct {
-	InvoiceNumber string `json:"invoice_number"`
-	PaymentMethod string `json:"payment_method"`
-	PaymentAmount string `json:"payment_ammount"`
-	PaymentDate   string `json:"payment_date"`
-	BookingCode   string `json:"booking_code"`
+	InvoiceNumber string    `json:"invoice_number"`
+	PaymentMethod string    `json:"payment_method"`
+	PaymentAmount float64   `json:"payment_ammount"`
+	PaymentDate   time.Time `json:"payment_date"`
+	BookingCode   string    `json:"booking_code"`
 }

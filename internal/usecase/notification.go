@@ -128,6 +128,15 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			return err
 		}
 
+		// Transform data to model
+		// specModel := dto_notification.ModelPaymentReceipt{
+		// 	InvoiceNumber: result.Payment.InvoiceNumber,
+		// 	BookingCode:   result.Booking.CodeBooking,
+		// 	PaymentAmount: result.Payment.TotalPayment,
+		// 	PaymentDate:  result.Payment.PaymentDate,
+		// 	PaymentMethod: result.Payment.PaymentMethod,
+		// }
+
 		// TODO: Populate data to template
 		// spec := dto_notification.ModelPaymentReceipt{}
 
