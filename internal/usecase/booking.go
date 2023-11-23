@@ -43,27 +43,27 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		return err
 	}
 
-	if reminingSeat <= 0 {
+	if reminingSeat < 1 {
 		return errors.New("no remaning seat")
 	}
 
 	flightIDKey := fmt.Sprintf("flight-%d", data.FlightID)
 
 	// Lock Transaction Redis
-	// rc := redis.InitMutex(flightIDKey)
-	// err = redis.LockMutex(rc)
-	// if err != nil {
-	// 	return err
-	// }
-	// defer func() {
-	// 	err = redis.UnlockMutex(rc)
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// }()
 	rc := redis.InitMutex(flightIDKey)
-	redis.LockMutex(rc)
-	defer redis.UnlockMutex(rc)
+	err = redis.LockMutex(rc)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = redis.UnlockMutex(rc)
+		if err != nil {
+			return
+		}
+	}()
+	// rc := redis.InitMutex(flightIDKey)
+	// redis.LockMutex(rc)
+	// defer redis.UnlockMutex(rc)
 	// Check Remining Seat
 
 	// find flight
@@ -95,7 +95,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	// Update Flight Reservation
 	entityReservation := &entity.FlightReservation{
 		Class:        data.BookDetails[0].Class,
-		ReservedSeat: 172 - (reminingSeat + len(data.BookDetails)),
+		ReminingSeat: reminingSeat + len(data.BookDetails),
 		TotalSeat:    172,
 		UpdatedAt: sql.NullTime{
 			Time:  time.Now().Round(time.Minute),

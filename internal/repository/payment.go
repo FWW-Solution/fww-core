@@ -29,9 +29,9 @@ func (r *repository) FindPaymentDetailByInvoice(invoiceNumber string) (entity.Pa
 func (r *repository) UpsertPayment(data *entity.Payment) (int64, error) {
 	var query string
 	if data.ID == 0 {
-		query = fmt.Sprintf(`INSERT INTO payments (invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES ('%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (id) DO UPDATE SET payment_status = '%s', updated_at = NOW() WHERE payments.id = %d RETURNING id`, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.PaymentStatus, data.BookingID, data.PaymentStatus, data.ID)
+		query = fmt.Sprintf(`INSERT INTO payments (invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES ('%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (id) DO UPDATE SET payment_status = '%s',payment_method = '%s', payment_date =' %s', updated_at = NOW() WHERE payments.id = %d RETURNING id`, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.PaymentStatus, data.BookingID, data.PaymentStatus, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.ID)
 	} else {
-		query = fmt.Sprintf(`INSERT INTO payments (id, invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES (%d,'%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (id) DO UPDATE SET payment_status = '%s', updated_at = NOW() WHERE payments.id = %d RETURNING id`, data.ID, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.PaymentStatus, data.BookingID, data.PaymentStatus, data.ID)
+		query = fmt.Sprintf(`INSERT INTO payments (id, invoice_number, total_payment, payment_method, payment_date, payment_status, booking_id) VALUES (%d,'%s', %f, '%s', '%s', '%s', %d) ON CONFLICT (id) DO UPDATE SET payment_status = '%s', payment_method = '%s', payment_date = '%s', updated_at = NOW() WHERE payments.id = %d RETURNING id`, data.ID, data.InvoiceNumber, data.TotalPayment, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.PaymentStatus, data.BookingID, data.PaymentStatus, data.PaymentMethod, data.PaymentDate.Format("2006-01-02 15:04:05"), data.ID)
 	}
 
 	// do sqlx transaction

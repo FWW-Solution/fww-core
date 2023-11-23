@@ -80,7 +80,7 @@ func TestRequestBooking(t *testing.T) {
 		entityReservation := &entity.FlightReservation{
 			FlightID:     flightID,
 			Class:        "Economy",
-			ReservedSeat: 172 - (reminingIntSeat + len(BookDetails)),
+			ReminingSeat: reminingIntSeat,
 			TotalSeat:    172,
 			UpdatedAt: sql.NullTime{
 				Time:  time.Now().Round(time.Minute),

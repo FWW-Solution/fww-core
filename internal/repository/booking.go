@@ -1,10 +1,13 @@
 package repository
 
-import "fww-core/internal/entity"
+import (
+	"fmt"
+	"fww-core/internal/entity"
+)
 
 // FindReminingSeat implements Repository.
 func (r *repository) FindReminingSeat(flightID int64) (int, error) {
-	query := `SELECT reserved_seat, total_seat FROM flight_reservations WHERE flight_id = $1 AND deleted_at IS NULL`
+	query := `SELECT remining_seat, total_seat FROM flight_reservations WHERE flight_id = $1 AND deleted_at IS NULL`
 	var result entity.FlightReservation
 	err := r.db.QueryRowx(query, flightID).StructScan(&result)
 	if err != nil && err.Error() == "sql: no rows in result set" {
@@ -13,7 +16,7 @@ func (r *repository) FindReminingSeat(flightID int64) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return result.TotalSeat - result.ReservedSeat, nil
+	return result.ReminingSeat, nil
 }
 
 // GetBookingByBookingIDCode implements Repository.
@@ -94,9 +97,9 @@ func (r *repository) InsertBookingDetail(data *entity.BookingDetail) (int64, err
 // UpdateFlightReservation implements Repository.
 func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (int64, error) {
 	// Query Postgres Select for update
-	querySelect := `SELECT id, class, reserved_seat, total_seat FROM flight_reservations WHERE flight_id = $1 AND class = $2 AND deleted_at IS NULL FOR UPDATE`
+	querySelect := fmt.Sprintf(`SELECT id, class, remining_seat, total_seat FROM flight_reservations WHERE flight_id = %d AND class = %s AND deleted_at IS NULL FOR UPDATE`, data.FlightID, data.Class)
 
-	queryUpdate := `UPDATE flight_reservations SET reserved_seat = $1, updated_at = $2 WHERE flight_id = $3 RETURNING id`
+	queryUpdate := fmt.Sprintf(`UPDATE flight_reservations SET remining_seat = %d, updated_at = NOW() WHERE flight_id = %d RETURNING id`, data.ReminingSeat, data.FlightID)
 
 	var id int64
 	var result entity.FlightReservation
@@ -108,7 +111,7 @@ func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (in
 	}
 
 	// get flight reservation
-	err = tx.QueryRowx(querySelect, data.FlightID, data.Class).StructScan(&result)
+	err = tx.QueryRowx(querySelect).StructScan(&result)
 	if err != nil {
 		err = tx.Rollback()
 		if err != nil {
@@ -118,7 +121,7 @@ func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (in
 	}
 
 	// update booking reservation
-	err = tx.QueryRowx(queryUpdate, data.ReservedSeat, data.UpdatedAt, data.FlightID).Scan(&id)
+	err = tx.QueryRowx(queryUpdate).Scan(&id)
 	if err != nil {
 		err = tx.Rollback()
 		if err != nil {

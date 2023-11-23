@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS flight_prices (
 CREATE TABLE IF NOT EXISTS flight_reservations (
     id SERIAL PRIMARY KEY,
     class VARCHAR(255) NOT NULL,
-    reserved_seat INT NOT NULL,
+    remining_seat INT NOT NULL,
     total_seat INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP,

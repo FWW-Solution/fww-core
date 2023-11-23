@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"fww-core/internal/data/dto_booking"
@@ -110,7 +111,12 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			PaymentMethodList: paymentMethodResponse,
 		}
 
-		fmt.Println(specModel)
+		jsonData, err := json.Marshal(specModel)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(jsonData))
 
 		return nil
 
@@ -142,7 +148,12 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			PaymentMethod: result.Payment.PaymentMethod,
 		}
 
-		fmt.Println(specModel)
+		jsonData, err := json.Marshal(specModel)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(jsonData))
 
 		return nil
 
@@ -165,6 +176,8 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(result)
 
 		// Transform data to model
 		var passengerDetails []dto_booking.BookResponseDetail
@@ -189,7 +202,12 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
 		}
 
-		fmt.Println(specModel)
+		jsonData, err := json.Marshal(specModel)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(jsonData))
 
 		return nil
 

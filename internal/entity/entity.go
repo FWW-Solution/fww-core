@@ -87,7 +87,7 @@ type FlightPrice struct {
 type FlightReservation struct {
 	ID           int64        `db:"id"`
 	Class        string       `db:"class"` // enum (business, economy)
-	ReservedSeat int          `db:"reserved_seat"`
+	ReminingSeat int          `db:"remining_seat"`
 	TotalSeat    int          `db:"total_seat"`
 	CreatedAt    time.Time    `db:"created_at"`
 	UpdatedAt    sql.NullTime `db:"updated_at"`

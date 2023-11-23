@@ -41,7 +41,7 @@ func (u *useCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail
 		DepartureTime:       resultFlight.DepartureTime.Format("2006-01-02 15:04:05"),
 		DepatureAirportName: resultFlight.DepartureAirportName,
 		FlightPrice:         resultFlightPrice.Price,
-		ReminingSeat:        resultFlightReservation.TotalSeat - resultFlightReservation.ReservedSeat,
+		ReminingSeat:        resultFlightReservation.ReminingSeat,
 		Status:              resultFlight.Status,
 	}
 

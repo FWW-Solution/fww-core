@@ -98,6 +98,7 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 
 // UpdateTicket implements UseCase.
 func (u *useCase) UpdateTicket(req *dto_ticket.RequestUpdateTicket) error {
+
 	// Find Ticket by code
 	ticket, err := u.repository.FindTicketByCodeTicket(req.CodeTicket)
 	if err != nil {

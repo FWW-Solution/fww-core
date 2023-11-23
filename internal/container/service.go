@@ -106,6 +106,19 @@ func InitService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		log.Fatal(err)
 	}
 
+	updatePaymentBPM, err := messagestream.NewRouter(
+		pub,
+		"update_payment_from_bpm_poisoned",
+		"update_payment_from_bpm_handler",
+		"update_payment_from_bpm",
+		sub,
+		ctrl.UpdatePaymentHandler,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	updateTicketBPM, err := messagestream.NewRouter(
 		pub,
 		"update_ticket_from_bpm_poisoned",
@@ -131,7 +144,20 @@ func InitService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		log.Fatal(err)
 	}
 
-	messageRouters = append(messageRouters, requestBookingRouter, requestPaymentRouter, updatePassangerBPM, requestGenerateInvoiceBPM, updateTicketBPM)
+	sendNotificationBPM, err := messagestream.NewRouter(
+		pub,
+		"send_notification_from_bpm_poisoned",
+		"send_notification_from_bpm_handler",
+		"send_notification_from_bpm",
+		sub,
+		ctrl.SendEmailNotificationHandler,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	messageRouters = append(messageRouters, requestBookingRouter, requestPaymentRouter, updatePassangerBPM, requestGenerateInvoiceBPM, updatePaymentBPM, updateTicketBPM, sendNotificationBPM)
 
 	// Init Router
 	app := router.Initialize(server, &ctrl)
