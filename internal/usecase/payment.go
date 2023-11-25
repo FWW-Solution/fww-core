@@ -96,10 +96,11 @@ func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 	}
 
 	specDoPayment := dto_payment.DoPayment{
-		CaseID:        resultBooking.CaseID,
-		InvoiceNumber: resultPayment.InvoiceNumber,
-		PaymentMethod: req.PaymentMethod,
-		PaymentAmount: resultPayment.TotalPayment,
+		CaseID:         resultBooking.CaseID,
+		InvoiceNumber:  resultPayment.InvoiceNumber,
+		PaymentMethod:  req.PaymentMethod,
+		PaymentAmount:  resultPayment.TotalPayment,
+		BookingExpired: resultBooking.BookingExpiredAt,
 	}
 	err = u.adapter.DoPayment(&specDoPayment)
 	if err != nil {

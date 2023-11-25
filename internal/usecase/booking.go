@@ -24,6 +24,8 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		return errors.New("booking id code already exist")
 	}
 
+	var reminingSeat int
+
 	// Check Remining Seat
 	flightIDReminingSeat := fmt.Sprintf("flight-%d-seat", data.FlightID)
 	result := u.redis.Get(ctx, flightIDReminingSeat)
@@ -38,7 +40,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		u.redis.Set(ctx, flightIDReminingSeat, reminingSeat, 0)
 	}
 
-	reminingSeat, err := result.Int()
+	reminingSeat, err = result.Int()
 	if err != nil {
 		return err
 	}
@@ -75,6 +77,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	bookingDate := time.Now().Round(time.Minute)
 	paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
 	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
+	// payment expired at 6 hour after booking
 
 	// Insert Booking
 	bookingEntity := &entity.Booking{
@@ -96,7 +99,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	// Update Flight Reservation
 	entityReservation := &entity.FlightReservation{
 		Class:        data.BookDetails[0].Class,
-		ReminingSeat: reminingSeat + len(data.BookDetails),
+		ReminingSeat: reminingSeat - len(data.BookDetails),
 		TotalSeat:    172,
 		UpdatedAt: sql.NullTime{
 			Time:  time.Now().Round(time.Minute),
@@ -107,6 +110,11 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	_, err = u.repository.UpdateFlightReservation(entityReservation)
 	if err != nil {
 		return err
+	}
+
+	status := u.redis.Set(ctx, flightIDReminingSeat, reminingSeat-len(data.BookDetails), 0)
+	if status.Err() != nil {
+		return status.Err()
 	}
 
 	// Insert Booking Detail
@@ -129,7 +137,8 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	//TODO: Send Email Detail Booking To BPM
 
 	specBooking := dto_booking.RequestBPM{
-		CodeBooking: bookingIDCode,
+		CodeBooking:    bookingIDCode,
+		PaymentExpired: paymentExpiredAt,
 	}
 
 	err = u.adapter.RequestGenerateInvoice(&specBooking)
@@ -227,6 +236,26 @@ func (u *useCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error
 	// Update Booking Detail
 	resultBookingDetail.IsEligibleToFlight = data.IsEligibleToFlight
 	_, err = u.repository.UpdateBookingDetail(&resultBookingDetail)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateBooking implements UseCase.
+func (u *useCase) UpdateBooking(req *dto_booking.RequestUpdateBooking) error {
+	resultBooking, err := u.repository.FindBookingByBookingIDCode(req.CodeBooking)
+	if err != nil {
+		return err
+	}
+
+	if resultBooking.ID == 0 {
+		return errors.New("booking not found")
+	}
+
+	resultBooking.BookingStatus = req.Status
+	_, err = u.repository.UpdateBooking(&resultBooking)
 	if err != nil {
 		return err
 	}

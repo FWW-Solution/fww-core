@@ -34,6 +34,7 @@ type UseCase interface {
 	RequestBooking(data *dto_booking.Request, bookingIDCode string) error
 	GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error)
 	UpdateDetailBooking(data *dto_booking.BookDetailRequest) error
+	UpdateBooking(req *dto_booking.RequestUpdateBooking) error
 	// Payment
 	RequestPayment(req *dto_payment.Request) error
 	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)

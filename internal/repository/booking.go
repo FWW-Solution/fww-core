@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"fww-core/internal/entity"
+	"log"
 )
 
 // FindReminingSeat implements Repository.
@@ -96,13 +97,13 @@ func (r *repository) InsertBookingDetail(data *entity.BookingDetail) (int64, err
 
 // UpdateFlightReservation implements Repository.
 func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (int64, error) {
-	// Query Postgres Select for update
-	querySelect := fmt.Sprintf(`SELECT id, class, remining_seat, total_seat FROM flight_reservations WHERE flight_id = %d AND class = %s AND deleted_at IS NULL FOR UPDATE`, data.FlightID, data.Class)
+	// // Query Postgres Select for update
+	// querySelect := fmt.Sprintf(`SELECT id, class, remining_seat, total_seat FROM flight_reservations WHERE flight_id = %d AND class = %s AND deleted_at IS NULL FOR UPDATE`, data.FlightID, data.Class)
 
 	queryUpdate := fmt.Sprintf(`UPDATE flight_reservations SET remining_seat = %d, updated_at = NOW() WHERE flight_id = %d RETURNING id`, data.ReminingSeat, data.FlightID)
 
 	var id int64
-	var result entity.FlightReservation
+	// var result entity.FlightReservation
 
 	// do sqlx transaction
 	tx, err := r.db.Beginx()
@@ -110,19 +111,20 @@ func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (in
 		return 0, err
 	}
 
-	// get flight reservation
-	err = tx.QueryRowx(querySelect).StructScan(&result)
-	if err != nil {
-		err = tx.Rollback()
-		if err != nil {
-			return 0, err
-		}
-		return 0, err
-	}
+	// // get flight reservation
+	// err = tx.QueryRowx(querySelect).StructScan(&result)
+	// if err != nil {
+	// 	err = tx.Rollback()
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// 	return 0, err
+	// }
 
 	// update booking reservation
 	err = tx.QueryRowx(queryUpdate).Scan(&id)
 	if err != nil {
+		log.Println(err)
 		err = tx.Rollback()
 		if err != nil {
 			return 0, err
@@ -132,6 +134,7 @@ func (r *repository) UpdateFlightReservation(data *entity.FlightReservation) (in
 
 	err = tx.Commit()
 	if err != nil {
+		log.Print(err)
 		err = tx.Rollback()
 		if err != nil {
 			return 0, err

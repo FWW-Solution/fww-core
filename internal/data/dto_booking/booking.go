@@ -1,5 +1,7 @@
 package dto_booking
 
+import "time"
+
 type Request struct {
 	BookDetails []BookDetail `json:"book_details"`
 	FlightID    int64        `json:"flight_id"`
@@ -7,7 +9,13 @@ type Request struct {
 }
 
 type RequestBPM struct {
+	CodeBooking    string    `json:"code_booking"`
+	PaymentExpired time.Time `json:"payment_expired"`
+}
+
+type RequestUpdateBooking struct {
 	CodeBooking string `json:"code_booking"`
+	Status      string `json:"status"`
 }
 
 type BookDetailRequest struct {

@@ -56,3 +56,21 @@ func (c *Controller) GetDetailBooking(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(response)
 }
+
+func (c *Controller) UpdateBookingHandler(msg *message.Message) error {
+	var body dto_booking.RequestUpdateBooking
+
+	if err := json.Unmarshal(msg.Payload, &body); err != nil {
+		msg.Ack()
+		c.Log.Error(err)
+		return err
+	}
+	err := c.UseCase.UpdateBooking(&body)
+	if err != nil {
+		msg.Ack()
+		c.Log.Error(err)
+		return err
+	}
+	msg.Ack()
+	return nil
+}
