@@ -14,7 +14,7 @@ func TestDetailPassanger(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		id := int64(1)
 		expected := dto_passanger.ResponseDetail{
-			CovidVaccineStatus: "VACCINATED I",
+			CovidVaccineStatus: "VACCINATED II",
 			CreatedAt:          time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
 			DateOfBirth:        dateTime,
 			FullName:           "John Doe",
@@ -27,7 +27,7 @@ func TestDetailPassanger(t *testing.T) {
 		}
 
 		entity := entity.Passenger{
-			CovidVaccineStatus: "VACCINATED I",
+			CovidVaccineStatus: "VACCINATED II",
 			CreatedAt:          time.Now().Round(time.Minute),
 			DateOfBirth:        time.Now().Round(time.Minute),
 			FullName:           "John Doe",
@@ -45,7 +45,7 @@ func TestDetailPassanger(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if res != expected {
-			t.Errorf("expected %v, got %v", expected, res)
+			t.Errorf("expectedd %v, got %v", expected, res)
 		}
 	})
 }
@@ -55,7 +55,7 @@ func TestRegisterPassanger(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		req := &dto_passanger.RequestRegister{
 			DateOfBirth: dateTime,
-			FullName:    "John Doe",
+			FullName:    "Asep",
 			Gender:      "Male",
 			IDNumber:    "1234567890",
 			IDType:      "KTP",
@@ -63,7 +63,7 @@ func TestRegisterPassanger(t *testing.T) {
 
 		entity := &entity.Passenger{
 			ID:                 0,
-			FullName:           "John Doe",
+			FullName:           "Asep",
 			Gender:             "Male",
 			IDNumber:           "1234567890",
 			IDType:             "KTP",
@@ -84,10 +84,10 @@ func TestRegisterPassanger(t *testing.T) {
 
 		res, err := uc.RegisterPassanger(req)
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("unexpectedd error: %v", err)
 		}
 		if res != expected {
-			t.Errorf("expected %v, got %v", expected, res)
+			t.Errorf("expectedddd %v, got %v", expected, res)
 		}
 	})
 }
@@ -98,7 +98,7 @@ func TestUpdatePassanger(t *testing.T) {
 		id := int64(1)
 		req := &dto_passanger.RequestUpdate{
 			DateOfBirth: dateTime,
-			FullName:    "John Doe",
+			FullName:    "Mamang",
 			Gender:      "Male",
 			ID:          id,
 			IDNumber:    "1234567890",
@@ -109,7 +109,7 @@ func TestUpdatePassanger(t *testing.T) {
 			CovidVaccineStatus: "VACCINATED I",
 			CreatedAt:          time.Now(),
 			DateOfBirth:        dateOnly,
-			FullName:           "John Doe",
+			FullName:           "Mamang",
 			Gender:             "Male",
 			ID:                 id,
 			IDNumber:           "1234567890",
@@ -126,7 +126,7 @@ func TestUpdatePassanger(t *testing.T) {
 
 		result, err := uc.UpdatePassanger(req)
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("unexpecteddd error: %v", err)
 		}
 		if result != expected {
 			t.Errorf("expected %v, got %v", expected, result)

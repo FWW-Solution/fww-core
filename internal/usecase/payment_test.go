@@ -14,7 +14,7 @@ import (
 func TestGetPaymentStatus(t *testing.T) {
 	setup()
 	t.Run("Sucess", func(t *testing.T) {
-		paymentCodeUUID := "c5e8a9b0-5c0e-4a0d-9b3a-8b6d1a9b0c3c"
+		paymentCodeUUID := "c5e8a9b0-5c0e-4a0d-9b3a-8b6da1a9b0c3c"
 
 		expect := dto_payment.StatusResponse{
 			Status: "success",
@@ -46,7 +46,7 @@ func TestRequestPayment(t *testing.T) {
 	setup()
 	t.Run("Sucess", func(t *testing.T) {
 		paymentCodeUUID := "c5e8a9b0-5c0e-4a0d-9b3a-8b6d1a9b0c3c"
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8e9"
 		// codeTicketUUID := "123e4567-e89b-12d3-a456-2341235r31324"
 		bookingID := int64(1)
 
@@ -130,7 +130,7 @@ func TestRequestPayment(t *testing.T) {
 func TestGenerateInvoice(t *testing.T) {
 	setup()
 	t.Run("Sucess", func(t *testing.T) {
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3ccre8a9"
 		bookingID := int64(1)
 		caseID := int64(1234)
 
@@ -203,7 +203,7 @@ func TestGenerateInvoice(t *testing.T) {
 		assert.Nil(t, err)
 	})
 	t.Run("Error FindBookingByBookingIDCode", func(t *testing.T) {
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3yc5e8a9"
 		bookingID := int64(1)
 		caseID := int64(1234)
 
@@ -218,7 +218,7 @@ func TestGenerateInvoice(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 	t.Run("Error FindBookingDetailByBookingID", func(t *testing.T) {
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0cccc5e8a9"
 		bookingID := int64(1)
 		caseID := int64(1234)
 
@@ -248,7 +248,7 @@ func TestGenerateInvoice(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 	t.Run("Error FindFlightPriceByID", func(t *testing.T) {
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3c45e8a9"
 		bookingID := int64(1)
 		caseID := int64(1234)
 
@@ -289,7 +289,7 @@ func TestGenerateInvoice(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 	t.Run("Error UpdateBooking", func(t *testing.T) {
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3dc5e8a9"
 		bookingID := int64(1)
 		caseID := int64(1234)
 
@@ -352,7 +352,7 @@ func TestGenerateInvoice(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 	t.Run("Error UpsertPayment", func(t *testing.T) {
-		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cwc5e8a9"
 		bookingID := int64(1)
 		caseID := int64(1234)
 

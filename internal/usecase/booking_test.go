@@ -44,11 +44,11 @@ func TestRequestBooking(t *testing.T) {
 			CodeFlight:           "123qwe",
 			DepartureTime:        time.Now().Round(time.Minute),
 			ArrivalTime:          time.Now().Round(time.Minute),
-			DepartureAirportName: "Soekarno-Hatta International Airport",
-			ArrivalAirportName:   "I Gusti Ngurah Rai International Airport",
+			DepartureAirportName: "Kualanamu International Airport",
+			ArrivalAirportName:   "Minangkabau International Airport",
 			DepartureAirportID:   ID,
 			ArrivalAirportID:     ID,
-			Status:               "On Time",
+			Status:               "Cancelled",
 			CreatedAt:            time.Now().Round(time.Minute),
 			UpdatedAt:            sql.NullTime{},
 			DeletedAt:            sql.NullTime{},
@@ -166,7 +166,7 @@ func TestGetDetailBooking(t *testing.T) {
 			ArrivalAirportName:   "Soekarno-Hatta International Airport",
 			DepartureAirportID:   ID,
 			ArrivalAirportID:     ID,
-			Status:               "On Time",
+			Status:               "Scheduled",
 			PlaneID:              ID,
 		}
 
@@ -182,12 +182,12 @@ func TestGetDetailBooking(t *testing.T) {
 
 		expected := dto_booking.BookResponse{
 			ArrivalAirport:   "Soekarno-Hatta International Airport",
-			ArrivalTime:      time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
-			BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
+			ArrivalTime:      time.Now().Round(time.Minute).Format("2006-01-02 15:01:00"),
+			BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:02:00"),
 			CodeBooking:      bookingIDCode,
 			CodeFlight:       codeFlight,
 			DepartureAirport: "I Gusti Ngurah Rai International Airport",
-			DepartureTime:    time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
+			DepartureTime:    time.Now().Round(time.Minute).Format("2006-01-02 15:03:00"),
 			Details: []dto_booking.BookResponseDetail{
 				{
 					Baggage:       20,
@@ -198,7 +198,7 @@ func TestGetDetailBooking(t *testing.T) {
 				},
 			},
 			ID:               ID,
-			PaymentExpiredAt: entityBooking.PaymentExpiredAt.Format("2006-01-02 15:04:05"),
+			PaymentExpiredAt: entityBooking.PaymentExpiredAt.Format("2006-01-02 15:04:00"),
 			TotalPrice:       172,
 		}
 
@@ -305,8 +305,8 @@ func TestGetDetailBooking(t *testing.T) {
 			CodeFlight:           "123qwe",
 			DepartureTime:        time.Now().Round(time.Minute),
 			ArrivalTime:          time.Now().Round(time.Minute),
-			DepartureAirportName: "I Gusti Ngurah Rai International Airport",
-			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			DepartureAirportName: "Mozes Kilangin Airport",
+			ArrivalAirportName:   "Halim Perdanakusuma International Airport",
 			DepartureAirportID:   ID,
 			ArrivalAirportID:     ID,
 			Status:               "On Time",
@@ -352,8 +352,8 @@ func TestGetDetailBooking(t *testing.T) {
 			CodeFlight:           "123qwe",
 			DepartureTime:        time.Now().Round(time.Minute),
 			ArrivalTime:          time.Now().Round(time.Minute),
-			DepartureAirportName: "I Gusti Ngurah Rai International Airport",
-			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			DepartureAirportName: "Mohammad Salahuddin Airport",
+			ArrivalAirportName:   "Ahmad Yani International Airport",
 			DepartureAirportID:   ID,
 			ArrivalAirportID:     ID,
 			Status:               "On Time",

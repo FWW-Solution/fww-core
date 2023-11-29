@@ -14,7 +14,7 @@ func TestInquiryNotification(t *testing.T) {
 	setup()
 	t.Run("success send_invoice", func(t *testing.T) {
 		req := dto_notification.Request{
-			CodeBooking: "123e4567-e89b-12d3-a456-426614174000",
+			CodeBooking: "123e4567-e89b-12d3-a456-426614174010",
 			Route:       "send_invoice",
 		}
 
@@ -93,7 +93,7 @@ func TestInquiryNotification(t *testing.T) {
 
 	t.Run("success send_receipt", func(t *testing.T) {
 		req := dto_notification.Request{
-			CodeBooking: "123e4567-e89b-12d3-a456-426614174000",
+			CodeBooking: "123e4567-e89b-12d3-a456-426614174020",
 			Route:       "send_receipt",
 		}
 
@@ -175,7 +175,7 @@ func TestInquiryNotification(t *testing.T) {
 			User:   entity.User{},
 		}
 
-		templateSendTicket := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Ticket</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Ticket</h1>\n\t\t\t\t\t<p>Ticket Code: </p>\n\t\t\t\t\t<p>Flight Number: </p>\n\t\t\t\t\t<p>Flight Departure Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t<p>Flight Arrival Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t<p>Flight Departure Airport: </p>\n\t\t\t\t\t<p>Flight Arrival Airport: </p>\n\t\t\t\t\t<p>Passenger Details:</p>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t<li></li>\n\t\t\t\t\t\t\t<l1></li>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<p>Boarding Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t\t\t</body>\n\t\t\t\t\t\t\t</html>\n\t\t\t\t\t\t\t"
+		templateSendTicket := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Ticket</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Ticket</h1>\n\t\t\t\t\t<p>Ticket Code: </p>\n\t\t\t\t\t<p>Flight Number: </p>\n\t\t\t\t\t<p>Flight Departure Time: 0001-01-01 00:00:01</p>\n\t\t\t\t\t<p>Flight Arrival Time: 0001-01-01 00:00:01</p>\n\t\t\t\t\t<p>Flight Departure Airport: </p>\n\t\t\t\t\t<p>Flight Arrival Airport: </p>\n\t\t\t\t\t<p>Passenger Details:</p>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t<li></li>\n\t\t\t\t\t\t\t<l1></li>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<p>Boarding Time: 0001-01-01 00:00:12</p>\n\t\t\t\t\t\t\t</body>\n\t\t\t\t\t\t\t</html>\n\t\t\t\t\t\t\t"
 
 		specNotification := dto_notification.SendEmailRequest{
 			To:      entityTicketRedeemAggregator.User.Email,

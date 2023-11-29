@@ -52,17 +52,6 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	flightIDKey := fmt.Sprintf("flight-%d", data.FlightID)
 
 	// Lock Transaction Redis
-	// rc := redis.InitMutex(flightIDKey)
-	// err = redis.LockMutex(rc)
-	// if err != nil {
-	// 	return err
-	// }
-	// defer func() {
-	// 	err = redis.UnlockMutex(rc)
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// }()
 	rc := redis.InitMutex(flightIDKey)
 	//nolint
 	redis.LockMutex(rc)
@@ -78,7 +67,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	}
 	bookingDate := time.Now().Round(time.Minute)
 	paymentExpiredAt := time.Now().Add(time.Hour * 6).Round(time.Minute)
-	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1)
+	bookingExpiredAt := resultFlight.DepartureTime.AddDate(0, 0, -1).Round(time.Minute)
 	// payment expired at 6 hour after booking
 
 	// Insert Booking
@@ -136,8 +125,6 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 		}
 	}
 
-	//TODO: Send Email Detail Booking To BPM
-
 	specBooking := dto_booking.RequestBPM{
 		CodeBooking:    bookingIDCode,
 		PaymentExpired: paymentExpiredAt,
@@ -151,6 +138,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	return err
 
 }
+
 
 // GetDetailBooking implements UseCase.
 func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error) {
@@ -208,15 +196,15 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 
 	bookResponse := dto_booking.BookResponse{
 		ArrivalAirport:   resultFlight.ArrivalAirportName,
-		ArrivalTime:      resultFlight.ArrivalTime.Round(time.Minute).Format("2006-01-02 15:04:05"),
-		BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
+		ArrivalTime:      resultFlight.ArrivalTime.Round(time.Minute).Format("2006-01-02 15:01:00"),
+		BookExpiredAt:    bookingExpiredAt.Round(time.Minute).Format("2006-01-02 15:02:00"),
 		CodeBooking:      result.CodeBooking,
 		CodeFlight:       resultFlight.CodeFlight,
 		DepartureAirport: resultFlight.DepartureAirportName,
-		DepartureTime:    resultFlight.DepartureTime.Round(time.Minute).Format("2006-01-02 15:04:05"),
+		DepartureTime:    resultFlight.DepartureTime.Round(time.Minute).Format("2006-01-02 15:03:00"),
 		Details:          bookDetails,
 		ID:               result.ID,
-		PaymentExpiredAt: result.PaymentExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:05"),
+		PaymentExpiredAt: result.PaymentExpiredAt.Round(time.Minute).Format("2006-01-02 15:04:00"),
 		TotalPrice:       resultFlightPrice.Price,
 	}
 

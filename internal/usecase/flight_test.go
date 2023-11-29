@@ -15,29 +15,29 @@ func TestGetDetailFlightByID(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		id := int64(1)
 		expected := dto_flight.ResponseFlightDetail{
-			ArrivalAirportName:  "Soekarno-Hatta International Airport",
-			ArrivalTime:         time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
-			CodeFlight:          "GA-001",
-			DepartureTime:       time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
-			DepatureAirportName: "New International Airport - Yogyakarta",
+			ArrivalAirportName:  "Biak Frans Kaisiepo International Airport",
+			ArrivalTime:         timeTimeNow.Format("2006-01-02 15:04:00"),
+			CodeFlight:          "GA-002",
+			DepartureTime:       timeTimeNow.Format("2006-01-02 15:04:00"),
+			DepatureAirportName: "Sorong Domine Eduard Osok Airport",
 			FlightPrice:         1000000,
 			ReminingSeat:        172,
-			Status:              "On Time",
+			Status:              "Delayed",
 		}
 
 		entityFlight := entity.Flight{
 			ID:                   id,
-			CodeFlight:           "GA-001",
-			DepartureTime:        time.Now().Round(time.Hour),
-			ArrivalTime:          time.Now().Round(time.Hour),
-			DepartureAirportName: "New International Airport - Yogyakarta",
-			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			CodeFlight:           "GA-002",
+			DepartureTime:        timeTimeNow,
+			ArrivalTime:          timeTimeNow,
+			DepartureAirportName: "Sorong Domine Eduard Osok Airport",
+			ArrivalAirportName:   "Biak Frans Kaisiepo International Airport",
 			DepartureAirportID:   id,
 			ArrivalAirportID:     id,
-			Status:               "On Time",
-			CreatedAt:            time.Now().Round(time.Hour),
+			Status:               "Delayed",
+			CreatedAt:            timeTimeNow,
 			UpdatedAt: sql.NullTime{
-				Time:  time.Now().Round(time.Hour),
+				Time:  timeTimeNow,
 				Valid: true,
 			},
 			DeletedAt: sql.NullTime{
@@ -51,9 +51,9 @@ func TestGetDetailFlightByID(t *testing.T) {
 			ID:        1,
 			Price:     1000000,
 			Class:     "Economy",
-			CreatedAt: time.Now().Round(time.Hour),
+			CreatedAt: timeTimeNow,
 			UpdatedAt: sql.NullTime{
-				Time:  time.Now().Round(time.Hour),
+				Time:  timeTimeNow,
 				Valid: true,
 			},
 			DeletedAt: sql.NullTime{
@@ -68,9 +68,9 @@ func TestGetDetailFlightByID(t *testing.T) {
 			Class:        "Economy",
 			ReminingSeat: 172,
 			TotalSeat:    172,
-			CreatedAt:    time.Now().Round(time.Hour),
+			CreatedAt:    timeTimeNow,
 			UpdatedAt: sql.NullTime{
-				Time:  time.Now().Round(time.Hour),
+				Time:  timeTimeNow,
 				Valid: true,
 			},
 			DeletedAt: sql.NullTime{
@@ -86,10 +86,10 @@ func TestGetDetailFlightByID(t *testing.T) {
 
 		result, err := uc.GetDetailFlightByID(id)
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("unexpectedd error: %v", err)
 		}
 		if result != expected {
-			t.Errorf("expected %v, got %v", expected, result)
+			t.Errorf("expectedd %v, got %v", expected, result)
 		}
 	})
 	t.Run("Error FindFlightByID", func(t *testing.T) {
@@ -101,7 +101,7 @@ func TestGetDetailFlightByID(t *testing.T) {
 		result, err := uc.GetDetailFlightByID(id)
 		assert.NotNil(t, err)
 		if result != expected {
-			t.Errorf("expected %v, got %v", expected, result)
+			t.Errorf("expecteed %v, got %v", expected, result)
 		}
 	})
 	t.Run("Error FindFlightPriceByID", func(t *testing.T) {
@@ -110,14 +110,14 @@ func TestGetDetailFlightByID(t *testing.T) {
 
 		entityFlight := entity.Flight{
 			ID:                   id,
-			CodeFlight:           "GA-001",
+			CodeFlight:           "GA-003",
 			DepartureTime:        time.Now().Round(time.Hour),
 			ArrivalTime:          time.Now().Round(time.Hour),
-			DepartureAirportName: "New International Airport - Yogyakarta",
-			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			DepartureAirportName: "Mopah International Airport",
+			ArrivalAirportName:   "Sentani International Airpor",
 			DepartureAirportID:   id,
 			ArrivalAirportID:     id,
-			Status:               "On Time",
+			Status:               "Cancelled",
 			CreatedAt:            time.Now().Round(time.Hour),
 			UpdatedAt: sql.NullTime{
 				Time:  time.Now().Round(time.Hour),
@@ -143,14 +143,14 @@ func TestGetDetailFlightByID(t *testing.T) {
 
 		entityFlight := entity.Flight{
 			ID:                   id,
-			CodeFlight:           "GA-001",
+			CodeFlight:           "GA-003",
 			DepartureTime:        time.Now().Round(time.Hour),
 			ArrivalTime:          time.Now().Round(time.Hour),
-			DepartureAirportName: "New International Airport - Yogyakarta",
-			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			DepartureAirportName: "Patimura International Airport",
+			ArrivalAirportName:   "Karel Sadsuitubun International Airport",
 			DepartureAirportID:   id,
 			ArrivalAirportID:     id,
-			Status:               "On Time",
+			Status:               "Cancelled",
 			CreatedAt:            time.Now().Round(time.Hour),
 			UpdatedAt: sql.NullTime{
 				Time:  time.Now().Round(time.Hour),
@@ -200,29 +200,29 @@ func TestGetFlights(t *testing.T) {
 			{
 				ArrivalAirportName:  "Soekarno-Hatta International Airport",
 				ArrivalTime:         time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
-				CodeFlight:          "GA-001",
+				CodeFlight:          "GA-004",
 				DepartureTime:       time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
 				DepatureAirportName: "New International Airport - Yogyakarta",
 				FlightPrice:         1000000,
 				ReminingSeat:        172,
-				Status:              "On Time",
+				Status:              "Delayed",
 			},
 			{
-				ArrivalAirportName:  "Soekarno-Hatta International Airport",
+				ArrivalAirportName:  "Adi Sutjipto International Airport",
 				ArrivalTime:         timeNow,
-				CodeFlight:          "GA-001",
+				CodeFlight:          "GA-005",
 				DepartureTime:       timeNow,
-				DepatureAirportName: "New International Airport - Yogyakarta",
+				DepatureAirportName: "Juanda International Airport",
 				FlightPrice:         1000000,
 				ReminingSeat:        172,
-				Status:              "On Time",
+				Status:              "Delayed",
 			},
 		}
 
 		entityFlights := []entity.Flight{
 			{
 				ID:                   1,
-				CodeFlight:           "GA-001",
+				CodeFlight:           "GA-004",
 				DepartureTime:        time.Now().Round(time.Hour),
 				ArrivalTime:          time.Now().Round(time.Hour),
 				DepartureAirportName: "New International Airport - Yogyakarta",
@@ -243,11 +243,11 @@ func TestGetFlights(t *testing.T) {
 			},
 			{
 				ID:                   2,
-				CodeFlight:           "GA-001",
+				CodeFlight:           "GA-005",
 				DepartureTime:        time.Now().Round(time.Minute),
 				ArrivalTime:          time.Now().Round(time.Minute),
-				DepartureAirportName: "New International Airport - Yogyakarta",
-				ArrivalAirportName:   "Soekarno-Hatta International Airport",
+				DepartureAirportName: "Adi Sutjipto International Airport",
+				ArrivalAirportName:   "Juanada International Airport",
 				DepartureAirportID:   1,
 				ArrivalAirportID:     1,
 				Status:               "On Time",

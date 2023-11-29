@@ -15,7 +15,7 @@ import (
 func TestRedeemTicket(t *testing.T) {
 	setup()
 	t.Run("success", func(t *testing.T) {
-		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174000"
+		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174002"
 		// codeTicketUUID := "123e4567-e89b-12d3-a456-2341235r31324"
 
 		ticketID64 := int64(1)
@@ -81,7 +81,7 @@ func TestRedeemTicket(t *testing.T) {
 	})
 
 	t.Run("Error FindBookingByBookingIDCode", func(t *testing.T) {
-		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174000"
+		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174003"
 		expected := dto_ticket.Response{}
 
 		repositoryMock.On("FindBookingByBookingIDCode", codeBookingUUID).Return(entity.Booking{}, sql.ErrNoRows)
@@ -93,7 +93,7 @@ func TestRedeemTicket(t *testing.T) {
 	})
 
 	t.Run("Error UpdateBooking", func(t *testing.T) {
-		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174000"
+		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174005"
 		expected := dto_ticket.Response{}
 
 		entityBooking := entity.Booking{
@@ -121,7 +121,7 @@ func TestRedeemTicket(t *testing.T) {
 	})
 
 	t.Run("Error UpsertTicket", func(t *testing.T) {
-		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174000"
+		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174009"
 		expected := dto_ticket.Response{}
 
 		entityBooking := entity.Booking{
@@ -152,7 +152,7 @@ func TestRedeemTicket(t *testing.T) {
 	})
 
 	t.Run("Error FindBookingDetailByBookingID", func(t *testing.T) {
-		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174000"
+		codeBookingUUID := "123e4567-e89b-12d3-a456-426614174004"
 		expected := dto_ticket.Response{}
 
 		entityBooking := entity.Booking{
