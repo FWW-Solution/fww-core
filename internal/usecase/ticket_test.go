@@ -88,9 +88,7 @@ func TestRedeemTicket(t *testing.T) {
 		repositoryMock.On("FindDetailPassanger", mock.Anything).Return(entity.Passenger{}, sql.ErrNoRows).Once()
 
 		result, err := uc.RedeemTicket(codeBookingUUID)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		assert.NotNil(t, err)
 		assert.Equal(t, expected, result)
 	})
 
@@ -118,9 +116,7 @@ func TestRedeemTicket(t *testing.T) {
 		repositoryMock.On("FindDetailPassanger", mock.Anything).Return(entity.Passenger{}, sql.ErrNoRows).Once()
 
 		result, err := uc.RedeemTicket(codeBookingUUID)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		assert.NotNil(t, err)
 		assert.Equal(t, expected, result)
 	})
 
@@ -332,7 +328,7 @@ func TestUpdateTicket(t *testing.T) {
 	})
 
 	t.Run("Error FindTicketByCodeTicket", func(t *testing.T) {
-		codeTicketUUID := "123e4567-e89b-12d3-a456-2341235r31324"
+		codeTicketUUID := ""
 		req := dto_ticket.RequestUpdateTicket{
 			CodeTicket:         codeTicketUUID,
 			BookingDetailID:    1,
@@ -342,13 +338,11 @@ func TestUpdateTicket(t *testing.T) {
 		repositoryMock.On("FindTicketByCodeTicket", codeTicketUUID).Return(entity.Ticket{}, sql.ErrNoRows)
 
 		err := uc.UpdateTicket(&req)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		assert.NotNil(t, err)
 	})
 
 	t.Run("Error UpdateDetailBooking", func(t *testing.T) {
-		codeTicketUUID := "123e4567-e89b-12d3-a456-2341235r31324"
+		codeTicketUUID := ""
 		req := dto_ticket.RequestUpdateTicket{
 			CodeTicket:         codeTicketUUID,
 			BookingDetailID:    1,
@@ -395,13 +389,11 @@ func TestUpdateTicket(t *testing.T) {
 		repositoryMock.On("UpdateBookingDetail", entityRequest).Return(int64(0), sql.ErrNoRows)
 
 		err := uc.UpdateTicket(&req)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		assert.NotNil(t, err)
 	})
 
 	t.Run("Error FindTicketByCodeTicket Return ID 0", func(t *testing.T) {
-		codeTicketUUID := "123e4567-e89b-12d3-a456-2341235r31324"
+		codeTicketUUID := ""
 		req := dto_ticket.RequestUpdateTicket{
 			CodeTicket:         codeTicketUUID,
 			BookingDetailID:    1,
@@ -419,8 +411,6 @@ func TestUpdateTicket(t *testing.T) {
 		repositoryMock.On("FindTicketByCodeTicket", codeTicketUUID).Return(entityTicket, nil)
 
 		err := uc.UpdateTicket(&req)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		assert.NotNil(t, err)
 	})
 }
