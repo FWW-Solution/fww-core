@@ -6,6 +6,8 @@ import (
 	"fww-core/internal/entity"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetDetailFlightByID(t *testing.T) {
@@ -89,7 +91,101 @@ func TestGetDetailFlightByID(t *testing.T) {
 		if result != expected {
 			t.Errorf("expected %v, got %v", expected, result)
 		}
+	})
+	t.Run("Error FindFlightByID", func(t *testing.T) {
+		id := int64(1)
+		expected := dto_flight.ResponseFlightDetail{}
 
+		repositoryMock.On("FindFlightByID", id).Return(entity.Flight{}, sql.ErrNoRows).Once()
+
+		result, err := uc.GetDetailFlightByID(id)
+		assert.NotNil(t, err)
+		if result != expected {
+			t.Errorf("expected %v, got %v", expected, result)
+		}
+	})
+	t.Run("Error FindFlightPriceByID", func(t *testing.T) {
+		id := int64(1)
+		expected := dto_flight.ResponseFlightDetail{}
+
+		entityFlight := entity.Flight{
+			ID:                   id,
+			CodeFlight:           "GA-001",
+			DepartureTime:        time.Now().Round(time.Hour),
+			ArrivalTime:          time.Now().Round(time.Hour),
+			DepartureAirportName: "New International Airport - Yogyakarta",
+			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			DepartureAirportID:   id,
+			ArrivalAirportID:     id,
+			Status:               "On Time",
+			CreatedAt:            time.Now().Round(time.Hour),
+			UpdatedAt: sql.NullTime{
+				Time:  time.Now().Round(time.Hour),
+				Valid: true,
+			},
+			DeletedAt: sql.NullTime{
+				Time:  time.Time{},
+				Valid: false,
+			},
+			PlaneID: id,
+		}
+
+		repositoryMock.On("FindFlightByID", id).Return(entityFlight, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", id).Return(entity.FlightPrice{}, sql.ErrNoRows).Once()
+
+		result, err := uc.GetDetailFlightByID(id)
+		assert.NotNil(t, err)
+		assert.Equal(t, result, expected)
+	})
+	t.Run("Error FindFlightReservationByID", func(t *testing.T) {
+		id := int64(1)
+		expected := dto_flight.ResponseFlightDetail{}
+
+		entityFlight := entity.Flight{
+			ID:                   id,
+			CodeFlight:           "GA-001",
+			DepartureTime:        time.Now().Round(time.Hour),
+			ArrivalTime:          time.Now().Round(time.Hour),
+			DepartureAirportName: "New International Airport - Yogyakarta",
+			ArrivalAirportName:   "Soekarno-Hatta International Airport",
+			DepartureAirportID:   id,
+			ArrivalAirportID:     id,
+			Status:               "On Time",
+			CreatedAt:            time.Now().Round(time.Hour),
+			UpdatedAt: sql.NullTime{
+				Time:  time.Now().Round(time.Hour),
+				Valid: true,
+			},
+			DeletedAt: sql.NullTime{
+				Time:  time.Time{},
+				Valid: false,
+			},
+			PlaneID: id,
+		}
+
+		entityFlightPrice := entity.FlightPrice{
+			ID:        1,
+			Price:     1000000,
+			Class:     "Economy",
+			CreatedAt: time.Now().Round(time.Hour),
+			UpdatedAt: sql.NullTime{
+				Time:  time.Now().Round(time.Hour),
+				Valid: true,
+			},
+			DeletedAt: sql.NullTime{
+				Time:  time.Time{},
+				Valid: false,
+			},
+			FlightID: id,
+		}
+
+		repositoryMock.On("FindFlightByID", id).Return(entityFlight, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", id).Return(entityFlightPrice, nil).Once()
+		repositoryMock.On("FindFlightReservationByID", id).Return(entity.FlightReservation{}, sql.ErrNoRows).Once()
+
+		result, err := uc.GetDetailFlightByID(id)
+		assert.NotNil(t, err)
+		assert.Equal(t, result, expected)
 	})
 }
 
@@ -179,4 +275,15 @@ func TestGetFlights(t *testing.T) {
 		}
 	})
 
+	t.Run("Error FindFlights", func(t *testing.T) {
+		departureTime := dateTime
+		arrivalTime := dateTime
+		limit := 5
+		offset := 1
+
+		repositoryMock.On("FindFlights", departureTime, arrivalTime, limit, offset).Return([]entity.Flight{}, sql.ErrNoRows).Once()
+
+		_, err := uc.GetFlights(departureTime, arrivalTime, limit, offset)
+		assert.NotNil(t, err)
+	})
 }
