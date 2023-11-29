@@ -202,6 +202,228 @@ func TestGenerateInvoice(t *testing.T) {
 		err := uc.GenerateInvoice(caseID, codeBookingUUID)
 		assert.Nil(t, err)
 	})
+	t.Run("Error FindBookingByBookingIDCode", func(t *testing.T) {
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		bookingID := int64(1)
+		caseID := int64(1234)
+
+		request := dto_payment.RequestInvoice{
+			CaseID:      bookingID,
+			CodeBooking: codeBookingUUID,
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entity.Booking{}, sql.ErrNoRows).Once()
+
+		err := uc.GenerateInvoice(caseID, codeBookingUUID)
+		assert.NotNil(t, err)
+	})
+	t.Run("Error FindBookingDetailByBookingID", func(t *testing.T) {
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		bookingID := int64(1)
+		caseID := int64(1234)
+
+		request := dto_payment.RequestInvoice{
+			CaseID:      bookingID,
+			CodeBooking: codeBookingUUID,
+		}
+
+		entityBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           0,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil).Once()
+		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return([]entity.BookingDetail{}, sql.ErrNoRows).Once()
+
+		err := uc.GenerateInvoice(caseID, codeBookingUUID)
+		assert.NotNil(t, err)
+	})
+	t.Run("Error FindFlightPriceByID", func(t *testing.T) {
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		bookingID := int64(1)
+		caseID := int64(1234)
+
+		request := dto_payment.RequestInvoice{
+			CaseID:      bookingID,
+			CodeBooking: codeBookingUUID,
+		}
+
+		entityBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           0,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		entityBookingDetails := []entity.BookingDetail{
+			{
+				ID:          1,
+				BookingID:   1,
+				PassengerID: 1,
+				SeatNumber:  "1A",
+				Class:       "economy",
+			},
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil).Once()
+		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetails, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", entityBooking.FlightID).Return(entity.FlightPrice{}, sql.ErrNoRows).Once()
+
+		err := uc.GenerateInvoice(caseID, codeBookingUUID)
+		assert.NotNil(t, err)
+	})
+	t.Run("Error UpdateBooking", func(t *testing.T) {
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		bookingID := int64(1)
+		caseID := int64(1234)
+
+		request := dto_payment.RequestInvoice{
+			CaseID:      bookingID,
+			CodeBooking: codeBookingUUID,
+		}
+
+		entityBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           0,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		entityBookingDetails := []entity.BookingDetail{
+			{
+				ID:          1,
+				BookingID:   1,
+				PassengerID: 1,
+				SeatNumber:  "1A",
+				Class:       "economy",
+			},
+		}
+
+		flightPrice := entity.FlightPrice{
+			ID:       1,
+			FlightID: 1,
+			Price:    100000,
+			Class:    "economy",
+		}
+
+		updateBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           caseID,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil).Once()
+		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetails, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", entityBooking.FlightID).Return(flightPrice, nil).Once()
+		repositoryMock.On("UpdateBooking", &updateBooking).Return(int64(0), sql.ErrNoRows).Once()
+
+		err := uc.GenerateInvoice(caseID, codeBookingUUID)
+		assert.NotNil(t, err)
+	})
+	t.Run("Error UpsertPayment", func(t *testing.T) {
+		codeBookingUUID := "c5e8a9b0-5c0e-4a0d-9b3a-9b0c3cc5e8a9"
+		bookingID := int64(1)
+		caseID := int64(1234)
+
+		request := dto_payment.RequestInvoice{
+			CaseID:      bookingID,
+			CodeBooking: codeBookingUUID,
+		}
+
+		entityBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           0,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		entityBookingDetails := []entity.BookingDetail{
+			{
+				ID:          1,
+				BookingID:   1,
+				PassengerID: 1,
+				SeatNumber:  "1A",
+				Class:       "economy",
+			},
+		}
+
+		flightPrice := entity.FlightPrice{
+			ID:       1,
+			FlightID: 1,
+			Price:    100000,
+			Class:    "economy",
+		}
+
+		updateBooking := entity.Booking{
+			ID:               bookingID,
+			CodeBooking:      codeBookingUUID,
+			BookingDate:      time.Now().Round(time.Minute),
+			PaymentExpiredAt: time.Now().Add(time.Hour * 6).Round(time.Minute),
+			BookingStatus:    "pending",
+			CaseID:           caseID,
+			CreatedAt:        time.Now().Round(time.Minute),
+			UpdatedAt:        sql.NullTime{},
+			DeletedAt:        sql.NullTime{},
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		entityPayment := entity.Payment{
+			InvoiceNumber: "INV-" + time.Now().Round(time.Second).Format("2006019123"),
+			TotalPayment:  100000,
+			PaymentMethod: "bank_transfer",
+			PaymentDate:   time.Now().Round(time.Second),
+			PaymentStatus: "pending",
+			BookingID:     bookingID,
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil).Once()
+		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetails, nil).Once()
+		repositoryMock.On("FindFlightPriceByID", entityBooking.FlightID).Return(flightPrice, nil).Once()
+		repositoryMock.On("UpdateBooking", &updateBooking).Return(entityPayment.ID, nil).Once()
+		repositoryMock.On("UpsertPayment", mock.Anything).Return(int64(0), sql.ErrNoRows).Once()
+
+		err := uc.GenerateInvoice(caseID, codeBookingUUID)
+		assert.NotNil(t, err)
+	})
 }
 
 func TestGetPaymentMethod(t *testing.T) {
@@ -257,6 +479,14 @@ func TestGetPaymentMethod(t *testing.T) {
 		result, err := uc.GetPaymentMethod()
 		assert.Nil(t, err)
 		assert.Equal(t, expect, result)
+	})
+	t.Run("Error", func(t *testing.T) {
+		entitiesPaymentMethod := []entity.PaymentMethod{}
+
+		repositoryMock.On("FindPaymentMethodStatus").Return(entitiesPaymentMethod, sql.ErrNoRows).Once()
+
+		_, err := uc.GetPaymentMethod()
+		assert.NotNil(t, err)
 	})
 }
 

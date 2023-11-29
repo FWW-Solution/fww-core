@@ -31,14 +31,51 @@ func TestInquiryNotification(t *testing.T) {
 				DeletedAt:     sql.NullTime{},
 				BookingID:     0,
 			},
-			BookingDetails: []entity.BookingDetail{},
-			PaymentMethods: []entity.PaymentMethod{},
-			Passengers:     []entity.Passenger{},
-			Booking:        entity.Booking{},
-			User:           entity.User{},
+			BookingDetails: []entity.BookingDetail{
+				{
+					ID:                 0,
+					PassengerID:        0,
+					SeatNumber:         "",
+					BaggageCapacity:    0,
+					Class:              "",
+					IsEligibleToFlight: false,
+					CreatedAt:          time.Time{},
+					UpdatedAt:          sql.NullTime{},
+					DeletedAt:          sql.NullTime{},
+					BookingID:          0,
+				},
+			},
+			PaymentMethods: []entity.PaymentMethod{
+				{
+					ID:        0,
+					Name:      "",
+					IsActive:  false,
+					CreatedAt: time.Time{},
+					UpdatedAt: sql.NullTime{},
+					DeletedAt: sql.NullTime{},
+				},
+			},
+			Passengers: []entity.Passenger{
+				{
+					ID:                 0,
+					FullName:           "",
+					Gender:             "",
+					DateOfBirth:        time.Time{},
+					IDNumber:           "",
+					IDType:             "",
+					CovidVaccineStatus: "",
+					IsIDVerified:       false,
+					CaseID:             0,
+					CreatedAt:          time.Time{},
+					UpdatedAt:          time.Time{},
+					DeletedAt:          &time.Time{},
+				},
+			},
+			Booking: entity.Booking{},
+			User:    entity.User{},
 		}
 
-		templateSendInvoice := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Invoice</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Invoice</h1>\n\t\t\t\t\t<p>Invoice Number: </p>\n\t\t\t\t\t<p>Booking Code: </p>\n\t\t\t\t\t<p>Payment Amount: 0</p>\n\t\t\t\t\t<p>Passenger Details:</p>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</body>\n\t\t\t\t\t\t\t</html>\n\t\t\t\t\t\t\t"
+		templateSendInvoice := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Invoice</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Invoice</h1>\n\t\t\t\t\t<p>Invoice Number: </p>\n\t\t\t\t\t<p>Booking Code: </p>\n\t\t\t\t\t<p>Payment Amount: 0</p>\n\t\t\t\t\t<p>Passenger Details:</p>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t<li></li>\n\t\t\t\t\t\t\t<l1></li>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t</body>\n\t\t\t\t\t\t\t</html>\n\t\t\t\t\t\t\t"
 
 		specNotification := dto_notification.SendEmailRequest{
 			To:      entityInvoiceAggregator.User.Email,
@@ -61,10 +98,23 @@ func TestInquiryNotification(t *testing.T) {
 		}
 
 		entityPaymentReceiptAggregator := dto_notification.PaymentReceiptAggregator{
-			Payment:        entity.Payment{},
-			BookingDetails: []entity.BookingDetail{},
-			Booking:        entity.Booking{},
-			User:           entity.User{},
+			Payment: entity.Payment{},
+			BookingDetails: []entity.BookingDetail{
+				{
+					ID:                 0,
+					PassengerID:        0,
+					SeatNumber:         "",
+					BaggageCapacity:    0,
+					Class:              "",
+					IsEligibleToFlight: false,
+					CreatedAt:          time.Time{},
+					UpdatedAt:          sql.NullTime{},
+					DeletedAt:          sql.NullTime{},
+					BookingID:          0,
+				},
+			},
+			Booking: entity.Booking{},
+			User:    entity.User{},
 		}
 
 		templateSendReceipt := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Receipt</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Receipt</h1>\n\t\t\t\t\t<p>Invoice Number: </p>\n\t\t\t\t\t<p>Booking Code: </p>\n\t\t\t\t\t<p>Payment Method: </p>\n\t\t\t\t\t<p>Payment Amount: 0</p>\n\t\t\t\t\t<p>Payment Date: 0001-01-01 00:00:00 +0000 UTC</p>\n\t\t\t\t\t</body>\n\t\t\t\t\t</html>\n\t\t\t\t\t"
@@ -89,15 +139,43 @@ func TestInquiryNotification(t *testing.T) {
 		}
 
 		entityTicketRedeemAggregator := dto_notification.TicketRedeemAgregator{
-			Ticket:         entity.Ticket{},
-			Booking:        entity.Booking{},
-			BookingDetails: []entity.BookingDetail{},
-			Passengers:     []entity.Passenger{},
-			Flight:         entity.Flight{},
-			User:           entity.User{},
+			Ticket:  entity.Ticket{},
+			Booking: entity.Booking{},
+			BookingDetails: []entity.BookingDetail{
+				{
+					ID:                 0,
+					PassengerID:        0,
+					SeatNumber:         "",
+					BaggageCapacity:    0,
+					Class:              "",
+					IsEligibleToFlight: false,
+					CreatedAt:          time.Time{},
+					UpdatedAt:          sql.NullTime{},
+					DeletedAt:          sql.NullTime{},
+					BookingID:          0,
+				},
+			},
+			Passengers: []entity.Passenger{
+				{
+					ID:                 0,
+					FullName:           "",
+					Gender:             "",
+					DateOfBirth:        time.Time{},
+					IDNumber:           "",
+					IDType:             "",
+					CovidVaccineStatus: "",
+					IsIDVerified:       false,
+					CaseID:             0,
+					CreatedAt:          time.Time{},
+					UpdatedAt:          time.Time{},
+					DeletedAt:          &time.Time{},
+				},
+			},
+			Flight: entity.Flight{},
+			User:   entity.User{},
 		}
 
-		templateSendTicket := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Ticket</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Ticket</h1>\n\t\t\t\t\t<p>Ticket Code: </p>\n\t\t\t\t\t<p>Flight Number: </p>\n\t\t\t\t\t<p>Flight Departure Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t<p>Flight Arrival Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t<p>Flight Departure Airport: </p>\n\t\t\t\t\t<p>Flight Arrival Airport: </p>\n\t\t\t\t\t<p>Passenger Details:</p>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<p>Boarding Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t\t\t</body>\n\t\t\t\t\t\t\t</html>\n\t\t\t\t\t\t\t"
+		templateSendTicket := "\n\t\t<html>\n\t\t\t<head>\n\t\t\t\t<title>Ticket</title>\n\t\t\t\t</head>\n\t\t\t\t<body>\n\t\t\t\t\t<h1>Ticket</h1>\n\t\t\t\t\t<p>Ticket Code: </p>\n\t\t\t\t\t<p>Flight Number: </p>\n\t\t\t\t\t<p>Flight Departure Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t<p>Flight Arrival Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t<p>Flight Departure Airport: </p>\n\t\t\t\t\t<p>Flight Arrival Airport: </p>\n\t\t\t\t\t<p>Passenger Details:</p>\n\t\t\t\t\t<ul>\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t<li></li>\n\t\t\t\t\t\t\t<l1></li>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t<p>Boarding Time: 0001-01-01 00:00:00</p>\n\t\t\t\t\t\t\t</body>\n\t\t\t\t\t\t\t</html>\n\t\t\t\t\t\t\t"
 
 		specNotification := dto_notification.SendEmailRequest{
 			To:      entityTicketRedeemAggregator.User.Email,
