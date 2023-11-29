@@ -214,18 +214,18 @@ func TestGetDetailBooking(t *testing.T) {
 	})
 
 	t.Run("Error FindBookingByBookingIDCode", func(t *testing.T) {
-		bookingIDCode := "123qwe"
+		bookingIDCode := ""
+		expected := dto_booking.BookResponse{}
 		repositoryMock.On("FindBookingByBookingIDCode", bookingIDCode).Return(entity.Booking{}, sql.ErrConnDone)
-		_, err := uc.GetDetailBooking(bookingIDCode)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		result, err := uc.GetDetailBooking(bookingIDCode)
+		assert.Error(t, err)
+		assert.Equal(t, expected, result)
 	})
 
 	t.Run("Error FindBookingDetailByBookingID", func(t *testing.T) {
 		ID := int64(0)
-		bookingIDCode := "123qwe"
-
+		bookingIDCode := ""
+		expected := dto_booking.BookResponse{}
 		entityBooking := entity.Booking{
 			ID:            ID,
 			FlightID:      ID,
@@ -237,15 +237,15 @@ func TestGetDetailBooking(t *testing.T) {
 
 		repositoryMock.On("FindBookingByBookingIDCode", bookingIDCode).Return(entityBooking, nil)
 		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return([]entity.BookingDetail{}, sql.ErrNoRows)
-		_, err := uc.GetDetailBooking(bookingIDCode)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		result, err := uc.GetDetailBooking(bookingIDCode)
+		assert.Error(t, err)
+		assert.Equal(t, expected, result)
 	})
 
 	t.Run("Error FindFlightByID", func(t *testing.T) {
 		ID := int64(0)
-		bookingIDCode := "123qwe"
+		bookingIDCode := ""
+		expected := dto_booking.BookResponse{}
 
 		entityBooking := entity.Booking{
 			ID:            ID,
@@ -270,15 +270,15 @@ func TestGetDetailBooking(t *testing.T) {
 		repositoryMock.On("FindBookingByBookingIDCode", bookingIDCode).Return(entityBooking, nil)
 		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetail, nil)
 		repositoryMock.On("FindFlightByID", entityBooking.FlightID).Return(entity.Flight{}, sql.ErrNoRows)
-		_, err := uc.GetDetailBooking(bookingIDCode)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		result, err := uc.GetDetailBooking(bookingIDCode)
+		assert.Error(t, err)
+		assert.Equal(t, expected, result)
 	})
 
 	t.Run("Error FindFlightPriceByID", func(t *testing.T) {
 		ID := int64(0)
-		bookingIDCode := "123qwe"
+		bookingIDCode := ""
+		expected := dto_booking.BookResponse{}
 
 		entityBooking := entity.Booking{
 			ID:            ID,
@@ -317,15 +317,15 @@ func TestGetDetailBooking(t *testing.T) {
 		repositoryMock.On("FindBookingDetailByBookingID", entityBooking.ID).Return(entityBookingDetail, nil)
 		repositoryMock.On("FindFlightByID", entityBooking.FlightID).Return(entityFlight, nil)
 		repositoryMock.On("FindFlightPriceByID", entityFlight.ID).Return(entity.FlightPrice{}, sql.ErrNoRows)
-		_, err := uc.GetDetailBooking(bookingIDCode)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		result, err := uc.GetDetailBooking(bookingIDCode)
+		assert.Error(t, err)
+		assert.Equal(t, expected, result)
 	})
 
 	t.Run("Error FindDetailPassanger", func(t *testing.T) {
 		ID := int64(1)
-		bookingIDCode := "123qwe"
+		bookingIDCode := ""
+		expected := dto_booking.BookResponse{}
 
 		entityBooking := entity.Booking{
 			ID:            ID,
@@ -372,10 +372,9 @@ func TestGetDetailBooking(t *testing.T) {
 		repositoryMock.On("FindFlightByID", entityBooking.FlightID).Return(entityFlight, nil)
 		repositoryMock.On("FindFlightPriceByID", entityFlight.ID).Return(entityFlightPrice, nil)
 		repositoryMock.On("FindDetailPassanger", ID).Return(entity.Passenger{}, sql.ErrNoRows).Once()
-		_, err := uc.GetDetailBooking(bookingIDCode)
-		if err != nil {
-			assert.Error(t, err)
-		}
+		result, err := uc.GetDetailBooking(bookingIDCode)
+		assert.Error(t, err)
+		assert.Equal(t, expected, result)
 	})
 }
 

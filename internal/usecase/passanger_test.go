@@ -15,7 +15,7 @@ func TestDetailPassanger(t *testing.T) {
 		id := int64(1)
 		expected := dto_passanger.ResponseDetail{
 			CovidVaccineStatus: "VACCINATED I",
-			CreatedAt:          time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
+			CreatedAt:          time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
 			DateOfBirth:        dateTime,
 			FullName:           "John Doe",
 			Gender:             "Male",
@@ -23,20 +23,20 @@ func TestDetailPassanger(t *testing.T) {
 			IDNumber:           "1234567890",
 			IDType:             "KTP",
 			IsIDVerified:       true,
-			UpdatedAt:          time.Now().Round(time.Hour).Format("2006-01-02 15:04:05"),
+			UpdatedAt:          time.Now().Round(time.Minute).Format("2006-01-02 15:04:05"),
 		}
 
 		entity := entity.Passenger{
 			CovidVaccineStatus: "VACCINATED I",
-			CreatedAt:          time.Now().Round(time.Hour),
-			DateOfBirth:        time.Now().Round(time.Hour),
+			CreatedAt:          time.Now().Round(time.Minute),
+			DateOfBirth:        time.Now().Round(time.Minute),
 			FullName:           "John Doe",
 			Gender:             "Male",
 			ID:                 id,
 			IDNumber:           "1234567890",
 			IDType:             "KTP",
 			IsIDVerified:       true,
-			UpdatedAt:          time.Now().Round(time.Hour),
+			UpdatedAt:          time.Now().Round(time.Minute),
 		}
 		repositoryMock.On("FindDetailPassanger", id).Return(entity, nil)
 
