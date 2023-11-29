@@ -64,7 +64,9 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	// 	}
 	// }()
 	rc := redis.InitMutex(flightIDKey)
+	//nolint
 	redis.LockMutex(rc)
+	//nolint
 	defer redis.UnlockMutex(rc)
 
 	// Check Remining Seat

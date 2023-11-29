@@ -287,5 +287,8 @@ func TestUpdateBooking(t *testing.T) {
 
 		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil)
 		repositoryMock.On("UpdateBooking", requestBookingQuery).Return(int64(1), nil)
+
+		err := uc.UpdateBooking(request)
+		assert.NoError(t, err)
 	})
 }

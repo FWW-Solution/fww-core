@@ -5,6 +5,8 @@ import (
 	"fww-core/internal/entity"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDetailPassanger(t *testing.T) {
@@ -129,5 +131,48 @@ func TestUpdatePassanger(t *testing.T) {
 		if result != expected {
 			t.Errorf("expected %v, got %v", expected, result)
 		}
+	})
+}
+
+func TestUpdatePassangerByIDNumber(t *testing.T) {
+	setup()
+	t.Run("Success", func(t *testing.T) {
+		idNumber := "1234567890"
+		req := &dto_passanger.RequestUpdateBPM{
+			IDNumber:           idNumber,
+			VaccineStatus:      "VACCINATED I",
+			IsVerifiedDukcapil: true,
+			CaseID:             123,
+		}
+
+		entityPassenger := entity.Passenger{
+			ID:                 1,
+			FullName:           "Koko",
+			Gender:             "Male",
+			DateOfBirth:        time.Time{},
+			IDNumber:           idNumber,
+			IDType:             "KTP",
+			CovidVaccineStatus: "",
+			IsIDVerified:       false,
+			CaseID:             0,
+		}
+
+		reqUpdateEntity := entity.Passenger{
+			ID:                 1,
+			FullName:           "Koko",
+			Gender:             "Male",
+			DateOfBirth:        time.Time{},
+			IDNumber:           idNumber,
+			IDType:             "KTP",
+			CovidVaccineStatus: req.VaccineStatus,
+			IsIDVerified:       req.IsVerifiedDukcapil,
+			CaseID:             req.CaseID,
+		}
+
+		repositoryMock.On("FindPassangerByIDNumber", idNumber).Return(entityPassenger, nil)
+		repositoryMock.On("UpdatePassanger", &reqUpdateEntity).Return(int64(1), nil)
+
+		err := uc.UpdatePassangerByIDNumber(req)
+		assert.Nil(t, err)
 	})
 }
