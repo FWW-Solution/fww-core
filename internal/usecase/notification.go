@@ -185,15 +185,15 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 			BoardingTime:           result.Ticket.BoardingTime.Time.Format("2006-01-02 15:04:05"),
 		}
 
-		templateSendReceipt, err := u.populateTemplateTicket(&specModel, templateSendTicket)
+		templateSendTicket, err := u.populateTemplateTicket(&specModel, templateSendTicket)
 		if err != nil {
 			return err
 		}
 
 		specNotification := dto_notification.SendEmailRequest{
 			To:      result.User.Email,
-			Subject: "[FWW] Receipt",
-			Body:    templateSendReceipt,
+			Subject: "[FWW] Ticket",
+			Body:    templateSendTicket,
 		}
 
 		err = u.adapter.SendNotification(&specNotification)

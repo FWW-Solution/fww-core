@@ -259,3 +259,42 @@ func TestGetPaymentMethod(t *testing.T) {
 		assert.Equal(t, expect, result)
 	})
 }
+
+func TestUpdatePayment(t *testing.T) {
+	setup()
+	t.Run("Sucess", func(t *testing.T) {
+		paymentCodeUUID := "c5e8a9b0-5c0e-4a0d-9b3a-8b6d1a9b0c3c"
+
+		request := dto_payment.RequestUpdatePayment{
+			InvoiceNumber: paymentCodeUUID,
+			Status:        "success",
+			PaymentMethod: "bank_transfer",
+		}
+
+		entityPayment := entity.Payment{
+			ID:            1,
+			InvoiceNumber: paymentCodeUUID,
+			TotalPayment:  100000,
+			PaymentMethod: "bank_transfer",
+			PaymentDate:   timeTimeNow,
+			PaymentStatus: "pending",
+			BookingID:     1,
+		}
+
+		entityRequest := entity.Payment{
+			ID:            1,
+			InvoiceNumber: paymentCodeUUID,
+			TotalPayment:  100000,
+			PaymentMethod: request.PaymentMethod,
+			PaymentDate:   time.Now().Round(time.Second),
+			PaymentStatus: request.Status,
+			BookingID:     1,
+		}
+
+		repositoryMock.On("FindPaymentDetailByInvoice", paymentCodeUUID).Return(entityPayment, nil).Once()
+		repositoryMock.On("UpsertPayment", &entityRequest).Return(entityPayment.ID, nil).Once()
+
+		err := uc.UpdatePayment(&request)
+		assert.Nil(t, err)
+	})
+}

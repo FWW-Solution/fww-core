@@ -21,6 +21,7 @@ func TestRequestBooking(t *testing.T) {
 		reminingSeat := int64(50)
 		resultReminingSeatString := fmt.Sprintf("%d", reminingSeat)
 		reminingIntSeat := int(reminingSeat)
+		flightIDReminingSeat := fmt.Sprintf("flight-%d-seat", flightID)
 		BookDetails := []dto_booking.BookDetail{
 			{
 				Baggage:     20,
@@ -80,7 +81,7 @@ func TestRequestBooking(t *testing.T) {
 		entityReservation := &entity.FlightReservation{
 			FlightID:     flightID,
 			Class:        "Economy",
-			ReminingSeat: reminingIntSeat + 1,
+			ReminingSeat: reminingIntSeat - 1,
 			TotalSeat:    172,
 			UpdatedAt: sql.NullTime{
 				Time:  time.Now().Round(time.Minute),
@@ -89,12 +90,14 @@ func TestRequestBooking(t *testing.T) {
 		}
 
 		requestBpm := dto_booking.RequestBPM{
-			CodeBooking: "123qwe",
+			CodeBooking:    "123qwe",
+			PaymentExpired: paymentExpiredAt,
 		}
 
 		repositoryMock.On("FindBookingByBookingIDCode", mock.Anything).Return(entityBookingNull, nil)
-		redisMock.ExpectGet("flight-1-seat").SetVal(resultReminingSeatString)
+		redisMock.ExpectGet(flightIDReminingSeat).SetVal(resultReminingSeatString)
 		repositoryMock.On("FindReminingSeat", req.FlightID).Return(reminingSeat, nil)
+		redisMock.ExpectSet(flightIDReminingSeat, reminingIntSeat-1, 0).SetVal("OK")
 		repositoryMock.On("FindFlightByID", req.FlightID).Return(entityFlight, nil)
 		repositoryMock.On("InsertBooking", entityBooking).Return(ID, nil)
 		repositoryMock.On("UpdateFlightReservation", entityReservation).Return(ID, nil)
@@ -209,5 +212,80 @@ func TestGetDetailBooking(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, expected, result)
 
+	})
+}
+
+func TestUpdateDetailBooking(t *testing.T) {
+	setup()
+	t.Run("success", func(t *testing.T) {
+		req := &dto_booking.BookDetailRequest{
+			BookingDetailID:    1,
+			IsEligibleToFlight: true,
+		}
+
+		entityBookingDetail := entity.BookingDetail{
+			ID:                 1,
+			PassengerID:        1,
+			SeatNumber:         "A1",
+			BaggageCapacity:    20,
+			Class:              "economy",
+			IsEligibleToFlight: false,
+			CreatedAt:          time.Now().Round(time.Minute),
+			BookingID:          1,
+		}
+
+		entityRequest := &entity.BookingDetail{
+			ID:                 req.BookingDetailID,
+			PassengerID:        1,
+			SeatNumber:         "A1",
+			BaggageCapacity:    20,
+			Class:              "economy",
+			IsEligibleToFlight: req.IsEligibleToFlight,
+			CreatedAt:          time.Now().Round(time.Minute),
+			BookingID:          1,
+		}
+
+		repositoryMock.On("FindBookingDetailByID", req.BookingDetailID).Return(entityBookingDetail, nil)
+		repositoryMock.On("UpdateBookingDetail", entityRequest).Return(int64(1), nil)
+
+		err := uc.UpdateDetailBooking(req)
+		assert.NoError(t, err)
+	})
+}
+
+func TestUpdateBooking(t *testing.T) {
+	setup()
+	t.Run("success", func(t *testing.T) {
+		request := &dto_booking.RequestUpdateBooking{
+			CodeBooking: "123qwe",
+			Status:      "success",
+		}
+
+		entityBooking := entity.Booking{
+			ID:               1,
+			CodeBooking:      "123qwe",
+			BookingDate:      timeTimeNow,
+			BookingExpiredAt: timeTimeNow,
+			PaymentExpiredAt: timeTimeNow,
+			BookingStatus:    "pending",
+			CaseID:           123,
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		requestBookingQuery := &entity.Booking{
+			ID:               1,
+			CodeBooking:      "123qwe",
+			BookingDate:      timeTimeNow,
+			BookingExpiredAt: timeTimeNow,
+			PaymentExpiredAt: timeTimeNow,
+			BookingStatus:    request.Status,
+			CaseID:           123,
+			UserID:           1,
+			FlightID:         1,
+		}
+
+		repositoryMock.On("FindBookingByBookingIDCode", request.CodeBooking).Return(entityBooking, nil)
+		repositoryMock.On("UpdateBooking", requestBookingQuery).Return(int64(1), nil)
 	})
 }

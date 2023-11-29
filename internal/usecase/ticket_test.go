@@ -2,6 +2,7 @@ package usecase_test
 
 import (
 	"database/sql"
+	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_ticket"
 	"fww-core/internal/entity"
 	"testing"
@@ -84,6 +85,55 @@ func TestRedeemTicket(t *testing.T) {
 func TestUpdateTicket(t *testing.T) {
 	setup()
 	t.Run("success", func(t *testing.T) {
+		// codeBookingUUID := "123e4567-e89b-12d3-a456-426614174000"
+		codeTicketUUID := "123e4567-e89b-12d3-a456-2341235r31324"
+		req := dto_ticket.RequestUpdateTicket{
+			CodeTicket:         codeTicketUUID,
+			BookingDetailID:    1,
+			IsEligibleToFlight: false,
+		}
+
+		entityTicket := entity.Ticket{
+			ID:                 1,
+			CodeTicket:         codeTicketUUID,
+			IsBoardingPass:     false,
+			IsEligibleToFlight: false,
+			BookingID:          1,
+		}
+
+		specUpdate := dto_booking.BookDetailRequest{
+			BookingDetailID:    req.BookingDetailID,
+			IsEligibleToFlight: req.IsEligibleToFlight,
+		}
+
+		entityBookingDetail := entity.BookingDetail{
+			ID:                 1,
+			PassengerID:        1,
+			SeatNumber:         "A1",
+			BaggageCapacity:    20,
+			Class:              "economy",
+			IsEligibleToFlight: false,
+			CreatedAt:          time.Now().Round(time.Minute),
+			BookingID:          1,
+		}
+
+		entityRequest := &entity.BookingDetail{
+			ID:                 specUpdate.BookingDetailID,
+			PassengerID:        1,
+			SeatNumber:         "A1",
+			BaggageCapacity:    20,
+			Class:              "economy",
+			IsEligibleToFlight: specUpdate.IsEligibleToFlight,
+			CreatedAt:          time.Now().Round(time.Minute),
+			BookingID:          1,
+		}
+
+		repositoryMock.On("FindTicketByCodeTicket", codeTicketUUID).Return(entityTicket, nil)
+		repositoryMock.On("FindBookingDetailByID", req.BookingDetailID).Return(entityBookingDetail, nil)
+		repositoryMock.On("UpdateBookingDetail", entityRequest).Return(int64(1), nil)
+
+		err := uc.UpdateTicket(&req)
+		assert.NoError(t, err)
 
 	})
 }

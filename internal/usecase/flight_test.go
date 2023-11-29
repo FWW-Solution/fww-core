@@ -64,7 +64,7 @@ func TestGetDetailFlightByID(t *testing.T) {
 		entityFlightReservation := entity.FlightReservation{
 			ID:           1,
 			Class:        "Economy",
-			ReminingSeat: 0,
+			ReminingSeat: 172,
 			TotalSeat:    172,
 			CreatedAt:    time.Now().Round(time.Hour),
 			UpdatedAt: sql.NullTime{

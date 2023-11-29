@@ -17,6 +17,7 @@ var (
 	adapterMock    *mocks.Adapter
 	redisMock      redismock.ClientMock
 	clientMock     *redis.Client
+	timeTimeNow    = time.Now().Round(time.Minute)
 	timeNow        = time.Now().Format("2006-01-02 15:04:05")
 	dateTime       = time.Now().Format("2006-01-02")
 	t              = time.Now()
