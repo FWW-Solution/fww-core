@@ -39,7 +39,6 @@ type UseCase interface {
 	RequestPayment(req *dto_payment.Request) error
 	GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error)
 	GetPaymentMethod() ([]dto_payment.MethodResponse, error)
-	DoPayment(codePayment string) error
 	GenerateInvoice(caseID int64, codeBooking string) error
 	UpdatePayment(req *dto_payment.RequestUpdatePayment) error
 	// Ticket

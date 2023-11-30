@@ -52,8 +52,6 @@ func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
 		return err
 	}
 
-	// TODO: Send Notification to user (email) (async)
-
 	return nil
 }
 
@@ -128,12 +126,6 @@ func (u *useCase) UpdatePayment(req *dto_payment.RequestUpdatePayment) error {
 
 	return nil
 }
-
-// DoPayment implements UseCase.
-func (u *useCase) DoPayment(codePayment string) error {
-	panic("unimplemented")
-}
-
 // GetDetailPayment implements UseCase.
 func (u *useCase) GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error) {
 	result, err := u.repository.FindPaymentDetailByInvoice(codePayment)
