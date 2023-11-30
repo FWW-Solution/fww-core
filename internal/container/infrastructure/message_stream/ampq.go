@@ -21,7 +21,12 @@ func NewAmpq(cfg *config.MessageStreamConfig) MessageStream {
 }
 
 func (m *ampq) NewSubscriber() (message.Subscriber, error) {
-	ampqURI := fmt.Sprintf("amqp://%s:%s@%s:%s/", m.cfg.Username, m.cfg.Password, m.cfg.Host, m.cfg.Port)
+	var ampqURI string
+	if m.cfg.SSL {
+		ampqURI = fmt.Sprintf("amqps://%s:%s@%s:%s/", m.cfg.Username, m.cfg.Password, m.cfg.Host, m.cfg.Port)
+	} else {
+		ampqURI = fmt.Sprintf("amqp://%s:%s@%s:%s/", m.cfg.Username, m.cfg.Password, m.cfg.Host, m.cfg.Port)
+	}
 	ampqConfig := amqp.NewDurableQueueConfig(ampqURI)
 
 	subscriber, err := amqp.NewSubscriber(
