@@ -6,6 +6,7 @@ import (
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_ticket"
 	"fww-core/internal/entity"
+	"fww-core/internal/tools"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,7 +18,7 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 	// Find Booking by code
 	booking, err := u.repository.FindBookingByBookingIDCode(codeBooking)
 	if err != nil {
-		return dto_ticket.Response{}, err
+		return dto_ticket.Response{}, tools.ErrorBuilder(err)
 	}
 
 	if booking.ID == 0 {
@@ -33,7 +34,7 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 	booking.BookingStatus = "redeemed"
 	_, err = u.repository.UpdateBooking(&booking)
 	if err != nil {
-		return dto_ticket.Response{}, err
+		return dto_ticket.Response{}, tools.ErrorBuilder(err)
 	}
 
 	// Upsert Ticket
@@ -55,19 +56,19 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 
 	_, err = u.repository.UpsertTicket(&entityTicket)
 	if err != nil {
-		return dto_ticket.Response{}, err
+		return dto_ticket.Response{}, tools.ErrorBuilder(err)
 	}
 
 	bookingDetails, err := u.repository.FindBookingDetailByBookingID(booking.ID)
 	if err != nil {
-		return dto_ticket.Response{}, err
+		return dto_ticket.Response{}, tools.ErrorBuilder(err)
 	}
 
 	passengersInfo := make([]dto_ticket.PassengerInfoData, 0)
 	for _, bookingDetail := range bookingDetails {
 		passenger, err := u.repository.FindDetailPassanger(bookingDetail.PassengerID)
 		if err != nil {
-			return dto_ticket.Response{}, err
+			return dto_ticket.Response{}, tools.ErrorBuilder(err)
 		}
 		passengersInfo = append(passengersInfo, dto_ticket.PassengerInfoData{
 			BookingDetailID: bookingDetail.ID,
@@ -84,7 +85,7 @@ func (u *useCase) RedeemTicket(codeBooking string) (dto_ticket.Response, error) 
 
 	err = u.adapter.RedeemTicket(&specRedeem)
 	if err != nil {
-		return dto_ticket.Response{}, err
+		return dto_ticket.Response{}, tools.ErrorBuilder(err)
 	}
 
 	response := dto_ticket.Response{
@@ -116,7 +117,7 @@ func (u *useCase) UpdateTicket(req *dto_ticket.RequestUpdateTicket) error {
 	}
 	err = u.UpdateDetailBooking(&specUpdate)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil

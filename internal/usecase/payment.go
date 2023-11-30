@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fww-core/internal/data/dto_payment"
 	"fww-core/internal/entity"
+	"fww-core/internal/tools"
 	"time"
 )
 
@@ -11,7 +12,7 @@ import (
 func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
 	resultBooking, err := u.repository.FindBookingByBookingIDCode(codeBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if resultBooking.ID == 0 {
@@ -22,19 +23,19 @@ func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
 
 	bookingDetails, err := u.repository.FindBookingDetailByBookingID(resultBooking.ID)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	bookingPrice, err := u.repository.FindFlightPriceByID(resultBooking.FlightID)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	// Update Booking Case ID
 	resultBooking.CaseID = caseID
 	_, err = u.repository.UpdateBooking(&resultBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	totalPayment += (bookingPrice.Price * float64(len(bookingDetails)))
@@ -49,7 +50,7 @@ func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
 
 	_, err = u.repository.UpsertPayment(&entityPayment)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil
@@ -59,7 +60,7 @@ func (u *useCase) GenerateInvoice(caseID int64, codeBooking string) error {
 func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 	resultBooking, err := u.repository.FindBookingByID(req.BookingID)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if resultBooking.ID == 0 {
@@ -74,7 +75,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 
 	paymentMethods, err := u.repository.FindPaymentMethodStatus()
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	isValid := false
@@ -90,7 +91,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 
 	resultPayment, err := u.repository.FindPaymentByBookingID(resultBooking.ID)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specDoPayment := dto_payment.DoPayment{
@@ -102,7 +103,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 	}
 	err = u.adapter.DoPayment(&specDoPayment)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil
@@ -112,7 +113,7 @@ func (u *useCase) RequestPayment(req *dto_payment.Request) error {
 func (u *useCase) UpdatePayment(req *dto_payment.RequestUpdatePayment) error {
 	resultPayment, err := u.repository.FindPaymentDetailByInvoice(req.InvoiceNumber)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	resultPayment.PaymentStatus = req.Status
@@ -121,16 +122,17 @@ func (u *useCase) UpdatePayment(req *dto_payment.RequestUpdatePayment) error {
 
 	_, err = u.repository.UpsertPayment(&resultPayment)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil
 }
+
 // GetDetailPayment implements UseCase.
 func (u *useCase) GetPaymentStatus(codePayment string) (dto_payment.StatusResponse, error) {
 	result, err := u.repository.FindPaymentDetailByInvoice(codePayment)
 	if err != nil {
-		return dto_payment.StatusResponse{}, err
+		return dto_payment.StatusResponse{}, tools.ErrorBuilder(err)
 	}
 
 	if result.ID == 0 {
@@ -147,7 +149,7 @@ func (u *useCase) GetPaymentStatus(codePayment string) (dto_payment.StatusRespon
 func (u *useCase) GetPaymentMethod() ([]dto_payment.MethodResponse, error) {
 	result, err := u.repository.FindPaymentMethodStatus()
 	if err != nil {
-		return []dto_payment.MethodResponse{}, err
+		return []dto_payment.MethodResponse{}, tools.ErrorBuilder(err)
 	}
 
 	var response []dto_payment.MethodResponse

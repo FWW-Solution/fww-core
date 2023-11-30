@@ -3,13 +3,14 @@ package usecase
 import (
 	"errors"
 	"fww-core/internal/data/dto_flight"
+	"fww-core/internal/tools"
 )
 
 // GetDetailFlightByID implements UseCase.
 func (u *useCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail, error) {
 	resultFlight, err := u.repository.FindFlightByID(id)
 	if err != nil {
-		return dto_flight.ResponseFlightDetail{}, err
+		return dto_flight.ResponseFlightDetail{}, tools.ErrorBuilder(err)
 	}
 
 	if resultFlight.ID == 0 {
@@ -18,7 +19,7 @@ func (u *useCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail
 
 	resultFlightPrice, err := u.repository.FindFlightPriceByID(id)
 	if err != nil {
-		return dto_flight.ResponseFlightDetail{}, err
+		return dto_flight.ResponseFlightDetail{}, tools.ErrorBuilder(err)
 	}
 
 	if resultFlightPrice.ID == 0 {
@@ -27,7 +28,7 @@ func (u *useCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail
 
 	resultFlightReservation, err := u.repository.FindFlightReservationByID(id)
 	if err != nil {
-		return dto_flight.ResponseFlightDetail{}, err
+		return dto_flight.ResponseFlightDetail{}, tools.ErrorBuilder(err)
 	}
 
 	if resultFlightReservation.ID == 0 {
@@ -52,7 +53,7 @@ func (u *useCase) GetDetailFlightByID(id int64) (dto_flight.ResponseFlightDetail
 func (u *useCase) GetFlights(departureTime string, arrivalTime string, limit int, offset int) ([]dto_flight.ResponseFlight, error) {
 	result, err := u.repository.FindFlights(departureTime, arrivalTime, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, tools.ErrorBuilder(err)
 	}
 
 	var response []dto_flight.ResponseFlight

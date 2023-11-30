@@ -1,6 +1,8 @@
 package usecase_test
 
 import (
+	"database/sql"
+	"fmt"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/entity"
 	"testing"
@@ -131,6 +133,29 @@ func TestUpdatePassanger(t *testing.T) {
 		if result != expected {
 			t.Errorf("expected %v, got %v", expected, result)
 		}
+	})
+
+	t.Run("Error FindDetailPassanger", func(t *testing.T) {
+		id := int64(0)
+		expected := dto_passanger.ResponseUpdate{}
+
+		repositoryMock.On("FindDetailPassanger", id).Return(entity.Passenger{}, sql.ErrConnDone)
+
+		result, err := uc.UpdatePassanger(&dto_passanger.RequestUpdate{})
+		assert.NotNil(t, err)
+		assert.Equal(t, expected, result)
+	})
+
+	t.Run("Error FindDetailPassanger Not Found", func(t *testing.T) {
+		id := int64(1)
+		expected := dto_passanger.ResponseUpdate{}
+
+		repositoryMock.On("FindDetailPassanger", id).Return(entity.Passenger{}, nil)
+
+		result, err := uc.UpdatePassanger(&dto_passanger.RequestUpdate{})
+		assert.NotNil(t, err)
+		fmt.Println(err)
+		assert.Equal(t, expected, result)
 	})
 }
 

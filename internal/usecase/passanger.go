@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fww-core/internal/data/dto_passanger"
 	"fww-core/internal/entity"
+	"fww-core/internal/tools"
 	"time"
 )
 
@@ -11,7 +12,7 @@ import (
 func (u *useCase) DetailPassanger(id int64) (dto_passanger.ResponseDetail, error) {
 	result, err := u.repository.FindDetailPassanger(id)
 	if err != nil {
-		return dto_passanger.ResponseDetail{}, err
+		return dto_passanger.ResponseDetail{}, tools.ErrorBuilder(err)
 	}
 
 	if result.ID == 0 {
@@ -39,7 +40,7 @@ func (u *useCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_pa
 	// convert string to time
 	dateOfBirth, err := time.Parse("2006-01-02", data.DateOfBirth)
 	if err != nil {
-		return dto_passanger.ResponseRegistered{}, err
+		return dto_passanger.ResponseRegistered{}, tools.ErrorBuilder(err)
 	}
 	entity := entity.Passenger{
 		ID:                 0,
@@ -53,7 +54,7 @@ func (u *useCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_pa
 	}
 	result, err := u.repository.RegisterPassanger(&entity)
 	if err != nil {
-		return dto_passanger.ResponseRegistered{}, err
+		return dto_passanger.ResponseRegistered{}, tools.ErrorBuilder(err)
 	}
 	dataPassanger := dto_passanger.RequestBPM{
 		IDNumber: data.IDNumber,
@@ -62,7 +63,7 @@ func (u *useCase) RegisterPassanger(data *dto_passanger.RequestRegister) (dto_pa
 	err = u.adapter.CheckPassangerInformations(&dataPassanger)
 
 	if err != nil {
-		return dto_passanger.ResponseRegistered{}, err
+		return dto_passanger.ResponseRegistered{}, tools.ErrorBuilder(err)
 	}
 
 	return dto_passanger.ResponseRegistered{
@@ -76,7 +77,7 @@ func (u *useCase) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passan
 	// select data from database
 	result, err := u.repository.FindDetailPassanger(data.ID)
 	if err != nil {
-		return dto_passanger.ResponseUpdate{}, err
+		return dto_passanger.ResponseUpdate{}, tools.ErrorBuilder(err)
 	}
 	if result.ID == 0 {
 		return dto_passanger.ResponseUpdate{}, errors.New("passanger not found")
@@ -105,7 +106,7 @@ func (u *useCase) UpdatePassanger(data *dto_passanger.RequestUpdate) (dto_passan
 
 	resultUpdate, err := u.repository.UpdatePassanger(&result)
 	if err != nil {
-		return dto_passanger.ResponseUpdate{}, err
+		return dto_passanger.ResponseUpdate{}, tools.ErrorBuilder(err)
 	}
 
 	response := dto_passanger.ResponseUpdate{
@@ -121,7 +122,7 @@ func (u *useCase) UpdatePassangerByIDNumber(data *dto_passanger.RequestUpdateBPM
 
 	result, err := u.repository.FindPassangerByIDNumber(data.IDNumber)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if result.ID == 0 {
@@ -141,7 +142,7 @@ func (u *useCase) UpdatePassangerByIDNumber(data *dto_passanger.RequestUpdateBPM
 
 	_, err = u.repository.UpdatePassanger(&result)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil

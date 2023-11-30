@@ -6,6 +6,7 @@ import (
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/data/dto_notification"
 	"fww-core/internal/data/dto_payment"
+	"fww-core/internal/tools"
 	"text/template"
 )
 
@@ -89,14 +90,14 @@ func (u *useCase) InquiryNotification(data *dto_notification.Request) error {
 func (u *useCase) sendInvoiceNotification(data *dto_notification.Request) error {
 	result, err := u.repository.PaymentInvoiceReportByBookingCode(data.CodeBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specModel := u.createInvoiceModel(&result)
 
 	templateSendInvoice, err := u.populateTemplateInvoice(&specModel, templateSendInvoice)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specNotification := dto_notification.SendEmailRequest{
@@ -111,14 +112,14 @@ func (u *useCase) sendInvoiceNotification(data *dto_notification.Request) error 
 func (u *useCase) sendReceiptNotification(data *dto_notification.Request) error {
 	result, err := u.repository.PaymentReceiptReportByBookingCode(data.CodeBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specModel := u.createReceiptModel(&result)
 
 	templateSendReceipt, err := u.populateTemplateReceipt(&specModel, templateSendReceipt)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specNotification := dto_notification.SendEmailRequest{
@@ -133,14 +134,14 @@ func (u *useCase) sendReceiptNotification(data *dto_notification.Request) error 
 func (u *useCase) sendTicketNotification(data *dto_notification.Request) error {
 	result, err := u.repository.TicketRedeemedReportByBookingCode(data.CodeBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specModel := u.createTicketModel(&result)
 
 	templateSendTicket, err := u.populateTemplateTicket(&specModel, templateSendTicket)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	specNotification := dto_notification.SendEmailRequest{
@@ -221,7 +222,7 @@ func (u *useCase) populateTemplateInvoice(data *dto_notification.ModelInvoice, t
 	var buf bytes.Buffer
 	t := template.Must(template.New("").Parse(templateHtml))
 	if err := t.Execute(&buf, data); err != nil {
-		return "", err
+		return "", tools.ErrorBuilder(err)
 	}
 	return buf.String(), nil
 }
@@ -230,7 +231,7 @@ func (u *useCase) populateTemplateReceipt(data *dto_notification.ModelPaymentRec
 	var buf bytes.Buffer
 	t := template.Must(template.New("").Parse(templateHtml))
 	if err := t.Execute(&buf, data); err != nil {
-		return "", err
+		return "", tools.ErrorBuilder(err)
 	}
 	return buf.String(), nil
 }
@@ -239,7 +240,7 @@ func (u *useCase) populateTemplateTicket(data *dto_notification.ModelTicketRedee
 	var buf bytes.Buffer
 	t := template.Must(template.New("").Parse(templateHtml))
 	if err := t.Execute(&buf, data); err != nil {
-		return "", err
+		return "", tools.ErrorBuilder(err)
 	}
 	return buf.String(), nil
 }

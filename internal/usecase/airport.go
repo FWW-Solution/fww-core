@@ -1,12 +1,15 @@
 package usecase
 
-import "fww-core/internal/data/dto_airport"
+import (
+	"fww-core/internal/data/dto_airport"
+	"fww-core/internal/tools"
+)
 
 // GetAirport implements UseCase.
 func (u *useCase) GetAirport(city string, province string, iata string) ([]dto_airport.ResponseAirport, error) {
 	result, err := u.repository.FindAirport(city, province, iata)
 	if err != nil {
-		return nil, err
+		return nil, tools.ErrorBuilder(err)
 	}
 
 	var response []dto_airport.ResponseAirport

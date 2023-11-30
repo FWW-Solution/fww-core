@@ -8,6 +8,7 @@ import (
 	"fww-core/internal/container/infrastructure/redis"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/entity"
+	"fww-core/internal/tools"
 	"time"
 )
 
@@ -17,11 +18,11 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	// Check Booking ID Code
 	resultBooking, err := u.repository.FindBookingByBookingIDCode(bookingIDCode)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if resultBooking.ID != 0 {
-		return errors.New("booking id code already exist")
+		return tools.ErrorBuilder(errors.New("booking id code already exist"))
 	}
 
 	var reminingSeat int
@@ -32,7 +33,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	if result.Err() != nil {
 		reminingSeat, err := u.repository.FindReminingSeat(data.FlightID)
 		if err != nil {
-			return err
+			return tools.ErrorBuilder(err)
 		}
 		if reminingSeat <= 0 {
 			return errors.New("no remaning seat")
@@ -42,7 +43,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 	reminingSeat, err = result.Int()
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if reminingSeat < 1 {
@@ -84,7 +85,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 	bookingID, err := u.repository.InsertBooking(bookingEntity)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	// Update Flight Reservation
@@ -100,12 +101,12 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	}
 	_, err = u.repository.UpdateFlightReservation(entityReservation)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	status := u.redis.Set(ctx, flightIDReminingSeat, reminingSeat-len(data.BookDetails), 0)
 	if status.Err() != nil {
-		return status.Err()
+		return tools.ErrorBuilder(status.Err())
 	}
 
 	// Insert Booking Detail
@@ -121,7 +122,7 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 		_, err := u.repository.InsertBookingDetail(&entityBookingDetail)
 		if err != nil {
-			return err
+			return tools.ErrorBuilder(err)
 		}
 	}
 
@@ -132,19 +133,18 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 
 	err = u.adapter.RequestGenerateInvoice(&specBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
-	return err
+	return nil
 
 }
-
 
 // GetDetailBooking implements UseCase.
 func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse, error) {
 	result, err := u.repository.FindBookingByBookingIDCode(codeBooking)
 	if err != nil {
-		return dto_booking.BookResponse{}, err
+		return dto_booking.BookResponse{}, tools.ErrorBuilder(err)
 	}
 
 	if result.ID == 0 {
@@ -153,12 +153,12 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 
 	resultBookingDetails, err := u.repository.FindBookingDetailByBookingID(result.ID)
 	if err != nil {
-		return dto_booking.BookResponse{}, err
+		return dto_booking.BookResponse{}, tools.ErrorBuilder(err)
 	}
 
 	resultFlight, err := u.repository.FindFlightByID(result.FlightID)
 	if err != nil {
-		return dto_booking.BookResponse{}, err
+		return dto_booking.BookResponse{}, tools.ErrorBuilder(err)
 	}
 
 	if resultFlight.ID == 0 {
@@ -167,7 +167,7 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 
 	resultFlightPrice, err := u.repository.FindFlightPriceByID(result.FlightID)
 	if err != nil {
-		return dto_booking.BookResponse{}, err
+		return dto_booking.BookResponse{}, tools.ErrorBuilder(err)
 	}
 
 	if resultFlightPrice.ID == 0 {
@@ -182,7 +182,7 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 	for _, v := range resultBookingDetails {
 		passenger, err := u.repository.FindDetailPassanger(v.PassengerID)
 		if err != nil {
-			return dto_booking.BookResponse{}, err
+			return dto_booking.BookResponse{}, tools.ErrorBuilder(err)
 		}
 
 		bookDetails = append(bookDetails, dto_booking.BookResponseDetail{
@@ -216,7 +216,7 @@ func (u *useCase) GetDetailBooking(codeBooking string) (dto_booking.BookResponse
 func (u *useCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error {
 	resultBookingDetail, err := u.repository.FindBookingDetailByID(data.BookingDetailID)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if resultBookingDetail.ID == 0 {
@@ -227,7 +227,7 @@ func (u *useCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error
 	resultBookingDetail.IsEligibleToFlight = data.IsEligibleToFlight
 	_, err = u.repository.UpdateBookingDetail(&resultBookingDetail)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil
@@ -237,7 +237,7 @@ func (u *useCase) UpdateDetailBooking(data *dto_booking.BookDetailRequest) error
 func (u *useCase) UpdateBooking(req *dto_booking.RequestUpdateBooking) error {
 	resultBooking, err := u.repository.FindBookingByBookingIDCode(req.CodeBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	if resultBooking.ID == 0 {
@@ -247,7 +247,7 @@ func (u *useCase) UpdateBooking(req *dto_booking.RequestUpdateBooking) error {
 	resultBooking.BookingStatus = req.Status
 	_, err = u.repository.UpdateBooking(&resultBooking)
 	if err != nil {
-		return err
+		return tools.ErrorBuilder(err)
 	}
 
 	return nil
