@@ -21,3 +21,5 @@
 go.work
 
 coverage.txt
+
+node_modules/
