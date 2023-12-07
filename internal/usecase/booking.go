@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"fww-core/internal/container/infrastructure/redis"
 	"fww-core/internal/data/dto_booking"
 	"fww-core/internal/entity"
 	"fww-core/internal/tools"
@@ -30,34 +29,37 @@ func (u *useCase) RequestBooking(data *dto_booking.Request, bookingIDCode string
 	// Check Remining Seat
 	flightIDReminingSeat := fmt.Sprintf("flight-%d-seat", data.FlightID)
 	result := u.redis.Get(ctx, flightIDReminingSeat)
+	// string to int
+	reminingSeat, _ = result.Int()
 	if result.Err() != nil {
 		reminingSeat, err := u.repository.FindReminingSeat(data.FlightID)
 		if err != nil {
 			return tools.ErrorBuilder(err)
 		}
-		if reminingSeat <= 0 {
-			return errors.New("no remaning seat")
+		if reminingSeat <= 1 {
+			return tools.ErrorBuilder(errors.New("no remaning seat"))
 		}
 		u.redis.Set(ctx, flightIDReminingSeat, reminingSeat, 0)
 	}
 
-	reminingSeat, err = result.Int()
-	if err != nil {
-		return tools.ErrorBuilder(err)
-	}
-
 	if reminingSeat < 1 {
-		return errors.New("no remaning seat")
+		return tools.ErrorBuilder(errors.New("no remaning seat"))
 	}
 
 	flightIDKey := fmt.Sprintf("flight-%d", data.FlightID)
 
+	isLocked := u.redis.Get(ctx, flightIDKey)
+	if isLocked.Err() == nil {
+		return tools.ErrorBuilder(errors.New("flight is locked"))
+	}
+
+	defer u.redis.Del(ctx, flightIDKey)
+
 	// Lock Transaction Redis
-	rc := redis.InitMutex(flightIDKey)
-	//nolint
-	redis.LockMutex(rc)
-	//nolint
-	defer redis.UnlockMutex(rc)
+	rc := u.redis.Set(ctx, flightIDKey, 1, 0)
+	if rc.Err() != nil {
+		return tools.ErrorBuilder(rc.Err())
+	}
 
 	// Check Remining Seat
 

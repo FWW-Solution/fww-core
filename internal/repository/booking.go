@@ -8,9 +8,11 @@ import (
 
 // FindReminingSeat implements Repository.
 func (r *repository) FindReminingSeat(flightID int64) (int, error) {
-	query := `SELECT remining_seat, total_seat FROM flight_reservations WHERE flight_id = $1 AND deleted_at IS NULL`
+	// query := `SELECT remining_seat, total_seat FROM flight_reservations WHERE flight_id = $1 AND deleted_at IS NULL`
+	query := fmt.Sprintf(`SELECT remining_seat, total_seat FROM flight_reservations WHERE flight_id = %d AND deleted_at IS NULL`, flightID)
+	fmt.Println(query)
 	var result entity.FlightReservation
-	err := r.db.QueryRowx(query, flightID).StructScan(&result)
+	err := r.db.QueryRowx(query).StructScan(&result)
 	if err != nil && err.Error() == "sql: no rows in result set" {
 		return 0, nil
 	}
